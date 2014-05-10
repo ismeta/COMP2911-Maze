@@ -33,13 +33,13 @@ public class RandomMaze implements MazeGenerator {
 		assert(size > 2 && size % 2 == 1);
 		assert(tiles != null);
 		
-		Point startPoint = new Point(1, 1);
-		Point goalPoint  = new Point(size - 2, size - 2);
+		Point startPoint = new Point(0, 0);
+		Point goalPoint  = new Point(size - 1, size - 1);
 		
 		/* Keeps track of which set each tile belongs to. */
 		boolean[][] inStartSet = new boolean[size][size];
-		inStartSet[1][1] = true;
-		inStartSet[size - 2][size - 2] = false;
+		inStartSet[0][0] = true;
+		inStartSet[size - 1][size - 1] = false;
 		
 		/* There are several ways we can keep track of what 
 		 * tile to visit. Here, we simply keep a list of tiles
@@ -63,8 +63,8 @@ public class RandomMaze implements MazeGenerator {
 				new Point(goalPoint.x, goalPoint.y - 2), goalPoint));
 		
 		/* Don't forget to initialise our start/end tiles :P */
-		tiles[1][1] = new MazeTile(false);
-		tiles[size - 2][size - 2] = new MazeTile(false);
+		tiles[0][0] = new MazeTile(false);
+		tiles[size - 1][size - 1] = new MazeTile(false);
 		
 		/* Finally, we need a counter of how many tiles we need to visit
 		 * so we know when we should stop. We could have a list of all the
@@ -82,7 +82,7 @@ public class RandomMaze implements MazeGenerator {
 		 * (one dimensional? how even), and subtract two as we have already 
 		 * visited the start/goal tiles.
 		 */
-		int unvisitedTiles = ((size / 2) * (size / 2)) - 2;
+		int unvisitedTiles = (((size / 2) + 1) * ((size / 2) + 1)) - 2;
 		System.out.println(unvisitedTiles + " tiles you need to visit");
 	
 		/* Phase 1: randomly visit tiles until they have all been visited. */
