@@ -10,22 +10,19 @@ public class MazePlayer {
 	private int posX;
 	private int posY;
 	private Color color;
-	private MazeJPanel m;
 	private double speed;
 	
 	
 	/**
 	 * @param id
-	 * @param m
 	 * @param color
 	 * @param speed
 	 */
-	public MazePlayer(int id, MazeJPanel m, Color color, double speed) {
+	public MazePlayer(int id, Color color, double speed) {
 		this.id = id;
 		this.posX = 0;
 		this.posY = 200;
 		this.color = color;
-		this.m = m;
 		this.speed = speed;
 	}
 	

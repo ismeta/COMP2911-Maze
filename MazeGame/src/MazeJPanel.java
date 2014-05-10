@@ -44,6 +44,11 @@ public class MazeJPanel extends JPanel {
 		
 		// generate tiles;
 		this.tiles = new MazeTile[size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				this.tiles[i][j] = new MazeTile(false);
+			}
+		}
 		
 		RandomMaze heh = new RandomMaze();
 		heh.generateMaze(tiles, size);
@@ -62,7 +67,7 @@ public class MazeJPanel extends JPanel {
 		// make da players
 		this.players = new MazePlayer[NUM_PLAYERS];
 		for (int i = 0; i < NUM_PLAYERS; i++) {
-			this.players[i] = new MazePlayer(i, this, i == 0 ? Color.red : i == 1 ? Color.blue : Color.green, 0.05);
+			this.players[i] = new MazePlayer(i, i == 0 ? Color.red : i == 1 ? Color.blue : Color.green, 0.05);
 		}
 	}
 	
@@ -142,31 +147,84 @@ public class MazeJPanel extends JPanel {
 				return;
 		}
 		
+		// ensure player is playing this game
 		MazePlayer p = this.players[player];
+		int tileWidth = this.getWidth() / size;
+		int tileHeight = this.getHeight() / size;
 		if (p != null) {
-			p.setPosX((int) (p.getPosX() + p.getSpeed() * time * xDir));
-			p.setPosY((int) (p.getPosY() + p.getSpeed() * time * yDir));
-		}
+			// prospective to
+			int xTo = (int) (p.getPosX() + p.getSpeed() * time * xDir);
+			int yTo = (int) (p.getPosY() + p.getSpeed() * time * yDir);
+			
+			// get nearest obstacle x-ways
+			int tileX = p.getPosX() / tileWidth;
+			int tileY = p.getPosY() / tileHeight;
+
+			int i;
+			
+			if (xDir > 0) {
+				for (i = tileX + 1; i < size; i++) {
+					if (tiles[tileY][i].isWall()) {
+						break;
+					}
+				}
+				if (i < size) {
+					xTo = Math.min((i - 1) * tileWidth, xTo);
+				}
+			} else if (xDir < 0) {
+				for (i = tileX; i >= 0; i--) {
+					if (tiles[tileY][i].isWall()) {
+						break;
+					}
+				}
+				if (i >= 0) {
+					xTo = Math.max((i + 1) * tileWidth, xTo);
+				}
+			}
+				
+            if (yDir > 0) {
+                for (i = tileY + 1; i < size; i++) {
+                    if (tiles[i][tileX].isWall()) {
+                        break;
+                    }
+                }
+                if (i < size) {
+                    yTo = Math.min((i - 1) * tileHeight, yTo);
+                }
+            } else if (yDir < 0) {
+                for (i = tileY; i >= 0; i--) {
+                    if (tiles[i][tileX].isWall()) {
+                        break;
+                    }
+                }
+                if (i >= 0) {
+                    yTo = Math.max((i + 1) * tileHeight, yTo);
+                }
+            }
+			// bound between the 4 walls
+			p.setPosX(Math.max(0, Math.min(xTo, tileWidth * (size - 1))));
+			p.setPosY(Math.max(0, Math.min(yTo, tileHeight * (size - 1))));
+		}		
 	}
 	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		int width = this.getWidth() / size;
-		int height = this.getHeight() / size;
+		int tileWidth = this.getWidth() / size;
+		int tileHeight = this.getHeight() / size;
 		
 		// draw tiles
 		Graphics2D g2d = (Graphics2D) g;
 		for (int i = 0; i < this.tiles.length; i++) {
 			for (int j = 0; j < this.tiles[i].length; j++) {
-				this.tiles[i][j].draw(g2d, i * width, j * height, width, height);
+				this.tiles[i][j].draw(g2d, j * tileHeight, i * tileWidth, tileWidth, tileHeight);
 			}
 		}
 		
 		// draw players
-		for (MazePlayer mp : this.players) {
-			if (mp != null) {
-				mp.draw(g2d, width, height);
+		for (MazePlayer p : this.players) {
+			if (p != null) {
+				p.draw(g2d, tileWidth, tileHeight);
 			}
 		}
 	}

@@ -27,8 +27,8 @@ public class MazeTile {
 		this.isWall = isWall;
 	}
 	
-	public void draw(Graphics2D g2d, int i, int j, int width, int height) {
+	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		g2d.setPaint(this.isWall ? Color.black : Color.white);
-		g2d.fill(new Rectangle(i, j, width, height));
+		g2d.fill(new Rectangle(x, y, width, height));
 	}
 }
