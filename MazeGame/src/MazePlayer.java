@@ -9,36 +9,19 @@ public class MazePlayer {
 	private double posX;
 	private double posY;
 	private Color color;
-	private double speed;
-	
 	
 	/**
 	 * @param id
 	 * @param color
-	 * @param speed
+	 * @param size
 	 */
-	public MazePlayer(int id, Color color, double speed) {
+	public MazePlayer(int id, Color color) {
 		this.id = id;
 		this.posX = 0;
 		this.posY = 0;
 		this.color = color;
-		this.speed = speed;
 	}
 	
-	/**
-	 * @return the speed
-	 */
-	public double getSpeed() {
-		return speed;
-	}
-
-	/**
-	 * @param speed the speed to set
-	 */
-	public void setSpeed(double speed) {
-		this.speed = speed;
-	}
-
 	/**
 	 * @return the color
 	 */
