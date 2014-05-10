@@ -1,6 +1,5 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +20,7 @@ public class MazeJPanel extends JPanel {
 	 * serialVersionUID magic
 	 */
 	private static final long serialVersionUID = 4602880844383443785L;
-	private ArrayList<ArrayList<MazeTile>> tiles;
+	private MazeTile[][] tiles;
 	private int size;
 	private Timer timer;
 
@@ -33,13 +32,11 @@ public class MazeJPanel extends JPanel {
 		// double buffered JPanel
 		super(true);
 		// generate tiles;
-		this.tiles = new ArrayList<ArrayList<MazeTile>>();
+		this.tiles = new MazeTile[size][size];
 		for (int i = 0; i  < size; i++) {
-			ArrayList<MazeTile> tileRow = new ArrayList<MazeTile>();
 			for (int j = 0; j < size; j++) {
-				tileRow.add(new MazeTile((new Random()).nextBoolean()));
+				this.tiles[i][j] = new MazeTile((new Random()).nextBoolean());
 			}
-			this.tiles.add(tileRow);
 		}
 		// size
 		this.size = size;
@@ -57,13 +54,13 @@ public class MazeJPanel extends JPanel {
 		// lol random
 		Random r = new Random();
 		Graphics2D g2d = (Graphics2D) g;
-		for (int i = 0; i < this.tiles.size(); i++) {
-			ArrayList<MazeTile> tileRow = this.tiles.get(i);
-			for (int j = 0; j < tileRow.size(); j++) {
-				tileRow.get(j).draw(g2d, i * width, j * height, width, height);
+		
+		for (int i = 0; i < this.size; i++) {
+			for (int j = 0; j < this.size; j++) {
+				this.tiles[i][j].draw(g2d, i * width, j * height, width, height);
 				// i am evil
 				if (r.nextInt(1000) > 950) {
-					tileRow.get(j).setWall(!tileRow.get(j).isWall());
+					this.tiles[i][j].setWall(!this.tiles[i][j].isWall());
 				}
 			}
 		}
