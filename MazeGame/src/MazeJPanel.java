@@ -61,6 +61,7 @@ public class MazeJPanel extends JPanel {
 			ArrayList<MazeTile> tileRow = this.tiles.get(i);
 			for (int j = 0; j < tileRow.size(); j++) {
 				tileRow.get(j).draw(g2d, i * width, j * height, width, height);
+				// i am evil
 				if (r.nextInt(1000) > 950) {
 					tileRow.get(j).setWall(!tileRow.get(j).isWall());
 				}
