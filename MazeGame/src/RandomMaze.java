@@ -56,6 +56,23 @@ public class RandomMaze implements MazeGenerator {
 		assert(tiles != null);
 		assert(startP.x != goalP.x || startP.y != goalP.y);
 		
+		/* can't really trust our array - initialise everything to null
+		 * and tell off the programmer if it's not initialised to null.
+		 * (or modified after being initialised)
+		 */
+		boolean warning = false;
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (tiles[i][j] != null) {
+					warning = true;
+				}
+			}
+		}
+		if (warning) {
+			System.out.println("warning: make sure your tiles are initialised" +
+							   " to null before generating the maze");
+		}
+		
 		/* Keeps track of which set each tile belongs to. */
 		boolean[][] inStartSet = new boolean[size][size];
 		inStartSet[startP.x][startP.y] = true;
