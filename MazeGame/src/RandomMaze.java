@@ -2,6 +2,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
+ * ALGORITHM
+ * 
+ * tl;dr Randomly generated. (Neither BFS or DFS; the degree of BFS/DFS
+ * at each iteration is randomly determined.)
+ * 
  * This implementation of MazeGenerator employs the below strategy:
  * 
  * - Separates the tiles into three sets:
@@ -11,10 +16,15 @@ import java.util.Random;
  * - In our implementation, we only need to really keep a list of tiles that we 
  *   want to investigate. This keeps memory required down.
  * 
- * - We randomly remove walls between tiles in the start/end tiles, and the unvisited
- *   tiles set. (never between tiles in the same set; this creates loops.) The
- *   tile uncovered by removing a wall is removed from the unvisited set, and
- *   added to the respective set.
+ * - We pick a random tile that we want to investigate, and check if it's been
+ *   visited. If not, then we add it to the relevant set. We then add all its 
+ *   surrounding tiles to the list of tiles to investigate.
+ *   
+ * - We also keep track of the set that the tiles belong to. A tile is added to 
+ *   the same set that the tile before it belongs to. If a tile is explored that
+ *   already exists, then we check if it is in a different set from the tile
+ *   before it. If so, we add it to the list of possible walls to remove for 
+ *   the next step:
  *   
  * - When we have no unvisited tiles, we pick an positive integer and remove
  *   that number of walls between the start and end tiles. (If we pick 0, then
@@ -23,23 +33,36 @@ import java.util.Random;
  * This algorithm was based off http://stackoverflow.com/a/22308159 and modified
  * to work with our implementation of maze tiles.
  * 
+ * LIMITATIONS:
+ * 
  * A limitation of this class is that the size must be odd, and the provided
- * 2D array of tiles must all be nulls. The outer rows and columns will all be walls.
+ * 2D array of tiles must all be nulls.
  * 
  * @author Vanessa
  */
 public class RandomMaze implements MazeGenerator {
-	public void generateMaze(MazeTile[][] tiles, int size) {
-		assert(size > 2 && size % 2 == 1);
+	public RandomMaze(int size) {
+		assert(size % 2 == 1 && size > 2);
+		this.size   = size;
+		this.startP = new Point(0, 0);
+		this.goalP  = new Point(size - 1, size - 1);
+		this.difficulty = 5;
+	}
+	
+	public void generateMaze(MazeTile[][] tiles) {
+		/* some checks: make sure we aren't handed lame, and that
+		 * the start/end tiles aren't the same!
+		 */
 		assert(tiles != null);
-		
-		Point startPoint = new Point(0, 0);
-		Point goalPoint  = new Point(size - 1, size - 1);
+		assert(startP.x != goalP.x || startP.y != goalP.y);
 		
 		/* Keeps track of which set each tile belongs to. */
 		boolean[][] inStartSet = new boolean[size][size];
-		inStartSet[0][0] = true;
-		inStartSet[size - 1][size - 1] = false;
+		inStartSet[startP.x][startP.y] = true;
+		inStartSet[goalP.x][goalP.y]   = false;
+		
+		System.out.println("start tile is " + startP);
+		System.out.println("goal tile is " + goalP);
 		
 		/* There are several ways we can keep track of what 
 		 * tile to visit. Here, we simply keep a list of tiles
@@ -54,17 +77,17 @@ public class RandomMaze implements MazeGenerator {
 		 * tiles that we can visit.
 		 */
 		tilesToVisit.add(new PointState(
-				new Point(startPoint.x + 2, startPoint.y), startPoint));
+				new Point(startP.x + 2, startP.y), startP));
 		tilesToVisit.add(new PointState(
-				new Point(startPoint.x, startPoint.y + 2), startPoint));
+				new Point(startP.x, startP.y + 2), startP));
 		tilesToVisit.add(new PointState(
-				new Point(goalPoint.x - 2, goalPoint.y), goalPoint));
+				new Point(goalP.x - 2, goalP.y), goalP));
 		tilesToVisit.add(new PointState(
-				new Point(goalPoint.x, goalPoint.y - 2), goalPoint));
+				new Point(goalP.x, goalP.y - 2), goalP));
 		
 		/* Don't forget to initialise our start/end tiles :P */
-		tiles[0][0] = new MazeTile(false);
-		tiles[size - 1][size - 1] = new MazeTile(false);
+		tiles[startP.x][startP.y] = new MazeTile(false);
+		tiles[goalP.x][goalP.y]   = new MazeTile(false);
 		
 		/* Finally, we need a counter of how many tiles we need to visit
 		 * so we know when we should stop. We could have a list of all the
@@ -153,10 +176,12 @@ public class RandomMaze implements MazeGenerator {
 		 * n is a number of our choosing.
 		 */
 		Point wallToRemove;
-		int wallsToRemove = 4;
+		
+		/* This is a naive measure of difficulty - we should change this later */
+		int wallsToRemove = difficulty;
 		
 		System.out.println(boundaries.size() + " potential boundaries");
-		while (wallsToRemove > 0) {
+		while (wallsToRemove > 0 && boundaries.size() > 0) {
 			/* remove a random wall */
 			wallToRemove = boundaries.remove(rand.nextInt(boundaries.size()));
 			tiles[wallToRemove.x][wallToRemove.y] = new MazeTile(false);
@@ -175,6 +200,46 @@ public class RandomMaze implements MazeGenerator {
 	}
 	
 	/**
+	 * This function can be optionally called before generateMaze() is
+	 * called. It sets the start tile for the maze. Note x and y must be
+	 * even numbers, and between 0 and size - 1, inclusive. size is not
+	 * specified here, but in the generateMaze call. (0, 0) refers to the
+	 * leftmost uppermost tile. It must be different from the end tile,
+	 * if it is specified!
+	 * @param x the x coordinate for the start tile.
+	 * @param y the y coordinate for the start tile.
+	 */
+	public void setStartTile(int x, int y) {
+		assert(x >= 0 && x < size && x % 2 == 0);
+		assert(y >= 0 && y < size && y % 2 == 0);
+		
+		this.startP = new Point(x, y);
+	}
+	
+	/**
+	 * This function can be optionally called before generateMaze() is
+	 * called. It sets the end tile for the maze. Note x and y must be
+	 * even numbers, and between 0 and size - 1, inclusive. size is not
+	 * specified here, but in the generateMaze call. (0, 0) refers to the
+	 * leftmost uppermost tile. The end tile must be different from the
+	 * start tile!
+	 * @param x the x coordinate for the end tile.
+	 * @param y the y coordinate for the end tile.
+	 */
+	public void setEndTile(int x, int y) {
+		assert(x >= 0 && x < size && x % 2 == 0);
+		assert(y >= 0 && y < size && y % 2 == 0);
+		
+		this.goalP = new Point(x, y);
+	}
+	
+	public void setDifficulty(int difficulty) {
+		assert(difficulty >= 1 && difficulty <= 10);
+		
+		this.difficulty = difficulty;
+	}
+	
+	/**
 	 * Little helper class that we use to store points, so we can have
 	 * a set of points in our RandomMaze implementation.
 	 * @author Vanessa
@@ -184,7 +249,12 @@ public class RandomMaze implements MazeGenerator {
 			this.x = x;
 			this.y = y;
 		}
-		 
+		
+		@Override
+		public String toString() {
+			return "(" + x + ", " + y + ")";
+		}
+		
 		public final int x;
 		public final int y;
 	}
@@ -205,4 +275,9 @@ public class RandomMaze implements MazeGenerator {
 		public final Point current;
 		public final Point previous;
 	}
+	
+	private final int size;
+	private int difficulty;
+	private Point startP;
+	private Point goalP;
 }
