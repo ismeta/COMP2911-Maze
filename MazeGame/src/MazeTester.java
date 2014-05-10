@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
@@ -13,7 +14,11 @@ public class MazeTester {
 		JFrame frame = new JFrame();
 		frame.setLayout(new GridBagLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(new MazeJPanel(33));
+				
+		MazeJPanel mp = new MazeJPanel(33);
+		mp.setPreferredSize(new Dimension(500, 500));
+		
+		frame.add(mp);
 		frame.pack();
 		frame.setVisible(true);
 	}
