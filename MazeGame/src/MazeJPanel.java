@@ -26,6 +26,8 @@ public class MazeJPanel extends JPanel {
 	private static final int REFRESH_RATE = 24;
 	private static final int NUM_PLAYERS = 3;
 	private static final long serialVersionUID = 4602880844383443785L;
+	private static final int TILES_PER_SECOND = 5;
+	
 	private MazeTile[][] tiles;
 	private int size;
 	private Timer timer;
@@ -41,15 +43,14 @@ public class MazeJPanel extends JPanel {
 		// double buffered JPanel
 		super(true);
 		this.setFocusable(true);
-		
-		// generate tiles;
-		this.tiles = new MazeTile[size][size];
-		
-		RandomMaze heh = new RandomMaze(size);
-		heh.generateMaze(tiles);
-		
+
 		// size
 		this.size = size;
+		
+		// generate tiles;
+		this.tiles = new MazeTile[size][size];		
+		RandomMaze heh = new RandomMaze(size);
+		heh.generateMaze(tiles);
 		
 		// allocate timer
 		this.timer = new Timer();
@@ -62,7 +63,7 @@ public class MazeJPanel extends JPanel {
 		// make da players
 		this.players = new MazePlayer[NUM_PLAYERS];
 		for (int i = 0; i < NUM_PLAYERS; i++) {
-			this.players[i] = new MazePlayer(i, i == 0 ? Color.red : i == 1 ? Color.blue : Color.green, 0.05);
+			this.players[i] = new MazePlayer(i, i == 0 ? Color.red : i == 1 ? Color.blue : Color.green);
 		}
 	}
 	
@@ -89,6 +90,7 @@ public class MazeJPanel extends JPanel {
 		int xDir = 0;
 		int yDir = 0;
 		
+		// find the player and directions the player will move 
 		switch (key) {
 			case 'w':
 				player = 0; 
@@ -145,30 +147,41 @@ public class MazeJPanel extends JPanel {
 		// ensure player is playing this game
 		MazePlayer p = this.players[player];
 		if (p != null) {
-			// prospective to
-			double xTo = (p.getPosX() + p.getSpeed() * time * xDir);
-			double yTo = (p.getPosY() + p.getSpeed() * time * yDir);
-			
+			// prospective to destination
+			// moving from the current position + the distance movable per second * time key held 
+			double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * (time / 1000.0) * xDir);
+			double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * (time / 1000.0) * yDir);
+						
 			int i;
 			
 			// get nearest obstacle x-ways
 			int tileWidth = this.getWidth() / size;
 			int tileHeight = this.getHeight() / size;
 			
-			int tileYs[] = { (int) p.getPosY() / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };	
+			// figure out which tiles the player is overlapping with
+			// we find the tile (in the array) of the leftmost tile
+			// and the tile at the right hand size
 			int tileXs[] = { (int) p.getPosX() / tileWidth, (int) ((p.getPosX() + tileWidth - 1) / tileWidth) } ;
+			int tileYs[] = { (int) p.getPosY() / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };	
+			
+			// scan through all potential collisions between the player's current position
+			// and where there will potentially move to
 			for (int tileX : tileXs) {
 				for (int tileY : tileYs) {
 					if (xDir > 0) {
+						// check moving  positive in X direction
+						// looks for closest wall 
 						for (i = tileX + 1; i < size; i++) {
 							if (tiles[tileY][i].isWall()) {
 								break;
 							}
 						}
 						if (i < size) {
+							// make sure we don't go past the nearest wall
 							xTo = Math.min((i - 1) * tileWidth, xTo);
 						}
 					} else if (xDir < 0) {
+						// vice versa for negative in X direction
 						for (i = tileX; i >= 0; i--) {
 							if (tiles[tileY][i].isWall()) {
 								break;
@@ -179,6 +192,7 @@ public class MazeJPanel extends JPanel {
 						}
 					}
 					
+					// and we do the same thing for the Y direction
 					if (yDir > 0) {
 					    for (i = tileY + 1; i < size; i++) {
 			                if (tiles[i][tileX].isWall()) {
@@ -200,7 +214,7 @@ public class MazeJPanel extends JPanel {
 					}
 				}
 			}
-			// bound between the 4 walls
+			// set position - but make sure we don't fall off the grid :)
 			p.setPosX(Math.max(0, Math.min(xTo, tileWidth * (size - 1))));
 			p.setPosY(Math.max(0, Math.min(yTo, tileHeight * (size - 1))));
 		}		
@@ -257,6 +271,10 @@ public class MazeJPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * @author oliver
+	 * Key Listener for the Maze JPanel
+	 */
 	private class MazeJPanelKeyListener implements KeyListener {
 		private MazeJPanel m;
 		
@@ -269,12 +287,14 @@ public class MazeJPanel extends JPanel {
 
 	    public void keyPressed(KeyEvent e) {
 	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
+	    		// make sure we register the player's key as pressed
 	    		this.m.getKeyPresses().put(e.getKeyChar(), System.currentTimeMillis());
 	    	}
 	    }
 
 	    public void keyReleased(KeyEvent e) {
 	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
+	    		// update the player's movement
 	    		long difference = System.currentTimeMillis() - this.m.getKeyPresses().remove(e.getKeyChar());
 	    		this.m.updatePlayerMovement(e.getKeyChar(), difference);
 	    	}
