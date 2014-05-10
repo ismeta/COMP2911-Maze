@@ -2,9 +2,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,11 +37,10 @@ public class MazeJPanel extends JPanel {
 		super(true);
 		// generate tiles;
 		this.tiles = new MazeTile[size][size];
-		for (int i = 0; i  < size; i++) {
-			for (int j = 0; j < size; j++) {
-				this.tiles[i][j] = new MazeTile((new Random()).nextBoolean());
-			}
-		}
+		
+		RandomMaze heh = new RandomMaze();
+		heh.generateMaze(tiles, size);
+		
 		// size
 		this.size = size;
 		// allocate timer
@@ -57,7 +53,7 @@ public class MazeJPanel extends JPanel {
 	
 	@Override
 	public void paint(Graphics g) {
-		System.out.println("REPAINT!");
+		//System.out.println("REPAINT!");
 		super.paint(g);
 		int width = this.getWidth() / size;
 		int height = this.getHeight() / size;
@@ -68,10 +64,6 @@ public class MazeJPanel extends JPanel {
 		for (int i = 0; i < this.size; i++) {
 			for (int j = 0; j < this.size; j++) {
 				this.tiles[i][j].draw(g2d, i * width, j * height, width, height);
-				// i am evil
-				if (r.nextInt(1000) > 950) {
-					this.tiles[i][j].setWall(!this.tiles[i][j].isWall());
-				}
 			}
 		}
 
