@@ -21,7 +21,7 @@ public class MazePlayer {
 	public MazePlayer(int id, Color color, double speed) {
 		this.id = id;
 		this.posX = 0;
-		this.posY = 200;
+		this.posY = 0;
 		this.color = color;
 		this.speed = speed;
 	}
