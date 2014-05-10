@@ -146,8 +146,8 @@ public class MazeJPanel extends JPanel {
 		MazePlayer p = this.players[player];
 		if (p != null) {
 			// prospective to
-			int xTo = (int) (p.getPosX() + p.getSpeed() * time * xDir);
-			int yTo = (int) (p.getPosY() + p.getSpeed() * time * yDir);
+			double xTo = (p.getPosX() + p.getSpeed() * time * xDir);
+			double yTo = (p.getPosY() + p.getSpeed() * time * yDir);
 			
 			int i;
 			
@@ -155,8 +155,8 @@ public class MazeJPanel extends JPanel {
 			int tileWidth = this.getWidth() / size;
 			int tileHeight = this.getHeight() / size;
 			
-			int tileYs[] = { p.getPosY() / tileHeight, (p.getPosY() + tileHeight - 1) / tileHeight };	
-			int tileXs[] = { p.getPosX() / tileWidth, (p.getPosX() + tileWidth - 1) / tileWidth } ;
+			int tileYs[] = { (int) p.getPosY() / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };	
+			int tileXs[] = { (int) p.getPosX() / tileWidth, (int) ((p.getPosX() + tileWidth - 1) / tileWidth) } ;
 			for (int tileX : tileXs) {
 				for (int tileY : tileYs) {
 					if (xDir > 0) {

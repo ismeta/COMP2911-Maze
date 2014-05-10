@@ -6,8 +6,8 @@ import java.awt.Rectangle;
 public class MazePlayer {
 
 	private int id;
-	private int posX;
-	private int posY;
+	private double posX;
+	private double posY;
 	private Color color;
 	private double speed;
 	
@@ -48,7 +48,7 @@ public class MazePlayer {
 
 	public void draw(Graphics2D g2d, int width, int height) {		
 		g2d.setColor(color);
-		g2d.fill(new Rectangle(posX, posY, width, height));
+		g2d.fill(new Rectangle((int) posX, (int) posY, width, height));
 	}
 
 	/**
@@ -68,28 +68,28 @@ public class MazePlayer {
 	/**
 	 * @return the posX
 	 */
-	public int getPosX() {
+	public double getPosX() {
 		return posX;
 	}
 
 	/**
 	 * @param posX the posX to set
 	 */
-	public void setPosX(int posX) {
+	public void setPosX(double posX) {
 		this.posX = posX;
 	}
 
 	/**
 	 * @return the posY
 	 */
-	public int getPosY() {
+	public double getPosY() {
 		return posY;
 	}
 
 	/**
 	 * @param posY the posY to set
 	 */
-	public void setPosY(int posY) {
+	public void setPosY(double posY) {
 		this.posY = posY;
 	}	
 }

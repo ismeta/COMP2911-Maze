@@ -15,7 +15,7 @@ public class MazeTester {
 		frame.setLayout(new GridBagLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				
-		MazeJPanel mp = new MazeJPanel(21);
+		MazeJPanel mp = new MazeJPanel(20);
 		mp.setPreferredSize(new Dimension(500, 500));
 		
 		frame.add(mp);
