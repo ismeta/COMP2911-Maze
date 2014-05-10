@@ -145,9 +145,6 @@ public class MazeJPanel extends JPanel {
 		// ensure player is playing this game
 		MazePlayer p = this.players[player];
 		if (p != null) {
-			int tileWidths[] = { (int) Math.floor(this.getWidth() / size), (int) Math.ceil(this.getWidth() / size) };
-			int tileHeights[] = { (int) Math.floor(this.getHeight() / size), (int) Math.ceil(this.getHeight() / size) };
-			
 			// prospective to
 			int xTo = (int) (p.getPosX() + p.getSpeed() * time * xDir);
 			int yTo = (int) (p.getPosY() + p.getSpeed() * time * yDir);
@@ -155,52 +152,57 @@ public class MazeJPanel extends JPanel {
 			int i;
 			
 			// get nearest obstacle x-ways
-
-			for (int tileWidth: tileWidths) {
-				for (int tileHeight: tileHeights) {
-					int tileY = p.getPosY() / tileHeight;	
-					int tileX = p.getPosX() / tileWidth;
-					for (i = tileX + 1; i < size; i++) {
-						if (tiles[tileY][i].isWall()) {
-							break;
+			int tileWidth = this.getWidth() / size;
+			int tileHeight = this.getHeight() / size;
+			
+			int tileYs[] = { p.getPosY() / tileHeight, (p.getPosY() + tileHeight - 1) / tileHeight };	
+			int tileXs[] = { p.getPosX() / tileWidth, (p.getPosX() + tileWidth - 1) / tileWidth } ;
+			for (int tileX : tileXs) {
+				for (int tileY : tileYs) {
+					if (xDir > 0) {
+						for (i = tileX + 1; i < size; i++) {
+							if (tiles[tileY][i].isWall()) {
+								break;
+							}
+						}
+						if (i < size) {
+							xTo = Math.min((i - 1) * tileWidth, xTo);
+						}
+					} else if (xDir < 0) {
+						for (i = tileX; i >= 0; i--) {
+							if (tiles[tileY][i].isWall()) {
+								break;
+							}
+						}
+						if (i >= 0) {
+							xTo = Math.max((i + 1) * tileWidth, xTo);
 						}
 					}
-					if (i < size) {
-						xTo = Math.min((i - 1) * tileWidth, xTo);
-					}
-					for (i = tileX; i >= 0; i--) {
-						if (tiles[tileY][i].isWall()) {
-							break;
-						}
-					}
-					if (i >= 0) {
-						xTo = Math.max((i + 1) * tileWidth, xTo);
-					}
 					
-
-	
-					
-				    for (i = tileX + 1; i < size; i++) {
-	                    if (tiles[i][tileX].isWall()) {
-	                        break;
-	                    }
-	                }
-	                if (i < size) {
-	                    yTo = Math.min((i - 1) * tileHeight, yTo);
-	                }
-	                for (i = tileX; i >= 0; i--) {
-	                    if (tiles[i][tileX].isWall()) {
-	                        break;
-	                    }
-	                }
-	                if (i >= 0) {
-	                    yTo = Math.max((i + 1) * tileHeight, yTo);
-	                }
+					if (yDir > 0) {
+					    for (i = tileY + 1; i < size; i++) {
+			                if (tiles[i][tileX].isWall()) {
+			                    break;
+			                }
+			            }
+			            if (i < size) {
+			                yTo = Math.min((i - 1) * tileHeight, yTo);
+			            }
+					} else if (yDir < 0) {
+			            for (i = tileY; i >= 0; i--) {
+			                if (tiles[i][tileX].isWall()) {
+			                    break;
+			                }
+			            }
+			            if (i >= 0) {
+			                yTo = Math.max((i + 1) * tileHeight, yTo);
+			            }
+					}
 				}
 			}
 			// bound between the 4 walls
-			p.setPosX(Math.max(0, Math.min(xTo, tileWidths[0] * (size - 1))));
-			p.setPosY(Math.max(0, Math.min(yTo, tileHeights[0] * (size - 1))));
+			p.setPosX(Math.max(0, Math.min(xTo, tileWidth * (size - 1))));
+			p.setPosY(Math.max(0, Math.min(yTo, tileHeight * (size - 1))));
 		}		
 	}
 	
