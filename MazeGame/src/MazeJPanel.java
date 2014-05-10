@@ -1,8 +1,14 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
 
@@ -23,6 +29,7 @@ public class MazeJPanel extends JPanel {
 	private MazeTile[][] tiles;
 	private int size;
 	private Timer timer;
+	private MazePlayer players[];
 
 	/**
 	 * Generates a new MazeJPanel 
@@ -43,6 +50,9 @@ public class MazeJPanel extends JPanel {
 		// allocate timer
 		this.timer = new Timer();
 		this.timer.scheduleAtFixedRate(new MazeJPanelTimer(this), 0, 1000 / 24);
+		// key presses
+		this.setFocusable(true);
+		this.addKeyListener(new MazeJPanelKeyListener(this));
 	}
 	
 	@Override
@@ -64,6 +74,9 @@ public class MazeJPanel extends JPanel {
 				}
 			}
 		}
+
+		MazePlayer mp = new MazePlayer(0);
+		mp.draw(g2d, width, height);
 	}
 	
 	/**
@@ -86,5 +99,31 @@ public class MazeJPanel extends JPanel {
 			// time has changed!
 			this.lastTime = System.currentTimeMillis();
 		}
+	}
+	
+	private class MazeJPanelKeyListener implements KeyListener {
+		private MazeJPanel mp;
+		private ConcurrentHashMap<Character, Long> kp = new ConcurrentHashMap<Character, Long>(); 
+		
+		private MazeJPanelKeyListener(MazeJPanel mp) {
+			this.mp = mp;
+		}		
+		
+		public void keyTyped(KeyEvent e) {
+	    }
+
+	    public void keyPressed(KeyEvent e) {
+	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
+	    		this.kp.put(e.getKeyChar(), System.currentTimeMillis());
+	    		System.out.println("yay");
+	    	}
+	    }
+
+	    public void keyReleased(KeyEvent e) {
+	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
+	    		long difference = System.currentTimeMillis() - this.kp.remove(e.getKeyChar());
+	    		System.out.println(difference);
+	    	}
+	    }
 	}
 }
