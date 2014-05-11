@@ -26,7 +26,7 @@ public class MazeJPanel extends JPanel {
 	private static final int REFRESH_RATE = 30;
 	private static final int NUM_PLAYERS = 3;
 	private static final long serialVersionUID = 4602880844383443785L;
-	private static final int TILES_PER_SECOND = 5;
+	private static final double TILES_PER_SECOND = 4;
 	
 	private MazeTile[][] tiles;
 	private int size;
@@ -161,18 +161,26 @@ public class MazeJPanel extends JPanel {
 			int leeWayX = 0;
 			int leeWayY = 0;
 			
-			int n = (int) p.getPosX() % tileWidth;			
-			if (n + 2 > tileWidth) {
-				leeWayX = tileWidth - n;
-			} else if (n < 2) {
-				leeWayX = -n;
+			// since being EXACT is hard, we allow a little bit of leeway
+			// for players, so turning corners is nicer
+			// calculate distance from the start of current tile
+			int distFromTileStartX = (int) p.getPosX() % tileWidth;			
+			if (distFromTileStartX + 2 > tileWidth) {
+				// you are almost at the end of one tile
+				// make it so that you are there
+				leeWayX = tileWidth - distFromTileStartX;
+			} else if (distFromTileStartX < 2) {
+				// you are almost at the start of the tile
+				// shift yourself there
+				leeWayX = -distFromTileStartX;
 			}
 			
-			int m = (int) p.getPosY() % tileHeight;
-			if (m + 2 > tileHeight) {
-				leeWayY = tileHeight - m;
-			} else if (m < 2) {
-				leeWayY = -m;
+			// do something similar for y
+			int distFromTileStartY = (int) p.getPosY() % tileHeight;
+			if (distFromTileStartY + 2 > tileHeight) {
+				leeWayY = tileHeight - distFromTileStartY;
+			} else if (distFromTileStartY < 2) {
+				leeWayY = -distFromTileStartY;
 			}
 			
 			// figure out which tiles the player is overlapping with
