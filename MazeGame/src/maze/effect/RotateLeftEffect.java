@@ -14,7 +14,7 @@ import maze.MazePlayer;
  * @author oliver
  *
  */
-public class RotateLeftEffect implements MazePlayerEffect {
+public class RotateLeftEffect implements MazeEffect {
 	
 	@Override
 	public void activate(Maze m, MazePlayer p) {

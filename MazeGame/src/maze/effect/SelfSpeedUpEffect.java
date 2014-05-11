@@ -14,7 +14,7 @@ import maze.MazePlayer;
  * @author oliver
  *
  */
-public class SelfSpeedUpEffect implements MazePlayerEffect {
+public class SelfSpeedUpEffect implements MazeEffect {
 	private static final long DURATION = 10000;
 	private static final double SPEED_MODIFIER = 2.0;
 	private long endTime;

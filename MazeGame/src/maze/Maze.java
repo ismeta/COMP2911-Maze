@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
 
 import maze.effect.GlobalSpeedDownEffect;
-import maze.effect.MazePlayerEffect;
+import maze.effect.MazeEffect;
 import maze.effect.RotateLeftEffect;
 import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
@@ -43,7 +43,7 @@ public class Maze extends JPanel {
 	private int size;
 	private Timer timer;
 	private MazePlayer players[];
-	private PriorityQueue<MazePlayerEffect> activatedEffects;
+	private PriorityQueue<MazeEffect> activatedEffects;
 
 	// keys current held - mapped by character-last processing time
 	private ConcurrentHashMap<Character, Long> keyPresses; 
@@ -65,7 +65,7 @@ public class Maze extends JPanel {
 		
 		RandomMazeGenerator heh = new RandomMazeGenerator(size);
 		heh.generateMaze(tiles);
-		heh.setDifficulty(1);
+		heh.setDifficulty(10);
 		
 		// key presses
 		this.keyPresses = new ConcurrentHashMap<Character, Long>();
@@ -76,10 +76,11 @@ public class Maze extends JPanel {
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			this.players[i] = new MazePlayer(i, i == 0 ? Color.red : i == 1 ? Color.blue : Color.green);
 		}
-
-		this.activatedEffects = new PriorityQueue<MazePlayerEffect>(10, new Comparator<MazePlayerEffect>() {
+		
+		// create the effects PQ
+		this.activatedEffects = new PriorityQueue<MazeEffect>(10, new Comparator<MazeEffect>() {
 			@Override
-			public int compare(MazePlayerEffect a, MazePlayerEffect b) {
+			public int compare(MazeEffect a, MazeEffect b) {
 				return (int) (b.getEndTime() - a.getEndTime());
 			}
 		});
@@ -259,7 +260,7 @@ public class Maze extends JPanel {
 			int currentTileYs[] = { (int) (p.getPosY()) / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };
 			for (int tileX : currentTileXs) {
 				for (int tileY : currentTileYs) {
-					MazePlayerEffect effect = this.tiles[tileY][tileX].getEffect();
+					MazeEffect effect = this.tiles[tileY][tileX].getEffect();
 					if (effect != null) {
 						// activate effect
 						this.tiles[tileY][tileX].setEffect(null);
@@ -335,7 +336,7 @@ public class Maze extends JPanel {
 	/**
 	 * @return the activatedEffects
 	 */
-	public PriorityQueue<MazePlayerEffect> getActivatedEffects() {
+	public PriorityQueue<MazeEffect> getActivatedEffects() {
 		return activatedEffects;
 	}
 
@@ -382,7 +383,7 @@ public class Maze extends JPanel {
 				this.m.getKeyPresses().put(e.getKey(), curTime);
 			}
 			// remove unnecessary boosts
-			PriorityQueue<MazePlayerEffect> pq = m.getActivatedEffects();
+			PriorityQueue<MazeEffect> pq = m.getActivatedEffects();
 			while (!pq.isEmpty()) {
 				if (pq.peek().getEndTime() <= curTime) {
 					System.out.println("die potato");

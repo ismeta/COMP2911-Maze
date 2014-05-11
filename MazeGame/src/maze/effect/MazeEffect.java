@@ -6,7 +6,7 @@ import maze.MazePlayer;
 
 
 
-public interface MazePlayerEffect {
+public interface MazeEffect {
 	/**
 	 * What the boost will do upon activation
 	 * Note it must set the endTime

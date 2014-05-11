@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import maze.Maze;
 import maze.MazePlayer;
 
-public class GlobalSpeedDownEffect implements MazePlayerEffect {
+public class GlobalSpeedDownEffect implements MazeEffect {
 	private static final long DURATION = 10000;
 	private static final double SPEED_MODIFIER = 0.75;
 	private long endTime;

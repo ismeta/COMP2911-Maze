@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import maze.Maze;
 import maze.MazePlayer;
 
-public class RotateRightEffect implements MazePlayerEffect {
+public class RotateRightEffect implements MazeEffect {
 
 	@Override
 	public void activate(Maze m, MazePlayer p) {

@@ -3,14 +3,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import maze.effect.MazePlayerEffect;
+import maze.effect.MazeEffect;
 
 
 public class MazeTile {
 	private boolean isWall;
 	private boolean isGoal;
 	/* effect stored on maze */
-	private MazePlayerEffect effect;
+	private MazeEffect effect;
 	
 	public MazeTile() {
 		this.isWall = false;
@@ -21,14 +21,14 @@ public class MazeTile {
 	/**
 	 * @return the effect
 	 */
-	public MazePlayerEffect getEffect() {
+	public MazeEffect getEffect() {
 		return effect;
 	}
 
 	/**
 	 * @param effect the effect to set
 	 */
-	public void setEffect(MazePlayerEffect effect) {
+	public void setEffect(MazeEffect effect) {
 		this.effect = effect;
 	}
 
