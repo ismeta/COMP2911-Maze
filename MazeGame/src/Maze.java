@@ -82,6 +82,25 @@ public class Maze extends JPanel {
 	public MazePlayer[] getPlayers() {
 		return players;
 	}
+	
+	public void rotateRight() {
+		MazeTile tiles[][] = new MazeTile[this.size][this.size];
+
+	    for (int i = 0; i < this.size; ++i) {
+	        for (int j = 0; j < this.size; ++j) {
+	            tiles[i][j] = this.tiles[this.size - j - 1][i];
+	        }
+	    }
+	    this.tiles = tiles;
+	    
+	    // rotate players
+	    for (MazePlayer p : this.players) {
+	    	double curX = p.getPosX();
+	    	double curY = p.getPosY();
+	    	p.setPosX(this.getWidth() - curY - this.getWidth() / this.size);
+	    	p.setPosY(curX);
+	    }
+	}
 
 	/**
 	 * @param key key pressed
@@ -305,6 +324,9 @@ public class Maze extends JPanel {
 
 	    public void keyPressed(KeyEvent e) {
 	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
+	    		if (e.getKeyChar() == 'e') {
+	    			m.rotateRight();
+	    		}
 	    		// make sure we register the player's key as pressed
 	    		this.m.getKeyPresses().put(e.getKeyChar(), System.currentTimeMillis());
 	    	}
