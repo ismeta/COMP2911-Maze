@@ -1,5 +1,9 @@
+package maze.generator;
+
 import java.util.ArrayList;
 import java.util.Random;
+
+import maze.MazeTile;
 
 /**
  * LIMITATIONS:

@@ -1,3 +1,5 @@
+package maze;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,6 +11,8 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
+
+import maze.generator.RandomMazeGenerator;
 
 /**
  * MazeJPanel

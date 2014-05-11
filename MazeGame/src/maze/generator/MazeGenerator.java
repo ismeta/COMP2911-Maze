@@ -1,3 +1,6 @@
+package maze.generator;
+import maze.MazeTile;
+
 
 public interface MazeGenerator {
 	/**

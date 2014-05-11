@@ -1,7 +1,9 @@
+package maze;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
+
 
 
 public class MazeTester {
