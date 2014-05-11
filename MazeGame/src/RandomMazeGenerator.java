@@ -140,8 +140,9 @@ public class RandomMazeGenerator implements MazeGenerator {
 		
 		
 		/* Don't forget to initialise our start/end tiles :P */
-		tiles[startP.x][startP.y] = new MazeTile(false);
-		tiles[goalP.x][goalP.y]   = new MazeTile(false);
+		tiles[startP.x][startP.y] = new MazeTile();
+		tiles[goalP.x][goalP.y]   = new MazeTile();
+		tiles[goalP.x][goalP.y].setGoal(true);
 		
 		/* Finally, we need a counter of how many tiles we need to visit
 		 * so we know when we should stop. We could have a list of all the
@@ -203,12 +204,12 @@ public class RandomMazeGenerator implements MazeGenerator {
 			/* otherwise, make this a not-wall as well as the wall joining
 			 * it to the previous node
 			 */
-			tiles[p.x][p.y] = new MazeTile(false);
+			tiles[p.x][p.y] = new MazeTile();
 			
 			/* the tile between this and the previous point can be fetched
 			 * by taking the midpoint of their coordinates.
 			 */
-			tiles[(prev.x + p.x) / 2][(prev.y + p.y) / 2] = new MazeTile(false);
+			tiles[(prev.x + p.x) / 2][(prev.y + p.y) / 2] = new MazeTile();
 			
 			/* update which set this tile belongs to (just whatever the previous
 			 * tile belonged to)
@@ -237,7 +238,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 			/* remove a random wall */
 			wallToRemove = boundaries.remove(rand.nextInt(boundaries.size()));
 			/*wallToRemove = boundaries.remove(boundaries.size() - 1);*/
-			tiles[wallToRemove.x][wallToRemove.y] = new MazeTile(false);
+			tiles[wallToRemove.x][wallToRemove.y] = new MazeTile();
 			wallsToRemove--;
 		}
 		
@@ -246,7 +247,8 @@ public class RandomMazeGenerator implements MazeGenerator {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (tiles[i][j] == null) {
-					tiles[i][j] = new MazeTile(true);
+					tiles[i][j] = new MazeTile();
+					tiles[i][j].setWall(true);
 				}
 			}
 		}
