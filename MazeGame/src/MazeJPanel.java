@@ -23,7 +23,7 @@ public class MazeJPanel extends JPanel {
 	/**
 	 * serialVersionUID magic
 	 */
-	private static final int REFRESH_RATE = 24;
+	private static final int REFRESH_RATE = 30;
 	private static final int NUM_PLAYERS = 3;
 	private static final long serialVersionUID = 4602880844383443785L;
 	private static final int TILES_PER_SECOND = 5;
@@ -33,6 +33,7 @@ public class MazeJPanel extends JPanel {
 	private Timer timer;
 	private MazePlayer players[];
 
+	// keys current held - mapped by character-last processing time
 	private ConcurrentHashMap<Character, Long> keyPresses; 
 
 	/**
@@ -152,66 +153,78 @@ public class MazeJPanel extends JPanel {
 			double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * (time / 1000.0) * xDir);
 			double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * (time / 1000.0) * yDir);
 						
-			int i;
-			
 			// get nearest obstacle x-ways
 			int tileWidth = this.getWidth() / size;
 			int tileHeight = this.getHeight() / size;
 			
+			int leeWayX = 0;
+			int leeWayY = 0;
+			
+			int n = (int) p.getPosX() % tileWidth;			
+			if (n + 2 > tileWidth) {
+				leeWayX = tileWidth - n;
+			} else if (n < 2) {
+				leeWayX = -n;
+			}
+			
+			int m = (int) p.getPosY() % tileHeight;
+			if (m + 2 > tileHeight) {
+				leeWayY = tileHeight - m;
+			} else if (m < 2) {
+				leeWayY = -m;
+			}
+			
 			// figure out which tiles the player is overlapping with
 			// we find the tile (in the array) of the leftmost tile
 			// and the tile at the right hand size
-			int tileXs[] = { (int) p.getPosX() / tileWidth, (int) ((p.getPosX() + tileWidth - 1) / tileWidth) } ;
-			int tileYs[] = { (int) p.getPosY() / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };	
+			int tileXs[] = { (int) (p.getPosX() + leeWayX) / tileWidth, (int) ((p.getPosX() + tileWidth  + leeWayX - 1) / tileWidth) } ;
+			int tileYs[] = { (int) (p.getPosY() + leeWayY) / tileHeight, (int) ((p.getPosY() + tileHeight  + leeWayY - 1) / tileHeight) };	
+			
 			
 			// scan through all potential collisions between the player's current position
 			// and where there will potentially move to
 			for (int tileX : tileXs) {
 				for (int tileY : tileYs) {
-					if (xDir > 0) {
-						// check moving  positive in X direction
-						// looks for closest wall 
-						for (i = tileX + 1; i < size; i++) {
-							if (tiles[tileY][i].isWall()) {
-								break;
-							}
+					int i;
+				
+					// check moving  positive in X direction
+					// looks for closest wall 
+					for (i = tileX + 1; i < size; i++) {
+						if (tiles[tileY][i].isWall()) {
+							break;
 						}
-						if (i < size) {
-							// make sure we don't go past the nearest wall
-							xTo = Math.min((i - 1) * tileWidth, xTo);
+					}
+					if (i < size) {
+						// make sure we don't go past the nearest wall
+						xTo = Math.min((i - 1) * tileWidth, xTo);
+					}
+					// vice versa for negative in X direction
+					for (i = tileX; i >= 0; i--) {
+						if (tiles[tileY][i].isWall()) {
+							break;
 						}
-					} else if (xDir < 0) {
-						// vice versa for negative in X direction
-						for (i = tileX; i >= 0; i--) {
-							if (tiles[tileY][i].isWall()) {
-								break;
-							}
-						}
-						if (i >= 0) {
-							xTo = Math.max((i + 1) * tileWidth, xTo);
-						}
+					}
+					if (i >= 0) {
+						xTo = Math.max((i + 1) * tileWidth, xTo);
 					}
 					
 					// and we do the same thing for the Y direction
-					if (yDir > 0) {
-					    for (i = tileY + 1; i < size; i++) {
-			                if (tiles[i][tileX].isWall()) {
-			                    break;
-			                }
-			            }
-			            if (i < size) {
-			                yTo = Math.min((i - 1) * tileHeight, yTo);
-			            }
-					} else if (yDir < 0) {
-			            for (i = tileY; i >= 0; i--) {
-			                if (tiles[i][tileX].isWall()) {
-			                    break;
-			                }
-			            }
-			            if (i >= 0) {
-			                yTo = Math.max((i + 1) * tileHeight, yTo);
-			            }
-					}
+				    for (i = tileY + 1; i < size; i++) {
+		                if (tiles[i][tileX].isWall()) {
+		                    break;
+		                }
+		            }
+		            if (i < size) {
+		                yTo = Math.min((i - 1) * tileHeight, yTo);
+		            }
+				    for (i = tileY; i >= 0; i--) {
+		                if (tiles[i][tileX].isWall()) {
+		                    break;
+		                }
+		            }
+		            if (i >= 0) {
+		                yTo = Math.max((i + 1) * tileHeight, yTo);
+		            }
 				}
 			}
 			// set position - but make sure we don't fall off the grid :)
@@ -248,11 +261,9 @@ public class MazeJPanel extends JPanel {
 	 */
 	private class MazeJPanelTimer extends TimerTask {
 		private MazeJPanel m;
-		private long lastTime;
 		
 		private MazeJPanelTimer(MazeJPanel m) {
 			this.m = m;
-			this.lastTime = System.currentTimeMillis();
 		}
 		
 		@Override
@@ -266,8 +277,6 @@ public class MazeJPanel extends JPanel {
 			}
 			// repaint the maze since there are updates
 			this.m.repaint();
-			// time has changed!
-			this.lastTime = curTime;
 		}
 	}
 	
