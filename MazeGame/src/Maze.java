@@ -25,8 +25,8 @@ public class Maze extends JPanel {
 	 */
 	private static final int REFRESH_RATE = 30;
 	private static final int NUM_PLAYERS = 3;
-	private static final long serialVersionUID = 4602880844383443785L;
 	private static final double TILES_PER_SECOND = 4;
+	private static final long serialVersionUID = 4602880844383443785L;
 	
 	private MazeTile[][] tiles;
 	private int size;
@@ -52,6 +52,7 @@ public class Maze extends JPanel {
 		this.tiles = new MazeTile[size][size];
 		
 		RandomMazeGenerator heh = new RandomMazeGenerator(size);
+		heh.setEndTile(4, 0);
 		heh.generateMaze(tiles);
 		
 		// allocate timer
@@ -165,6 +166,7 @@ public class Maze extends JPanel {
 				xDir = 1;
 				break;
 			default:
+				// nothing we're worried about :)
 				return;
 		}
 		

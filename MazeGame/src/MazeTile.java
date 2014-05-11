@@ -1,17 +1,29 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.Random;
 
 
 public class MazeTile {
 	private boolean isWall;
+	private boolean isGoal;
 	
+	public MazeTile() {
+		this.isWall = false;
+		this.isGoal = false;
+	}
+
 	/**
-	 * @param isWall
+	 * @return the isGoal
 	 */
-	public MazeTile(boolean isWall) {
-		this.isWall = isWall;
+	public boolean isGoal() {
+		return isGoal;
+	}
+
+	/**
+	 * @param isGoal the isGoal to set
+	 */
+	public void setGoal(boolean isGoal) {
+		this.isGoal = isGoal;
 	}
 
 	/**
@@ -29,8 +41,8 @@ public class MazeTile {
 	}
 	
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
-		Random r = new Random();
-		g2d.setPaint(this.isWall ? new Color(r.nextInt(0xFD), r.nextInt(0xFD), r.nextInt(0xFD)) : Color.white);
+		// Random r = new Random(); //  new Color(r.nextInt(0xFD), r.nextInt(0xFD), r.nextInt(0xFD))
+		g2d.setPaint(this.isWall ? Color.BLACK : Color.white);
 		g2d.fill(new Rectangle(x, y, width, height));
 	}
 }

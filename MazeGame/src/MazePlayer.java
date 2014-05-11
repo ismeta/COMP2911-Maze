@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 
 
 public class MazePlayer {
@@ -11,9 +12,8 @@ public class MazePlayer {
 	private Color color;
 	
 	/**
-	 * @param id
-	 * @param color
-	 * @param size
+	 * @param id the id of the player
+	 * @param color the color to draw the player
 	 */
 	public MazePlayer(int id, Color color) {
 		this.id = id;
@@ -29,9 +29,17 @@ public class MazePlayer {
 		return color;
 	}
 
-	public void draw(Graphics2D g2d, int width, int height) {		
+	/**
+	 * draws the player
+	 * @param g2d what graphics class we use to draw
+	 * @param width width of player
+	 * @param height height of player
+	 */
+	public void draw(Graphics2D g2d, int width, int height) {
+		Stroke previousStroke = g2d.getStroke();
+		g2d.setStroke(previousStroke);
 		g2d.setColor(color);
-		g2d.fill(new Ellipse2D.Double(posX,  posY, width, height));
+		g2d.fill(new Rectangle((int) posX, (int) posY, width, height));
 	}
 
 	/**
