@@ -46,7 +46,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		this.size   = size;
 		this.startP = new Point(0, 0);
 		this.goalP  = new Point(size - 1, size - 1);
-		this.difficulty = 5;
+		this.difficulty = 10;
 	}
 	
 	public void generateMaze(MazeTile[][] tiles) {
@@ -89,27 +89,55 @@ public class RandomMazeGenerator implements MazeGenerator {
 		 * this list.
 		 */
 		ArrayList<PointState> tilesToVisit = new ArrayList<PointState>();
-		
-		/* Add the tiles adjacent to our start and end tiles to our
-		 * tiles that we can visit.
-		 */
-		tilesToVisit.add(new PointState(
-				new Point(startP.x + 2, startP.y), startP));
-		tilesToVisit.add(new PointState(
-				new Point(startP.x, startP.y + 2), startP));
 
 		/* Only allow one path from the end (i.e. can't go on after reaching
 		 * the end tile
 		 */
 		Random rand = new Random();
 		
-		if (rand.nextBoolean()) {
-			tilesToVisit.add(new PointState(
-					new Point(goalP.x - 2, goalP.y), goalP));
-		} else {
-			tilesToVisit.add(new PointState(
-					new Point(goalP.x, goalP.y - 2), goalP));
+		Point[] possibleEndPaths = { 
+				new Point(goalP.x - 2, goalP.y),
+				new Point(goalP.x + 2, goalP.y),
+				new Point(goalP.x, goalP.y + 2),
+				new Point(goalP.x, goalP.y - 2)
+		};
+		
+		/* randomly add a legal tile to the list of tiles to visit */
+		while (true) {
+			Point next = possibleEndPaths[rand.nextInt(possibleEndPaths.length)];
+			if (next.x < 0 || next.y < 0 || next.x >= size || next.y >= size) {
+				continue;
+			} else {
+				tilesToVisit.add(new PointState(next, goalP));
+				System.out.println("added " + next);
+				break;
+			}
 		}
+		
+		Point[] possibleStartPaths = { 
+				new Point(startP.x - 2, startP.y),
+				new Point(startP.x + 2, startP.y),
+				new Point(startP.x, startP.y + 2),
+				new Point(startP.x, startP.y - 2)
+		};
+		
+		/* randomly add a legal tile to the list of tiles to visit - 
+		 * check that it's not close to the other tile in the list
+		 */
+		while (true) {
+			Point next = possibleStartPaths[rand.nextInt(possibleStartPaths.length)];
+			if (next.x < 0 || next.y < 0 || next.x >= size || next.y >= size) {
+				continue;
+			} else if (tilesToVisit.get(0).current.x == next.x 
+					&& tilesToVisit.get(0).current.y == next.y) {
+				continue;
+			} else {
+				tilesToVisit.add(new PointState(next, startP));
+				System.out.println("added " + next);
+				break;
+			}
+		}
+		
 		
 		/* Don't forget to initialise our start/end tiles :P */
 		tiles[startP.x][startP.y] = new MazeTile();
@@ -203,12 +231,13 @@ public class RandomMazeGenerator implements MazeGenerator {
 		Point wallToRemove;
 		
 		/* This is a naive measure of difficulty - we should change this later */
-		int wallsToRemove = difficulty;
+		int wallsToRemove = 11 - difficulty;
 		
 		System.out.println(boundaries.size() + " potential boundaries");
 		while (wallsToRemove > 0 && boundaries.size() > 0) {
 			/* remove a random wall */
 			wallToRemove = boundaries.remove(rand.nextInt(boundaries.size()));
+			/*wallToRemove = boundaries.remove(boundaries.size() - 1);*/
 			tiles[wallToRemove.x][wallToRemove.y] = new MazeTile();
 			wallsToRemove--;
 		}
