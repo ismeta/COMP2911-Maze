@@ -178,7 +178,6 @@ public class RandomMazeGenerator implements MazeGenerator {
 			 * tile belonged to)
 			 */
 			inStartSet[p.x][p.y] = inStartSet[prev.x][prev.y];
-			
 			/* add the tiles around it to the to-be-visited list */
 			tilesToVisit.add(new PointState(new Point(p.x + 2, p.y), p));
 			tilesToVisit.add(new PointState(new Point(p.x, p.y + 2), p));
