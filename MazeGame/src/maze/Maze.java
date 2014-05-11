@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
 
 import maze.effect.MazePlayerEffect;
+import maze.effect.RotateLeftEffect;
+import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
 import maze.generator.RandomMazeGenerator;
 
@@ -81,6 +83,8 @@ public class Maze extends JPanel {
 			}
 		});
 		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
+		this.tiles[4][0].setEffect(new RotateLeftEffect());
+		this.tiles[6][0].setEffect(new RotateRightEffect());
 		
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();
@@ -100,7 +104,7 @@ public class Maze extends JPanel {
 	public MazePlayer[] getPlayers() {
 		return players;
 	}
-	
+		
 	/**
 	 * rotates the map right
 	 */
@@ -120,6 +124,28 @@ public class Maze extends JPanel {
 	    	double curY = p.getPosY();
 	    	p.setPosX(this.getWidth() - curY - this.getWidth() / this.size);
 	    	p.setPosY(curX);
+	    }
+	}
+	
+	/**
+	 * rotates the map right
+	 */
+	public void rotateLeft() {
+		// rotate tiles
+		MazeTile tiles[][] = new MazeTile[this.size][this.size];
+	    for (int i = 0; i < this.size; ++i) {
+	        for (int j = 0; j < this.size; ++j) {
+	            tiles[i][j] = this.tiles[j][this.size - i - 1];
+	        }
+	    }
+	    this.tiles = tiles;
+	    
+	    // rotate players
+	    for (MazePlayer p : this.players) {
+	    	double curX = p.getPosX();
+	    	double curY = p.getPosY();
+	    	p.setPosX(curY);
+	    	p.setPosY(this.getHeight() - curX - this.getHeight() / this.size);
 	    }
 	}
 
@@ -233,9 +259,11 @@ public class Maze extends JPanel {
 				for (int tileY : currentTileYs) {
 					MazePlayerEffect effect = this.tiles[tileY][tileX].getEffect();
 					if (effect != null) {
-						effect.activate(this, p);
-						this.activatedEffects.add(effect);
 						this.tiles[tileY][tileX].setEffect(null);
+						effect.activate(this, p);
+						if (effect.getEndTime() <= System.currentTimeMillis()) {
+							this.activatedEffects.add(effect);
+						}						
 					}
 				}
 			}
@@ -301,9 +329,9 @@ public class Maze extends JPanel {
 	}
 	
 	/**
-	 * @return the activatedBoosts
+	 * @return the activatedEffects
 	 */
-	public PriorityQueue<MazePlayerEffect> getActivatedBoosts() {
+	public PriorityQueue<MazePlayerEffect> getActivatedEffects() {
 		return activatedEffects;
 	}
 
@@ -350,7 +378,7 @@ public class Maze extends JPanel {
 				this.m.getKeyPresses().put(e.getKey(), curTime);
 			}
 			// remove unnecessary boosts
-			PriorityQueue<MazePlayerEffect> pq = m.getActivatedBoosts();
+			PriorityQueue<MazePlayerEffect> pq = m.getActivatedEffects();
 			while (!pq.isEmpty()) {
 				if (pq.peek().getEndTime() <= curTime) {
 					System.out.println("die potato");
@@ -382,6 +410,8 @@ public class Maze extends JPanel {
 	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
 	    		if (e.getKeyChar() == 'e') {
 	    			m.rotateRight();
+	    		} else if (e.getKeyChar() == 'q') {
+	    			m.rotateLeft();
 	    		}
 	    		// make sure we register the player's key as pressed
 	    		this.m.getKeyPresses().put(e.getKeyChar(), System.currentTimeMillis());
