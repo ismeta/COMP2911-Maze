@@ -97,10 +97,19 @@ public class RandomMazeGenerator implements MazeGenerator {
 				new Point(startP.x + 2, startP.y), startP));
 		tilesToVisit.add(new PointState(
 				new Point(startP.x, startP.y + 2), startP));
-		tilesToVisit.add(new PointState(
-				new Point(goalP.x - 2, goalP.y), goalP));
-		tilesToVisit.add(new PointState(
-				new Point(goalP.x, goalP.y - 2), goalP));
+
+		/* Only allow one path from the end (i.e. can't go on after reaching
+		 * the end tile
+		 */
+		Random rand = new Random();
+		
+		if (rand.nextBoolean()) {
+			tilesToVisit.add(new PointState(
+					new Point(goalP.x - 2, goalP.y), goalP));
+		} else {
+			tilesToVisit.add(new PointState(
+					new Point(goalP.x, goalP.y - 2), goalP));
+		}
 		
 		/* Don't forget to initialise our start/end tiles :P */
 		tiles[startP.x][startP.y] = new MazeTile(false);
@@ -126,7 +135,6 @@ public class RandomMazeGenerator implements MazeGenerator {
 		System.out.println(unvisitedTiles + " tiles you need to visit");
 	
 		/* Phase 1: randomly visit tiles until they have all been visited. */
-		Random rand = new Random();
 		PointState pointToCheck;
 		Point p, prev;
 
