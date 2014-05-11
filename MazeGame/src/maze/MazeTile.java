@@ -3,7 +3,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import maze.boost.MazePlayerEffect;
+import maze.effect.MazePlayerEffect;
 
 
 public class MazeTile {

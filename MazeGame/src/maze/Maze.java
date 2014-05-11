@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
 
-import maze.boost.MazePlayerEffect;
-import maze.boost.SelfSpeedUpEffect;
+import maze.effect.MazePlayerEffect;
+import maze.effect.SelfSpeedUpEffect;
 import maze.generator.RandomMazeGenerator;
 
 /**
