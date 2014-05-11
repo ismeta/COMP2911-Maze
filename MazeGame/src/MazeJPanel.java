@@ -49,8 +49,9 @@ public class MazeJPanel extends JPanel {
 		this.size = size;
 		
 		// generate tiles;
-		this.tiles = new MazeTile[size][size];		
-		RandomMaze heh = new RandomMaze(size);
+		this.tiles = new MazeTile[size][size];
+		
+		RandomMazeGenerator heh = new RandomMazeGenerator(size);
 		heh.generateMaze(tiles);
 		
 		// allocate timer

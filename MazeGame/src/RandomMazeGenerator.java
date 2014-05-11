@@ -2,6 +2,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
+ * LIMITATIONS:
+ * 
+ * A limitation of this class is that the size must be odd, and the provided
+ * 2D array of tiles must all be nulls.
+ * 
  * ALGORITHM
  * 
  * tl;dr Randomly generated. (Neither BFS or DFS; the degree of BFS/DFS
@@ -33,15 +38,10 @@ import java.util.Random;
  * This algorithm was based off http://stackoverflow.com/a/22308159 and modified
  * to work with our implementation of maze tiles.
  * 
- * LIMITATIONS:
- * 
- * A limitation of this class is that the size must be odd, and the provided
- * 2D array of tiles must all be nulls.
- * 
  * @author Vanessa
  */
-public class RandomMaze implements MazeGenerator {
-	public RandomMaze(int size) {
+public class RandomMazeGenerator implements MazeGenerator {
+	public RandomMazeGenerator(int size) {
 		assert(size % 2 == 1 && size > 2);
 		this.size   = size;
 		this.startP = new Point(0, 0);
