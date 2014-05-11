@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 
 
 public class MazeTester {
-	private static final int TILE_SIZE_ORIGINAL = 40;
+	private static final int TILE_SIZE_ORIGINAL = 20;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 	private static final int FULL_SIZE_MAX = 500;
 	/**
@@ -17,7 +17,7 @@ public class MazeTester {
 		frame.setLayout(new GridBagLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				
-		MazeJPanel mp = new MazeJPanel(TILE_SIZE);
+		Maze mp = new Maze(TILE_SIZE);
 		mp.setPreferredSize(new Dimension((int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE, (int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE));
 		
 		frame.add(mp);
