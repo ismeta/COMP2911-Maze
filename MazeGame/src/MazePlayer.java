@@ -1,6 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
 
 
 public class MazePlayer {
@@ -31,7 +31,7 @@ public class MazePlayer {
 
 	public void draw(Graphics2D g2d, int width, int height) {		
 		g2d.setColor(color);
-		g2d.fill(new Rectangle((int) posX, (int) posY, width, height));
+		g2d.fill(new Ellipse2D.Double(posX,  posY, width, height));
 	}
 
 	/**

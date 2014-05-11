@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.Random;
 
 
 public class MazeTile {
@@ -28,7 +29,8 @@ public class MazeTile {
 	}
 	
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
-		g2d.setPaint(this.isWall ? Color.black : Color.white);
+		Random r = new Random();
+		g2d.setPaint(this.isWall ? new Color(r.nextInt(0xFD), r.nextInt(0xFD), r.nextInt(0xFD)) : Color.white);
 		g2d.fill(new Rectangle(x, y, width, height));
 	}
 }

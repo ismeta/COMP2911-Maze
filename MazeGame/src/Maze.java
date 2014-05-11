@@ -83,9 +83,12 @@ public class Maze extends JPanel {
 		return players;
 	}
 	
+	/**
+	 * rotates the map right
+	 */
 	public void rotateRight() {
+		// rotate tiles
 		MazeTile tiles[][] = new MazeTile[this.size][this.size];
-
 	    for (int i = 0; i < this.size; ++i) {
 	        for (int j = 0; j < this.size; ++j) {
 	            tiles[i][j] = this.tiles[this.size - j - 1][i];
