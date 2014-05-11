@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
 
+import maze.effect.GlobalSpeedDownEffect;
 import maze.effect.MazePlayerEffect;
 import maze.effect.RotateLeftEffect;
 import maze.effect.RotateRightEffect;
@@ -83,8 +84,9 @@ public class Maze extends JPanel {
 			}
 		});
 		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
-		this.tiles[4][0].setEffect(new RotateLeftEffect());
-		this.tiles[6][0].setEffect(new RotateRightEffect());
+		this.tiles[4][0].setEffect(new GlobalSpeedDownEffect());
+		this.tiles[4][4].setEffect(new RotateLeftEffect());
+		this.tiles[6][6].setEffect(new RotateRightEffect());
 		
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();
@@ -259,9 +261,11 @@ public class Maze extends JPanel {
 				for (int tileY : currentTileYs) {
 					MazePlayerEffect effect = this.tiles[tileY][tileX].getEffect();
 					if (effect != null) {
+						// activate effect
 						this.tiles[tileY][tileX].setEffect(null);
 						effect.activate(this, p);
-						if (effect.getEndTime() <= System.currentTimeMillis()) {
+						// only add if effect is time based
+						if (effect.getEndTime() >= System.currentTimeMillis()) {
 							this.activatedEffects.add(effect);
 						}						
 					}
