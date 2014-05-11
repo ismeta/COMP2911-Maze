@@ -5,13 +5,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Comparator;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
 
+import maze.boost.MazeBoost;
+import maze.boost.SelfSpeedUpBoost;
 import maze.generator.RandomMazeGenerator;
 
 /**
@@ -36,6 +40,7 @@ public class Maze extends JPanel {
 	private int size;
 	private Timer timer;
 	private MazePlayer players[];
+	private PriorityQueue<MazeBoost> activatedBoosts;
 
 	// keys current held - mapped by character-last processing time
 	private ConcurrentHashMap<Character, Long> keyPresses; 
@@ -56,13 +61,8 @@ public class Maze extends JPanel {
 		this.tiles = new MazeTile[size][size];
 		
 		RandomMazeGenerator heh = new RandomMazeGenerator(size);
-		heh.setEndTile(4, 0);
 		heh.generateMaze(tiles);
 		heh.setDifficulty(1);
-		
-		// allocate timer
-		this.timer = new Timer();
-		this.timer.scheduleAtFixedRate(new MazeJPanelTimer(this), 0, 1000 / REFRESH_RATE);
 		
 		// key presses
 		this.keyPresses = new ConcurrentHashMap<Character, Long>();
@@ -73,6 +73,18 @@ public class Maze extends JPanel {
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			this.players[i] = new MazePlayer(i, i == 0 ? Color.red : i == 1 ? Color.blue : Color.green);
 		}
+
+		this.activatedBoosts = new PriorityQueue<MazeBoost>(10, new Comparator<MazeBoost>() {
+			@Override
+			public int compare(MazeBoost a, MazeBoost b) {
+				return (int) (b.getEndTime() - a.getEndTime());
+			}
+		});
+		this.tiles[2][0].setBoost(new SelfSpeedUpBoost());
+		
+		// allocate timer and start when ready - MUST BE LAST
+		this.timer = new Timer();
+		this.timer.scheduleAtFixedRate(new MazeJPanelTimer(this), 0, 1000 / REFRESH_RATE);
 	}
 	
 	/**
@@ -180,8 +192,8 @@ public class Maze extends JPanel {
 		if (p != null) {
 			// prospective to destination
 			// moving from the current position + the distance movable per second * time key held 
-			double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * (time / 1000.0) * xDir);
-			double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * (time / 1000.0) * yDir);
+			double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * xDir);
+			double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * yDir);
 						
 			// get nearest obstacle x-ways
 			int tileWidth = this.getWidth() / size;
@@ -215,9 +227,23 @@ public class Maze extends JPanel {
 			// figure out which tiles the player is overlapping with
 			// we find the tile (in the array) of the leftmost tile
 			// and the tile at the right hand size
-			int tileXs[] = { (int) (p.getPosX() + leeWayX) / tileWidth, (int) ((p.getPosX() + tileWidth  + leeWayX - 1) / tileWidth) } ;
-			int tileYs[] = { (int) (p.getPosY() + leeWayY) / tileHeight, (int) ((p.getPosY() + tileHeight  + leeWayY - 1) / tileHeight) };	
+			int currentTileXs[] = { (int) (p.getPosX()) / tileWidth, (int) ((p.getPosX() + tileWidth - 1) / tileWidth) } ;
+			int currentTileYs[] = { (int) (p.getPosY()) / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };
+			for (int tileX : currentTileXs) {
+				for (int tileY : currentTileYs) {
+					MazeBoost boost = this.tiles[tileY][tileX].getBoost();
+					if (boost != null) {
+						this.tiles[tileY][tileX].getBoost().activate(this, p);
+						this.activatedBoosts.add(boost);
+						this.tiles[tileY][tileX].setBoost(null);
+					}
+				}
+			}
 			
+			// add leeways to the tiles, so players don't bash against the wall
+			// if they're one pixel off
+			int tileXs[] = { (int) (p.getPosX() + leeWayX) / tileWidth, (int) ((p.getPosX() + tileWidth  + leeWayX - 1) / tileWidth) } ;
+			int tileYs[] = { (int) (p.getPosY() + leeWayY) / tileHeight, (int) ((p.getPosY() + tileHeight  + leeWayY - 1) / tileHeight) };
 			
 			// scan through all potential collisions between the player's current position
 			// and where there will potentially move to
@@ -243,6 +269,7 @@ public class Maze extends JPanel {
 						}
 					}
 					if (i >= 0) {
+						// make sure we don't go past that wall either
 						xTo = Math.max((i + 1) * tileWidth, xTo);
 					}
 					
@@ -269,8 +296,17 @@ public class Maze extends JPanel {
 			p.setPosX(Math.max(0, Math.min(xTo, tileWidth * (size - 1))));
 			p.setPosY(Math.max(0, Math.min(yTo, tileHeight * (size - 1))));
 		}		
+		
+		
 	}
 	
+	/**
+	 * @return the activatedBoosts
+	 */
+	public PriorityQueue<MazeBoost> getActivatedBoosts() {
+		return activatedBoosts;
+	}
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -312,6 +348,16 @@ public class Maze extends JPanel {
 				long difference = curTime - e.getValue();
 	    		this.m.updatePlayerMovement(e.getKey(), difference);
 				this.m.getKeyPresses().put(e.getKey(), curTime);
+			}
+			// remove unnecessary boosts
+			PriorityQueue<MazeBoost> pq = m.getActivatedBoosts();
+			while (!pq.isEmpty()) {
+				if (pq.peek().getEndTime() <= curTime) {
+					System.out.println("die potato");
+					pq.poll().deactivate(m);
+				} else {
+					break;
+				}
 			}
 			// repaint the maze since there are updates
 			this.m.repaint();

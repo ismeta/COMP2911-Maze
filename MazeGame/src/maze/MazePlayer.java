@@ -11,6 +11,7 @@ public class MazePlayer {
 	private double posX;
 	private double posY;
 	private Color color;
+	private double speedModifier;
 	
 	/**
 	 * @param id the id of the player
@@ -21,6 +22,7 @@ public class MazePlayer {
 		this.posX = 0;
 		this.posY = 0;
 		this.color = color;
+		this.speedModifier = 1.0;
 	}
 	
 	/**
@@ -28,6 +30,20 @@ public class MazePlayer {
 	 */
 	public Color getColor() {
 		return color;
+	}
+	
+		/**
+	 * @return the speedModifier
+	 */
+	public double getSpeedModifier() {
+		return speedModifier;
+	}
+
+	/**
+	 * @param speedModifier the speedModifier to set
+	 */
+	public void setSpeedModifier(double speedModifier) {
+		this.speedModifier = speedModifier;
 	}
 
 	/**
