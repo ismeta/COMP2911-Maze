@@ -52,6 +52,7 @@ public class Maze extends JPanel {
 		this.tiles = new MazeTile[size][size];
 		
 		RandomMazeGenerator heh = new RandomMazeGenerator(size);
+		heh.setEndTile(4, 0);
 		heh.generateMaze(tiles);
 		
 		// allocate timer

@@ -39,7 +39,7 @@ public interface MazeGenerator {
 	
 	/**
 	 * This function can be optionally called before generateMaze().
-	 * 1 represents the most difficulty and 10 represents the least
+	 * 1 represents the least difficulty and 10 represents the highest
 	 * difficulty. If not called, the default difficulty is 5.
 	 * @param difficulty the difficulty of the maze to be generated;
 	 * must be between 1 and 10, inclusive.
