@@ -53,6 +53,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		this.difficulty = 10;
 	}
 	
+	@Override
 	public void generateMaze(MazeTile[][] tiles) {
 		/* some checks: make sure we aren't handed lame, and that
 		 * the start/end tiles aren't the same!
@@ -268,6 +269,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 	 * @param x the x coordinate for the start tile.
 	 * @param y the y coordinate for the start tile.
 	 */
+	@Override
 	public void setStartTile(int x, int y) {
 		assert(x >= 0 && x < size && x % 2 == 0);
 		assert(y >= 0 && y < size && y % 2 == 0);
@@ -285,6 +287,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 	 * @param x the x coordinate for the end tile.
 	 * @param y the y coordinate for the end tile.
 	 */
+	@Override
 	public void setEndTile(int x, int y) {
 		assert(x >= 0 && x < size && x % 2 == 0);
 		assert(y >= 0 && y < size && y % 2 == 0);
@@ -292,6 +295,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		this.goalP = new Point(x, y);
 	}
 	
+	@Override
 	public void setDifficulty(int difficulty) {
 		assert(difficulty >= 1 && difficulty <= 10);
 		

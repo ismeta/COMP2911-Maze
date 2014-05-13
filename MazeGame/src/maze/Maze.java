@@ -19,7 +19,8 @@ import maze.effect.MazeEffect;
 import maze.effect.RotateLeftEffect;
 import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
-import maze.generator.RandomMazeGenerator;
+import maze.generator.MazeGenerator;
+import maze.generator.RecursiveBacktrackerMazeGenerator;
 
 /**
  * MazeJPanel
@@ -63,7 +64,7 @@ public class Maze extends JPanel {
 		// generate tiles;
 		this.tiles = new MazeTile[size][size];
 		
-		RandomMazeGenerator heh = new RandomMazeGenerator(size);
+		MazeGenerator heh = new RecursiveBacktrackerMazeGenerator(size);
 		heh.generateMaze(tiles);
 		heh.setDifficulty(10);
 		
