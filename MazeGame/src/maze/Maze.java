@@ -3,6 +3,7 @@ package maze;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
@@ -34,7 +35,7 @@ public class Maze extends JPanel {
 	/**
 	 * serialVersionUID magic
 	 */
-	private static final int REFRESH_RATE = 30;
+	private static final int REFRESH_RATE = 60;
 	private static final int NUM_PLAYERS = 3;
 	private static final double TILES_PER_SECOND = 4;
 	private static final long serialVersionUID = 4602880844383443785L;
@@ -162,7 +163,7 @@ public class Maze extends JPanel {
 		int yDir = 0;
 		
 		// find the player and directions the player will move 
-		switch (key) {
+		switch (Character.toLowerCase(key)) {
 			case 'w':
 				player = 0; 
 				yDir = -1;
@@ -231,15 +232,18 @@ public class Maze extends JPanel {
 			int leeWayX = 0;
 			int leeWayY = 0;
 			
+			int maxLeeWayX = Math.max(tileWidth > 2 ? 2 : (tileWidth > 1 ? 1 : 0), (int) (tileWidth * 0.2));
+			int maxLeeWayY = Math.max(tileHeight > 2 ? 2 : (tileHeight > 0 ? 1 : 0), (int) (tileHeight * 0.2));
+						
 			// since being EXACT is hard, we allow a little bit of leeway
 			// for players, so turning corners is nicer
 			// calculate distance from the start of current tile
 			int distFromTileStartX = (int) p.getPosX() % tileWidth;			
-			if (distFromTileStartX + 2 > tileWidth) {
+			if (distFromTileStartX + maxLeeWayX > tileWidth) {
 				// you are almost at the end of one tile
 				// make it so that you are there
 				leeWayX = tileWidth - distFromTileStartX;
-			} else if (distFromTileStartX < 2) {
+			} else if (distFromTileStartX < maxLeeWayX) {
 				// you are almost at the start of the tile
 				// shift yourself there
 				leeWayX = -distFromTileStartX;
@@ -247,9 +251,9 @@ public class Maze extends JPanel {
 			
 			// do something similar for y
 			int distFromTileStartY = (int) p.getPosY() % tileHeight;
-			if (distFromTileStartY + 2 > tileHeight) {
+			if (distFromTileStartY + maxLeeWayY > tileHeight) {
 				leeWayY = tileHeight - distFromTileStartY;
-			} else if (distFromTileStartY < 2) {
+			} else if (distFromTileStartY < maxLeeWayY) {
 				leeWayY = -distFromTileStartY;
 			}
 			
@@ -329,9 +333,8 @@ public class Maze extends JPanel {
 			p.setPosX(Math.max(0, Math.min(xTo, tileWidth * (size - 1))));
 			p.setPosY(Math.max(0, Math.min(yTo, tileHeight * (size - 1))));
 		}		
-		
-		
 	}
+	
 	
 	/**
 	 * @return the activatedEffects
@@ -360,6 +363,9 @@ public class Maze extends JPanel {
 				p.draw(g2d, tileWidth, tileHeight);
 			}
 		}
+		// ensure clean and up to date
+		Toolkit.getDefaultToolkit().sync();
+		g.dispose();
 	}
 	
 	/**
@@ -425,9 +431,13 @@ public class Maze extends JPanel {
 
 	    public void keyReleased(KeyEvent e) {
 	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
-	    		// update the player's movement
-	    		long difference = System.currentTimeMillis() - this.m.getKeyPresses().remove(e.getKeyChar());
-	    		this.m.updatePlayerMovement(e.getKeyChar(), difference);
+	    		// in case remove doesn't exist
+	    		Long releasedTime = this.m.getKeyPresses().remove(e.getKeyChar());
+	    		if (releasedTime != null) {
+		    		// update the player's movement
+		    		long difference = System.currentTimeMillis() - releasedTime;
+		    		this.m.updatePlayerMovement(e.getKeyChar(), difference);
+	    		}
 	    	}
 	    }
 	}
