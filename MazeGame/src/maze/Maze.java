@@ -75,7 +75,7 @@ public class Maze extends JPanel {
 		for (int i = 0; i < TileType.values().length; i++) {
 			try {
 				System.out.println(i);
-				tileImages[i] = ImageIO.read(new File("./res/tiles/tile_" + i + ".png"));
+				tileImages[i] = ImageIO.read(new File("images/tiles/tile_" + i + ".png"));
 			} catch (IOException e) {
 				throw new RuntimeException("Tile images missing!");
 			}
@@ -119,7 +119,7 @@ public class Maze extends JPanel {
 		this.image = new BufferedImage((int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D imageG2D = this.image.createGraphics();
 		
-		imageG2D.setColor(Color.BLACK);
+		imageG2D.setColor(Color.YELLOW);
 		imageG2D.fill(new Rectangle(0, 0, (int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight()));
 		
 		for (int i = 0; i < size; i++) {
