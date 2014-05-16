@@ -19,7 +19,7 @@ public class MazeTester {
 		JFrame frame = new JFrame();
 		frame.setLayout(new GridBagLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("FUCK U NESS");
+		frame.setTitle("SCREW U DAVINA");
 		
 		Maze mp = new Maze(TILE_SIZE);
 		mp.setPreferredSize(new Dimension((int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE, (int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE));

@@ -33,9 +33,7 @@ import maze.generator.RandomMazeGenerator;
  *
  */
 public class Maze extends JPanel {
-	/**
-	 * serialVersionUID magic
-	 */
+	private static final char[] MAZE_EFFECT_ACTIVATE_KEYS = { 'e', 'y', 'o' };
 	private static final int REFRESH_RATE = 60;
 	private static final int NUM_PLAYERS = 3;
 	private static final double TILES_PER_SECOND = 4;
@@ -88,8 +86,8 @@ public class Maze extends JPanel {
 		});
 		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
 		this.tiles[4][0].setEffect(new GlobalSpeedDownEffect());
-		/*this.tiles[4][4].setEffect(new RotateLeftEffect());
-		this.tiles[6][6].setEffect(new RotateRightEffect());*/
+		this.tiles[4][4].setEffect(new RotateLeftEffect());
+		this.tiles[6][6].setEffect(new RotateRightEffect());
 		
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();
@@ -164,7 +162,7 @@ public class Maze extends JPanel {
 		int yDir = 0;
 		
 		// find the player and directions the player will move 
-		switch (Character.toLowerCase(key)) {
+		switch (key) {
 			case 'w':
 				player = 0; 
 				yDir = -1;
@@ -269,11 +267,7 @@ public class Maze extends JPanel {
 					if (effect != null) {
 						// activate effect
 						this.tiles[tileY][tileX].setEffect(null);
-						effect.activate(this, p);
-						// only add if effect is time based
-						if (effect.getEndTime() >= System.currentTimeMillis()) {
-							this.activatedEffects.add(effect);
-						}						
+						p.addMazeEffect(effect);				
 					}
 				}
 			}
@@ -419,25 +413,29 @@ public class Maze extends JPanel {
 	    }
 
 	    public void keyPressed(KeyEvent e) {
-	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
-	    		if (e.getKeyChar() == 'e') {
-	    			m.rotateRight();
-	    		} else if (e.getKeyChar() == 'q') {
-	    			m.rotateLeft();
+	    	char c = Character.toLowerCase(e.getKeyChar());
+	    	if (c >= 'a' && c <= 'z') {
+	    		// activate the next maze effect
+	    		MazePlayer[] mazePlayers = m.getPlayers();
+	    		for (int i = 0; i < mazePlayers.length; i++) {
+	    			if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c) {
+	    				mazePlayers[i].activateNextMazeEffect(m);
+	    			}
 	    		}
 	    		// make sure we register the player's key as pressed
-	    		this.m.getKeyPresses().put(e.getKeyChar(), System.currentTimeMillis());
+	    		this.m.getKeyPresses().put(c, System.currentTimeMillis());
 	    	}
 	    }
 
 	    public void keyReleased(KeyEvent e) {
-	    	if (e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') {
+	    	char c = Character.toLowerCase(e.getKeyChar());
+	    	if (c >= 'a' && c <= 'z') {
 	    		// in case remove doesn't exist
-	    		Long releasedTime = this.m.getKeyPresses().remove(e.getKeyChar());
+	    		Long releasedTime = this.m.getKeyPresses().remove(c);
 	    		if (releasedTime != null) {
 		    		// update the player's movement
 		    		long difference = System.currentTimeMillis() - releasedTime;
-		    		this.m.updatePlayerMovement(e.getKeyChar(), difference);
+		    		this.m.updatePlayerMovement(c, difference);
 	    		}
 	    	}
 	    }
