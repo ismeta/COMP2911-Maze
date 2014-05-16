@@ -110,11 +110,13 @@ public class MazePlayer {
 	 *            height of player
 	 */
 	public void draw(Graphics2D g2d, int width, int height) {
+		// clone car
 		Graphics2D g = (Graphics2D) g2d.create();
+		// pls tranparency
 		g.setComposite(AlphaComposite.Src);
+		// rotate
 		g.rotate(Math.toRadians(90), (int) this.posX + width/2, (int) this.posY + height/2);		
 		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
-		g.rotate(0, (int) this.posX + width/2, (int) this.posY + height/2);
 		g.dispose();
 	}
 
