@@ -1,8 +1,8 @@
 package maze;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
-import java.util.Random;
 
 import maze.effect.MazeEffect;
 
@@ -10,6 +10,7 @@ import maze.effect.MazeEffect;
 public class MazeTile {
 	private boolean isWall;
 	private boolean isGoal;
+	private Image image;
 	/* effect stored on maze */
 	private MazeEffect effect;
 	
@@ -61,16 +62,23 @@ public class MazeTile {
 		this.isWall = isWall;
 	}
 	
+	public void setImage(Image image) {
+		this.image = image;
+	}
+	
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		if (this.isGoal) {
 			g2d.setPaint(Color.CYAN);
-		} else {
+			g2d.fill(new Rectangle(x, y, width, height));
+		} else if (this.image == null){
 			/*Random r = (new Random());
 			Color c = new Color(r.nextInt(0xFD), r.nextInt(0xFD), r.nextInt(0xFD));*/ 
 			// draw tile
 			g2d.setPaint(this.isWall ? Color.BLACK : Color.GRAY);
+			g2d.fill(new Rectangle(x, y, width, height));
+		} else {
+			g2d.drawImage(this.image, x, y, width, height, null);
 		}
-		g2d.fill(new Rectangle(x, y, width, height));
 		// draw effect on top
 		if (effect != null) {
 			// draw boost if required

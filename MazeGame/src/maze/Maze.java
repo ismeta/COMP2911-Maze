@@ -6,6 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
@@ -13,12 +16,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import maze.effect.GlobalSpeedDownEffect;
 import maze.effect.MazeEffect;
-import maze.effect.RotateLeftEffect;
-import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
 import maze.generator.MazeGenerator;
 import maze.generator.RandomMazeGenerator;
@@ -40,6 +42,8 @@ public class Maze extends JPanel {
 	private static final int NUM_PLAYERS = 3;
 	private static final double TILES_PER_SECOND = 4;
 	private static final long serialVersionUID = 4602880844383443785L;
+	
+	private final BufferedImage[] tileImages;
 	
 	private MazeTile[][] tiles;
 	private int size;
@@ -65,9 +69,20 @@ public class Maze extends JPanel {
 		// generate tiles;
 		this.tiles = new MazeTile[size][size];
 		
+		this.tileImages = new BufferedImage[TileType.values().length];
+		for (int i = 0; i < TileType.values().length; i++) {
+			try {
+				tileImages[i] = ImageIO.read(new File("./res/tiles/tile_" + i + ".png"));
+			} catch (IOException e) {
+				throw new RuntimeException("Tile images missing!");
+			}
+		}
+		
 		MazeGenerator heh = new RandomMazeGenerator(size);
 		heh.generateMaze(tiles);
 		heh.setDifficulty(10);
+		
+		setTileImages();
 		
 		// key presses
 		this.keyPresses = new ConcurrentHashMap<Character, Long>();
@@ -94,6 +109,66 @@ public class Maze extends JPanel {
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();
 		this.timer.scheduleAtFixedRate(new MazeJPanelTimer(this), 0, 1000 / REFRESH_RATE);
+	}
+	
+	private void setTileImages() {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (!tiles[i][j].isWall()) {
+					int neighbours = numNeighbours(i, j);
+					
+					setTileImage(i, j, neighbours);
+				}
+			}
+		}
+	}
+	
+	private void setTileImage(int i, int j, int neighbours) {
+		switch (neighbours) {
+			case 1:
+				tiles[i][j].setImage(tileImages[TileType.DEAD_END.ordinal()]);
+				break;
+			case 2:
+				tiles[i][j].setImage(tileImages[TileType.STRAIGHT.ordinal()]);
+				break;
+			case 3:
+				tiles[i][j].setImage(tileImages[TileType.THREE_INTERSECT.ordinal()]);
+				break;
+			case 4:
+				tiles[i][j].setImage(tileImages[TileType.EVERYTHING.ordinal()]);
+				break;
+			default:
+				throw new RuntimeException("you fucked up");
+		}
+	}
+	
+	/**
+	 * @return the number of non-wall neighbours of a specified tile.
+	 */
+	private int numNeighbours(int i, int j) {
+		int neighbours = 0;
+		
+		/* Check if there's a neighbour to the left */
+		if (i > 0 && !tiles[i-1][j].isWall()) {
+			neighbours++;
+		}
+		
+		/* Check if there's a neighbour on top */
+		if (j > 0 && !tiles[i][j-1].isWall()) {
+			neighbours++;
+		}
+		
+		/* Check if there's a neighbour on the right */
+		if (i < size - 1 && !tiles[i+1][j].isWall()) {
+			neighbours++;
+		}
+		
+		/* Check if there's a neighbour on the bottom */
+		if (j < size - 1 && !tiles[i][j+1].isWall()) {
+			neighbours++;
+		}
+		
+		return neighbours;
 	}
 	
 	/**
@@ -441,5 +516,13 @@ public class Maze extends JPanel {
 	    		}
 	    	}
 	    }
+	}
+	
+	private enum TileType {
+		EVERYTHING,
+		THREE_INTERSECT,
+		RIGHT_ANGLE,
+		STRAIGHT,
+		DEAD_END
 	}
 }

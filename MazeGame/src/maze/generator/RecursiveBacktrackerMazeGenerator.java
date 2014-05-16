@@ -83,8 +83,7 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 		while (unvisitedTiles > 0) {
 			/* get the most recently visited tile */
 			p = previous.remove(previous.size() - 1);
-
-			System.out.println(p);
+			
 			/* Some tile checks:
 			 * - If this tile is out of bounds, don't even try! 
 			 * - If this tile has actually been visited before, we don't

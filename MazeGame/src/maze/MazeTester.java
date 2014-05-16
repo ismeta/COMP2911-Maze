@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 
 
 public class MazeTester {
-	private static final int TILE_SIZE_ORIGINAL = 60;
+	private static final int TILE_SIZE_ORIGINAL = 30;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 	private static final int FULL_SIZE_MAX = 600;
 	/**
