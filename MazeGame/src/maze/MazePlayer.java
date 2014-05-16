@@ -2,10 +2,8 @@ package maze;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -20,10 +18,12 @@ public class MazePlayer {
 	private int id;
 	private double posX;
 	private double posY;
+	private int dirX;
+	private int dirY;
 	private Color color;
 	private double speedModifier;
 	private Queue<MazeEffect> effectQueue;
-	private Image image;
+	private BufferedImage image;
 
 	/**
 	 * @param id
@@ -35,6 +35,8 @@ public class MazePlayer {
 		this.id = id;
 		this.posX = 0;
 		this.posY = 0;
+		this.dirX = 0;
+		this.dirY = 0;
 		this.color = color;
 		this.speedModifier = 1.0;
 		this.effectQueue = new LinkedList<MazeEffect>();
@@ -47,6 +49,34 @@ public class MazePlayer {
 			throw new RuntimeException("player image missing!");
 		}
 		
+	}
+	
+	/**
+	 * @return the dirX
+	 */
+	public int getDirX() {
+		return dirX;
+	}
+
+	/**
+	 * @param dirX the dirX to set
+	 */
+	public void setDirX(int dirX) {
+		this.dirX = dirX;
+	}
+
+	/**
+	 * @return the dirY
+	 */
+	public int getDirY() {
+		return dirY;
+	}
+
+	/**
+	 * @param dirY the dirY to set
+	 */
+	public void setDirY(int dirY) {
+		this.dirY = dirY;
 	}
 
 	/**
@@ -110,12 +140,12 @@ public class MazePlayer {
 	 *            height of player
 	 */
 	public void draw(Graphics2D g2d, int width, int height) {
-		// clone car
+		// clone car graphics instance
 		Graphics2D g = (Graphics2D) g2d.create();
 		// pls tranparency
 		g.setComposite(AlphaComposite.Src);
-		// rotate
-		g.rotate(Math.toRadians(90), (int) this.posX + width/2, (int) this.posY + height/2);		
+		// rotate based on where we are going
+		g.rotate(Math.toRadians(dirX * 90 + (dirY == 0 ? 0 : (dirY + 1) * 90)), (int) this.posX + width/2, (int) this.posY + height/2);		
 		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
 		g.dispose();
 	}
