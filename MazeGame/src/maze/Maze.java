@@ -3,10 +3,10 @@ package maze;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +50,7 @@ public class Maze extends JPanel {
 	private int size;
 	private Timer timer;
 	private MazePlayer players[];
+	private BufferedImage image;
 	private PriorityQueue<MazeEffect> activatedEffects;
 
 	// keys current held - mapped by character-last processing time
@@ -103,6 +104,7 @@ public class Maze extends JPanel {
 				return (int) (b.getEndTime() - a.getEndTime());
 			}
 		});
+		
 		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
 		this.tiles[4][0].setEffect(new GlobalSpeedDownEffect());
 		this.tiles[4][4].setEffect(new RotateLeftEffect());
@@ -113,24 +115,29 @@ public class Maze extends JPanel {
 		this.timer.scheduleAtFixedRate(new MazeJPanelTimer(this), 0, 1000 / REFRESH_RATE);
 	}
 	
-	private void setTileImages() {
+	public void setTileImages() {
+		this.image = new BufferedImage((int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D imageG2D = this.image.createGraphics();
+		
+		imageG2D.setColor(Color.BLACK);
+		imageG2D.fill(new Rectangle(0, 0, (int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight()));
+		
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (!tiles[i][j].isWall()) {
 					int neighbours = numNeighbours(i, j);
-					
-					setTileImage(i, j, neighbours);
+					setTileImage(imageG2D, i, j, neighbours);
 				}
 			}
 		}
+		imageG2D.dispose();
 	}
 	
-	private void setTileImage(int i, int j, int neighbours) {
+	private void setTileImage(Graphics2D imageG2D, int i, int j, int neighbours) {
 		BufferedImage tileImage = null;
 		boolean flipX = false;
 		boolean flipY = false;
 		
-		System.out.println(neighbours + ": " + i + ", " + j);
 		switch (neighbours) {
 			case 1:
 				if (j < size - 1 && !tiles[i][j + 1].isWall()) {
@@ -184,8 +191,20 @@ public class Maze extends JPanel {
 			default:
 				throw new RuntimeException("you fucked up");
 		}
-		tiles[i][j].setRotation(flipX, flipY);
-		tiles[i][j].setImage(tileImage);
+		
+		int width = (int) this.getPreferredSize().getWidth() / size;
+		int height = (int) this.getPreferredSize().getHeight() / size;
+		int x = j * width;
+		int y = i * height;
+		if (flipX && !flipY) {
+			imageG2D.drawImage(tileImage, x + width, y, -width, height, null);
+		} else if (flipX && flipY) {
+			imageG2D.drawImage(tileImage, x + width, y + height, -width, -height, null);
+		} else if (!flipX && flipY) {
+			imageG2D.drawImage(tileImage, x, y + height, width, -height, null);
+		} else {
+			imageG2D.drawImage(tileImage, x, y, width, height, null);
+		}
 	}
 	
 	/**
@@ -475,9 +494,12 @@ public class Maze extends JPanel {
 		super.paint(g);
 		int tileWidth = this.getWidth() / size;
 		int tileHeight = this.getHeight() / size;
-		
-		// draw tiles
 		Graphics2D g2d = (Graphics2D) g;
+		
+		// draw base map
+		g2d.drawImage(this.image, 0, 0, this.getWidth(), this.getHeight(), null);
+
+		// draw effects
 		for (int i = 0; i < this.tiles.length; i++) {
 			for (int j = 0; j < this.tiles[i].length; j++) {
 				this.tiles[i][j].draw(g2d, j * tileHeight, i * tileWidth, tileWidth, tileHeight);

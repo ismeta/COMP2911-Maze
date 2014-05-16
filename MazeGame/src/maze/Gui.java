@@ -41,7 +41,7 @@ public class Gui implements ActionListener {
     private JButton systemSaveButton;
     private JButton systemBackButton;
 
-	private static final int TILE_SIZE_ORIGINAL = 80;
+	private static final int TILE_SIZE_ORIGINAL = 30;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 	private static final int FULL_SIZE_MAX = 600;
 	
@@ -289,6 +289,7 @@ public class Gui implements ActionListener {
     	
     	Maze mp = new Maze(TILE_SIZE);
 		mp.setPreferredSize(new Dimension((int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE, (int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE));
+		mp.setTileImages();
 		
 		mazeCard.add(mp);
 		mazeCard.setFocusable(true);
