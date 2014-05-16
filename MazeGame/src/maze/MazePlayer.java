@@ -1,10 +1,15 @@
 package maze;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.imageio.ImageIO;
 
 import maze.effect.MazeEffect;
 
@@ -17,6 +22,7 @@ public class MazePlayer {
 	private Color color;
 	private double speedModifier;
 	private Queue<MazeEffect> effectQueue;
+	private Image image;
 	
 	/**
 	 * @param id the id of the player
@@ -29,6 +35,12 @@ public class MazePlayer {
 		this.color = color;
 		this.speedModifier = 1.0;
 		this.effectQueue = new LinkedList<MazeEffect>();
+
+		try {
+			this.image = ImageIO.read(new File(String.format("images/sprites/player%d.png", id)));
+		} catch (IOException e) {
+			throw new RuntimeException("player image missing!");
+		}
 	}
 	
 	/**
@@ -83,10 +95,7 @@ public class MazePlayer {
 	 * @param height height of player
 	 */
 	public void draw(Graphics2D g2d, int width, int height) {
-		Stroke previousStroke = g2d.getStroke();
-		g2d.setStroke(previousStroke);
-		g2d.setColor(color);
-		g2d.fill(new Rectangle((int) posX, (int) posY, width, height));
+		g2d.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
 	}
 
 	/**
