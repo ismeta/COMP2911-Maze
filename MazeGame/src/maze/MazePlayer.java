@@ -3,15 +3,20 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import maze.effect.MazeEffect;
 
 
 public class MazePlayer {
-
+	public static final int MAX_EFFECTS = 2;
 	private int id;
 	private double posX;
 	private double posY;
 	private Color color;
 	private double speedModifier;
+	private Queue<MazeEffect> effectQueue;
 	
 	/**
 	 * @param id the id of the player
@@ -23,6 +28,31 @@ public class MazePlayer {
 		this.posY = 0;
 		this.color = color;
 		this.speedModifier = 1.0;
+		this.effectQueue = new LinkedList<MazeEffect>();
+	}
+	
+	/**
+	 * activate the next MazeEffect in the queue
+	 * @param m the maze the player is in
+	 */
+	public void activateNextMazeEffect(Maze m) {
+		if (!this.effectQueue.isEmpty()) {
+			MazeEffect ef = this.effectQueue.remove();
+			ef.activate(m, this);
+			if (ef.getEndTime() >= System.currentTimeMillis()) {
+				m.getActivatedEffects().add(ef);
+			}
+		}
+	}
+	
+	/**
+	 * Adds to a player's hand a MazeEffect
+	 * @param mf the MazeEffect to add
+	 */
+	public void addMazeEffect(MazeEffect mf) {
+		if (this.effectQueue.size() < MAX_EFFECTS) {
+			this.effectQueue.add(mf);
+		}
 	}
 	
 	/**
