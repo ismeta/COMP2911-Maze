@@ -41,7 +41,7 @@ public class Gui implements ActionListener {
     private JButton systemSaveButton;
     private JButton systemBackButton;
 
-	private static final int TILE_SIZE_ORIGINAL = 30;
+	private static final int TILE_SIZE_ORIGINAL = 10;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 	private static final int FULL_SIZE_MAX = 600;
 	
