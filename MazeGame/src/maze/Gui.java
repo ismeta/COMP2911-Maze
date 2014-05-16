@@ -93,7 +93,7 @@ public class Gui implements ActionListener {
         
         // Header (empty)
         JLabel label = new JLabel("");
-        label.setPreferredSize(new Dimension(200, 350));
+        label.setPreferredSize(new Dimension(200, 220));
         homeCard.add(label, BorderLayout.PAGE_START);
         
         
@@ -136,20 +136,10 @@ public class Gui implements ActionListener {
         exitButton.addActionListener(this);
         buttonsPanel.add(exitButton);
         
-        homeCard.add(buttonsPanel);
-        
-        
-        // Side Panels
-        label = new JLabel("");
-        label.setPreferredSize(new Dimension(700, 700));
-        homeCard.add(label, BorderLayout.LINE_START);
+        homeCard.add(buttonsPanel, BorderLayout.CENTER);        
         
         label = new JLabel("");
-        label.setPreferredSize(new Dimension(700, 700));
-        homeCard.add(label, BorderLayout.LINE_END);
-        
-        label = new JLabel("");
-        label.setPreferredSize(new Dimension(100, 100));
+        label.setPreferredSize(new Dimension(100, 50));
         homeCard.add(label, BorderLayout.PAGE_END);
         
         // Add home card to cardss
