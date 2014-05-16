@@ -243,7 +243,7 @@ public class Maze extends JPanel {
 	        }
 	    }
 	    this.tiles = tiles;
-	    
+	    setTileImages();
 	    // rotate players
 	    for (MazePlayer p : this.players) {
 	    	double curX = p.getPosX();
@@ -265,6 +265,7 @@ public class Maze extends JPanel {
 	        }
 	    }
 	    this.tiles = tiles;
+	    setTileImages();
 	    
 	    // rotate players
 	    for (MazePlayer p : this.players) {
