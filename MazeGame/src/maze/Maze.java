@@ -3,6 +3,7 @@ package maze;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -18,6 +19,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import maze.effect.GlobalSpeedDownEffect;
@@ -119,19 +121,36 @@ public class Maze extends JPanel {
 		this.image = new BufferedImage((int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D imageG2D = this.image.createGraphics();
 		
-		imageG2D.setColor(Color.YELLOW);
-		imageG2D.fill(new Rectangle(0, 0, (int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight()));
-		
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (!tiles[i][j].isWall()) {
 					int neighbours = numNeighbours(i, j);
 					setTileImage(imageG2D, i, j, neighbours);
+				} else {
+					setWallImage(imageG2D, i, j);
 				}
 			}
 		}
 		imageG2D.dispose();
 	}
+	
+	private void setWallImage(Graphics2D imageG2D, int i, int j) {
+		int width = (int) this.getPreferredSize().getWidth() / size;
+		int height = (int) this.getPreferredSize().getHeight() / size;
+		int x = j * width;
+		int y = i * height;
+		
+		Image img = null;
+		if (i % 4 == 0 || i % 6 == 0 || i % 2 == 0) {
+			img = new ImageIcon("images/tiles/house.png").getImage();
+		} else if (j % 4 == 0 || j % 6 == 0) {
+			img = new ImageIcon("images/tiles/building.png").getImage();
+		} else {
+			img = new ImageIcon("images/tiles/treegreen.png").getImage();
+		}
+		imageG2D.drawImage(img, x, y, width, height, null);
+	}
+	
 	
 	private void setTileImage(Graphics2D imageG2D, int i, int j, int neighbours) {
 		BufferedImage tileImage = null;
