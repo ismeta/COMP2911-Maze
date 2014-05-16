@@ -1,32 +1,60 @@
 package maze;
+
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
-
-
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class MazeTester {
-	private static final int TILE_SIZE_ORIGINAL = 60;
-	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
-	private static final int FULL_SIZE_MAX = 600;
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-
-		JFrame frame = new JFrame();
-		frame.setLayout(new GridBagLayout());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("SCREW U DAVINA");
-		
-		Maze mp = new Maze(TILE_SIZE);
-		mp.setPreferredSize(new Dimension((int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE, (int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE));
-		
-		frame.add(mp);
-		frame.pack();
-		frame.setVisible(true);
-	}
-
+    
+    /**
+     * Create the GUI and show it.  For thread safety,
+     * this method should be invoked from the
+     * event dispatch thread.
+     */
+    private static void createAndShowGUI() {
+        //Create and set up the window.
+        JFrame frame = new JFrame("Home");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //Create and set up the content pane.
+        Gui gui = new Gui(frame);
+        gui.generate(frame.getContentPane());
+        
+        //Display the window.
+        frame.getContentPane().setBackground(Color.YELLOW);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setMinimumSize(screenSize);
+        //frame.pack();
+        frame.setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        /* Use an appropriate Look and Feel */
+        try {
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+        } catch (UnsupportedLookAndFeelException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (InstantiationException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        /* Turn off metal's use of bold fonts */
+        UIManager.put("swing.boldMetal", Boolean.FALSE);
+        
+        //Schedule a job for the event dispatch thread:
+        //creating and showing this application's GUI.
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
 }
