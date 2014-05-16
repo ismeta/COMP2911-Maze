@@ -21,7 +21,7 @@ import maze.effect.RotateLeftEffect;
 import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
 import maze.generator.MazeGenerator;
-import maze.generator.RecursiveBacktrackerMazeGenerator;
+import maze.generator.RandomMazeGenerator;
 
 /**
  * MazeJPanel
@@ -65,7 +65,7 @@ public class Maze extends JPanel {
 		// generate tiles;
 		this.tiles = new MazeTile[size][size];
 		
-		MazeGenerator heh = new RecursiveBacktrackerMazeGenerator(size);
+		MazeGenerator heh = new RandomMazeGenerator(size);
 		heh.generateMaze(tiles);
 		heh.setDifficulty(10);
 		
@@ -88,8 +88,8 @@ public class Maze extends JPanel {
 		});
 		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
 		this.tiles[4][0].setEffect(new GlobalSpeedDownEffect());
-		this.tiles[4][4].setEffect(new RotateLeftEffect());
-		this.tiles[6][6].setEffect(new RotateRightEffect());
+		/*this.tiles[4][4].setEffect(new RotateLeftEffect());
+		this.tiles[6][6].setEffect(new RotateRightEffect());*/
 		
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();

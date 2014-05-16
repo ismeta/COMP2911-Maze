@@ -65,8 +65,8 @@ public class MazeTile {
 		if (this.isGoal) {
 			g2d.setPaint(Color.CYAN);
 		} else {
-			Random r = (new Random());
-			Color c = new Color(r.nextInt(0xFD), r.nextInt(0xFD), r.nextInt(0xFD)); 
+			/*Random r = (new Random());
+			Color c = new Color(r.nextInt(0xFD), r.nextInt(0xFD), r.nextInt(0xFD));*/ 
 			// draw tile
 			g2d.setPaint(this.isWall ? Color.BLACK : Color.GRAY);
 		}
