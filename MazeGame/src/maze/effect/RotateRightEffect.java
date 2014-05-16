@@ -1,14 +1,27 @@
 package maze.effect;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import maze.Maze;
 import maze.MazePlayer;
 
 public class RotateRightEffect implements MazeEffect {
-
+	private static final String EFFECT_IMAGE = "images/sprites/rotateright.png";
+	private Image image;
+	
+	public RotateRightEffect() {
+		try {
+			this.image = ImageIO.read(new File(EFFECT_IMAGE));
+		} catch (IOException e) {
+			throw new RuntimeException(EFFECT_IMAGE + " missing!");
+		}
+	}
+	
 	@Override
 	public void activate(Maze m, MazePlayer p) {
 		m.rotateRight();
@@ -26,8 +39,7 @@ public class RotateRightEffect implements MazeEffect {
 
 	@Override
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
-		g2d.setColor(Color.MAGENTA);
-		g2d.fill(new Rectangle(x, y, width, height));
+		g2d.drawImage(this.image, x, y, width, height, null);
 	}
 
 }

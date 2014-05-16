@@ -1,17 +1,31 @@
 package maze.effect;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import maze.Maze;
 import maze.MazePlayer;
 
 public class GlobalSpeedDownEffect implements MazeEffect {
+	private static final String EFFECT_IMAGE = "images/sprites/slow.png";
+	
 	private static final long DURATION = 10000;
 	private static final double SPEED_MODIFIER = 0.75;
 	private long endTime;
 	private MazePlayer p;
+	private Image image;
+	
+	public GlobalSpeedDownEffect() {
+		try {
+			this.image = ImageIO.read(new File(EFFECT_IMAGE));
+		} catch (IOException e) {
+			throw new RuntimeException(EFFECT_IMAGE + " missing!");
+		}
+	}
 	
 	@Override
 	public void activate(Maze m, MazePlayer p) {
@@ -42,8 +56,7 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 
 	@Override
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
-		g2d.setColor(Color.PINK);
-		g2d.fill(new Rectangle(x, y, width, height));
+		g2d.drawImage(this.image, x, y, width, height, null);
 	}
 
 }
