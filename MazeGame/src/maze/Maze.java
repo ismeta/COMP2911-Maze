@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +73,7 @@ public class Maze extends JPanel {
 		this.tileImages = new BufferedImage[TileType.values().length];
 		for (int i = 0; i < TileType.values().length; i++) {
 			try {
+				System.out.println(i);
 				tileImages[i] = ImageIO.read(new File("./res/tiles/tile_" + i + ".png"));
 			} catch (IOException e) {
 				throw new RuntimeException("Tile images missing!");
@@ -124,22 +126,66 @@ public class Maze extends JPanel {
 	}
 	
 	private void setTileImage(int i, int j, int neighbours) {
+		BufferedImage tileImage = null;
+		boolean flipX = false;
+		boolean flipY = false;
+		
+		System.out.println(neighbours + ": " + i + ", " + j);
 		switch (neighbours) {
 			case 1:
-				tiles[i][j].setImage(tileImages[TileType.DEAD_END.ordinal()]);
+				if (j < size - 1 && !tiles[i][j + 1].isWall()) {
+					tileImage = tileImages[TileType.DEAD_END_HORIZONTAL.ordinal()];
+					flipX = true;
+				} else if (j > 0 && !tiles[i][j - 1].isWall()) {
+					tileImage = tileImages[TileType.DEAD_END_HORIZONTAL.ordinal()];
+				} else if (i < size - 1 && !tiles[i + 1][j].isWall()) {
+					tileImage = tileImages[TileType.DEAD_END_VERTICAL.ordinal()];
+					flipY = true;
+				} else if (i > 0 && !tiles[i - 1][j].isWall()) {
+					tileImage = tileImages[TileType.DEAD_END_VERTICAL.ordinal()];
+				} 
 				break;
 			case 2:
-				tiles[i][j].setImage(tileImages[TileType.STRAIGHT.ordinal()]);
+				if ((j > 0 && j < size - 1) && !tiles[i][j - 1].isWall() && !tiles[i][j+1].isWall()) {
+					tileImage = tileImages[TileType.STRAIGHT_HORIZONTAL.ordinal()];
+				} else if ((i > 0 && i < size - 1) && !tiles[i+1][j].isWall() && !tiles[i - 1][j].isWall()) {
+					tileImage = tileImages[TileType.STRAIGHT_VERTICAL.ordinal()];
+				} else if (i > 0 && j > 0 && !tiles[i-1][j].isWall() && !tiles[i][j-1].isWall()) {
+					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
+					flipX = true;
+				} else if (i > 0 && j < size - 1 && !tiles[i - 1][j].isWall() && !tiles[i][j + 1].isWall()) {
+					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
+				} else if (i < size - 1 && j < size - 1 && !tiles[i + 1][j].isWall() && !tiles[i][j + 1].isWall()) {
+					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
+					flipY = true;
+				} else {
+					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
+					flipX = true;
+					flipY = true;
+				}
+				
 				break;
 			case 3:
-				tiles[i][j].setImage(tileImages[TileType.THREE_INTERSECT.ordinal()]);
+				if (j == size - 1 || (j < size - 1 && tiles[i][j + 1].isWall())) {
+					tileImage = tileImages[TileType.THREE_INTERSECT_VERTICAL.ordinal()];
+				} else if (j == 0 || (j > 0 && tiles[i][j - 1].isWall())) {
+					tileImage = tileImages[TileType.THREE_INTERSECT_VERTICAL.ordinal()];
+					flipX = true;
+				} else if (i == size - 1 || (i < size - 1 && tiles[i + 1][j].isWall())) {
+					tileImage = tileImages[TileType.THREE_INTERSECT_HORIZONTAL.ordinal()];
+				} else if (i == 0 || (i > 0 && tiles[i - 1][j].isWall())) {
+					tileImage = tileImages[TileType.THREE_INTERSECT_HORIZONTAL.ordinal()];
+					flipY = true;
+				}
 				break;
 			case 4:
-				tiles[i][j].setImage(tileImages[TileType.EVERYTHING.ordinal()]);
+				tileImage = tileImages[TileType.EVERYTHING.ordinal()];
 				break;
 			default:
 				throw new RuntimeException("you fucked up");
 		}
+		tiles[i][j].setRotation(flipX, flipY);
+		tiles[i][j].setImage(tileImage);
 	}
 	
 	/**
@@ -520,9 +566,12 @@ public class Maze extends JPanel {
 	
 	private enum TileType {
 		EVERYTHING,
-		THREE_INTERSECT,
+		THREE_INTERSECT_HORIZONTAL,
+		THREE_INTERSECT_VERTICAL,
 		RIGHT_ANGLE,
-		STRAIGHT,
-		DEAD_END
+		STRAIGHT_HORIZONTAL,
+		STRAIGHT_VERTICAL,
+		DEAD_END_HORIZONTAL,
+		DEAD_END_VERTICAL
 	}
 }
