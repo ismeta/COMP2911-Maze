@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import maze.Maze;
-import maze.MazePlayer;
+import maze.game.MazeGamePanel;
+import maze.game.MazePlayer;
 
 public class RotateRightEffect implements MazeEffect {
 	private static final String EFFECT_IMAGE = "images/sprites/rotateright.png";
@@ -23,7 +23,7 @@ public class RotateRightEffect implements MazeEffect {
 	}
 	
 	@Override
-	public void activate(Maze m, MazePlayer p) {
+	public void activate(MazeGamePanel m, MazePlayer p) {
 		m.rotateRight();
 	}
 
@@ -33,7 +33,7 @@ public class RotateRightEffect implements MazeEffect {
 	}
 
 	@Override
-	public void deactivate(Maze m) {
+	public void deactivate(MazeGamePanel m) {
 		// do nothing
 	}
 

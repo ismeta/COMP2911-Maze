@@ -3,7 +3,7 @@ package maze.generator;
 import java.util.ArrayList;
 import java.util.Random;
 
-import maze.MazeTile;
+import maze.game.MazeTile;
 
 /**
  * "It's so easy"

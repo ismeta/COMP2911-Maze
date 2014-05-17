@@ -1,4 +1,4 @@
-package maze;
+package maze.game;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -20,7 +20,6 @@ public class MazePlayer {
 	private double posY;
 	private int dirX;
 	private int dirY;
-	private Color color;
 	private double speedModifier;
 	private Queue<MazeEffect> effectQueue;
 	private BufferedImage image;
@@ -31,13 +30,12 @@ public class MazePlayer {
 	 * @param color
 	 *            the color to draw the player
 	 */
-	public MazePlayer(int id, Color color) {
+	public MazePlayer(int id) {
 		this.id = id;
 		this.posX = 0;
 		this.posY = 0;
 		this.dirX = 0;
 		this.dirY = 0;
-		this.color = color;
 		this.speedModifier = 1.0;
 		this.effectQueue = new LinkedList<MazeEffect>();
 
@@ -85,7 +83,7 @@ public class MazePlayer {
 	 * @param m
 	 *            the maze the player is in
 	 */
-	public void activateNextMazeEffect(Maze m) {
+	public void activateNextMazeEffect(MazeGamePanel m) {
 		if (!this.effectQueue.isEmpty()) {
 			MazeEffect ef = this.effectQueue.remove();
 			ef.activate(m, this);
@@ -105,13 +103,6 @@ public class MazePlayer {
 		if (this.effectQueue.size() < MAX_EFFECTS) {
 			this.effectQueue.add(mf);
 		}
-	}
-
-	/**
-	 * @return the color
-	 */
-	public Color getColor() {
-		return color;
 	}
 
 	/**
@@ -140,12 +131,28 @@ public class MazePlayer {
 	 *            height of player
 	 */
 	public void draw(Graphics2D g2d, int width, int height) {
+		draw(g2d, width, height, true);
+	}
+	
+
+	/**
+	 * draws the player
+	 * 
+	 * @param g2d
+	 *            what graphics class we use to draw
+	 * @param width
+	 *            width of player
+	 * @param height
+	 *            height of player
+	 * @param orientation whether to take the direction player is facing into account
+	 */
+	public void draw(Graphics2D g2d, int width, int height, boolean orientation) {
 		// clone car graphics instance
 		Graphics2D g = (Graphics2D) g2d.create();
-		// pls tranparency
-		g.setComposite(AlphaComposite.Src);
-		// rotate based on where we are going
-		g.rotate(Math.toRadians(dirX * 90 + (dirY == 0 ? 0 : (dirY + 1) * 90)), (int) this.posX + width/2, (int) this.posY + height/2);		
+		// rotate based on where we are going if orientation is set
+		if (orientation) {
+			g.rotate(Math.toRadians(dirX * 90 + (dirY == 0 ? 0 : (dirY + 1) * 90)), (int) this.posX + width/2, (int) this.posY + height/2);
+		}
 		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
 		g.dispose();
 	}
@@ -194,4 +201,13 @@ public class MazePlayer {
 	public void setPosY(double posY) {
 		this.posY = posY;
 	}
+
+	/**
+	 * @return the image
+	 */
+	public BufferedImage getImage() {
+		return image;
+	}
+	
+	
 }

@@ -10,8 +10,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import maze.Maze;
-import maze.MazePlayer;
+import maze.game.MazeGamePanel;
+import maze.game.MazePlayer;
 
 /**
  * @author oliver
@@ -34,7 +34,7 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	}
 	
 	@Override
-	public void activate(Maze m, MazePlayer p) {
+	public void activate(MazeGamePanel m, MazePlayer p) {
 		this.p = p;
 		this.endTime = System.currentTimeMillis() + DURATION;
 		p.setSpeedModifier(p.getSpeedModifier() * SPEED_MODIFIER);
@@ -46,7 +46,7 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	}
 
 	@Override
-	public void deactivate(Maze m) {
+	public void deactivate(MazeGamePanel m) {
 		p.setSpeedModifier(p.getSpeedModifier() / SPEED_MODIFIER);
 	}
 

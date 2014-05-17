@@ -1,5 +1,5 @@
 package maze.generator;
-import maze.MazeTile;
+import maze.game.MazeTile;
 
 
 public interface MazeGenerator {

@@ -1,8 +1,8 @@
 package maze.effect;
 import java.awt.Graphics2D;
 
-import maze.Maze;
-import maze.MazePlayer;
+import maze.game.MazeGamePanel;
+import maze.game.MazePlayer;
 
 
 
@@ -13,7 +13,7 @@ public interface MazeEffect {
 	 * @param m the Maze game
 	 * @param p the player who activated it
 	 */
-	public void activate(Maze m, MazePlayer p);
+	public void activate(MazeGamePanel m, MazePlayer p);
 	
 	/**
 	 * @return when the boost, upon activation, will deactivate
@@ -24,7 +24,7 @@ public interface MazeEffect {
 	 * What the boost will do upon deactivation
 	 * @param m the Maze game
 	 */
-	public void deactivate(Maze m);
+	public void deactivate(MazeGamePanel m);
 	
 	/**
 	 * Draws the boost

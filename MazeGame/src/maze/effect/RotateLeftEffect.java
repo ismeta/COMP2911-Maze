@@ -10,8 +10,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import maze.Maze;
-import maze.MazePlayer;
+import maze.game.MazeGamePanel;
+import maze.game.MazePlayer;
 
 /**
  * @author oliver
@@ -30,7 +30,7 @@ public class RotateLeftEffect implements MazeEffect {
 	}
 	
 	@Override
-	public void activate(Maze m, MazePlayer p) {
+	public void activate(MazeGamePanel m, MazePlayer p) {
 		m.rotateLeft();
 
 	}
@@ -41,7 +41,7 @@ public class RotateLeftEffect implements MazeEffect {
 	}
 
 	@Override
-	public void deactivate(Maze m) {
+	public void deactivate(MazeGamePanel m) {
 		// nothing
 	}
 

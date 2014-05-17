@@ -22,7 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-public class Gui implements ActionListener {
+import maze.game.MazeGamePanel;
+
+public class GUI implements ActionListener {
 
 	private JFrame frame;
 
@@ -41,7 +43,7 @@ public class Gui implements ActionListener {
 	private JButton systemSaveButton;
 	private JButton systemBackButton;
 
-	private static final int TILE_SIZE_ORIGINAL = 60;
+	private static final int TILE_SIZE_ORIGINAL = 30;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 	private static final int FULL_SIZE_MAX = 600;
 
@@ -53,7 +55,7 @@ public class Gui implements ActionListener {
 	 * 
 	 * @param frame
 	 */
-	public Gui(JFrame frame) {
+	public GUI(JFrame frame) {
 		this.frame = frame;
 		this.difficulty = 5;
 		this.numPlayers = 2;
@@ -288,7 +290,7 @@ public class Gui implements ActionListener {
 	public void initialiseMazeCard() {
 		mazeCard = new JPanel();
 
-		Maze mp = new Maze(TILE_SIZE);
+		MazeGamePanel mp = new MazeGamePanel(TILE_SIZE);
 		mp.setPreferredSize(new Dimension((int) (FULL_SIZE_MAX / TILE_SIZE)
 				* TILE_SIZE, (int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE));
 		mp.setTileImages();
