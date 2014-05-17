@@ -1,7 +1,5 @@
 package maze.game;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -83,10 +81,10 @@ public class MazePlayer {
 	 * @param m
 	 *            the maze the player is in
 	 */
-	public void activateNextMazeEffect(MazeGamePanel m) {
+	public void activateNextMazeEffect(MazeBasePanel m) {
 		if (!this.effectQueue.isEmpty()) {
 			MazeEffect ef = this.effectQueue.remove();
-			ef.activate(m, this);
+			ef.activate(m.getMazeGamePanel(), this);
 			if (ef.getEndTime() >= System.currentTimeMillis()) {
 				m.getActivatedEffects().add(ef);
 			}

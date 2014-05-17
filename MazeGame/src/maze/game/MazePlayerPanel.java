@@ -1,6 +1,7 @@
 package maze.game;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.ImageIcon;
@@ -18,9 +19,7 @@ public class MazePlayerPanel extends JPanel {
 		this.player = player;
 		
 		/* GUI */
-		this.setLayout(new BorderLayout());
-		this.add(new JLabel(new ImageIcon(this.player.getImage())), BorderLayout.LINE_START);
-		this.add(new JLabel("LOL"), BorderLayout.LINE_END);
+		this.setPreferredSize(new Dimension(100, 100));
 	}
 	
 	/**

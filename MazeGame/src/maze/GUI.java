@@ -4,13 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -22,7 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import maze.game.MazeGamePanel;
+import maze.game.MazeBasePanel;
+import maze.generator.RandomMazeGenerator;
 
 public class GUI implements ActionListener {
 
@@ -32,7 +33,7 @@ public class GUI implements ActionListener {
 	private ImagePanel homeCard;
 	private ImagePanel playOptionsCard;
 	private JPanel systemopsCard;
-	private JPanel mazeCard;
+	private MazeBasePanel mazeCard;
 
 	private JButton playButton;
 	private JButton optionsButton;
@@ -45,7 +46,6 @@ public class GUI implements ActionListener {
 
 	private static final int TILE_SIZE_ORIGINAL = 30;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
-	private static final int FULL_SIZE_MAX = 600;
 
 	private int difficulty;
 	private int numPlayers;
@@ -60,6 +60,17 @@ public class GUI implements ActionListener {
 		this.difficulty = 5;
 		this.numPlayers = 2;
 	}
+	
+	
+
+	/**
+	 * @return the cards
+	 */
+	public JPanel getCards() {
+		return cards;
+	}
+
+
 
 	/**
 	 * Generate card for card layout
@@ -288,24 +299,9 @@ public class GUI implements ActionListener {
 	 * Maze Card
 	 */
 	public void initialiseMazeCard() {
-		mazeCard = new JPanel();
-
-		MazeGamePanel mp = new MazeGamePanel(TILE_SIZE);
-		mp.setPreferredSize(new Dimension((int) (FULL_SIZE_MAX / TILE_SIZE)
-				* TILE_SIZE, (int) (FULL_SIZE_MAX / TILE_SIZE) * TILE_SIZE));
-		mp.setTileImages();
-
-		mazeCard.add(mp);
-		mazeCard.setFocusable(true);
-		for (KeyListener kl : mp.getKeyListeners()) {
-			mazeCard.addKeyListener(kl);
-		}
-
+		mazeCard = new MazeBasePanel();
 		cards.add(mazeCard, "maze");
 		cards.setFocusable(true);
-		for (KeyListener kl : mp.getKeyListeners()) {
-			cards.addKeyListener(kl);
-		}
 	}
 
 	public void initialiseSystemOptionsCard() {
@@ -338,10 +334,10 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == helpButton) {
 			cl.show(cards, "home");
 		} else if (e.getSource() == exitButton) {
-			// cl.show(cards, "home");
-			frame.dispose();
+			this.frame.dispose();
 		} else if (e.getSource() == playSaveButton) {
 			System.out.println(difficulty);
+			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
 			cl.show(cards, "maze");
 		} else if (e.getSource() == playBackButton) {
 			cl.show(cards, "home");
@@ -349,5 +345,21 @@ public class GUI implements ActionListener {
 				|| e.getSource() == systemBackButton) {
 			cl.show(cards, "home");
 		}
+	}
+	
+	private class ImagePanel extends JPanel {		
+		private static final long serialVersionUID = 1;
+	    Image image;
+
+	    public void setBackground(Image image) {
+	        this.image = image;
+	    }
+
+	    @Override
+	    public void paintComponent(Graphics G) {
+	        super.paintComponent(G);
+	        G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
+	    }
+
 	}
 }

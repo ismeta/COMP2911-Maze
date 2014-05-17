@@ -1,25 +1,11 @@
 package maze.game;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Map.Entry;
-import java.util.PriorityQueue;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import maze.effect.GlobalSpeedDownEffect;
@@ -28,7 +14,8 @@ import maze.effect.RotateLeftEffect;
 import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
 import maze.generator.MazeGenerator;
-import maze.generator.RandomMazeGenerator;
+import maze.tiler.CarCityMazeTiler;
+import maze.tiler.MazeTiler;
 
 /**
  * MazeJPanel
@@ -40,233 +27,64 @@ import maze.generator.RandomMazeGenerator;
  *
  */
 public class MazeGamePanel extends JPanel {
-	private static final char[] MAZE_EFFECT_ACTIVATE_KEYS = { 'e', 'y', 'o' };
-	private static final int REFRESH_RATE = 60;
-	public static final int NUM_PLAYERS = 3;
-	public static final double TILES_PER_SECOND = 4;
+	private static final double TILES_PER_SECOND = 4;
 	private static final long serialVersionUID = 4602880844383443785L;
 	
-	private final BufferedImage[] tileImages;
-	
+	// maze tiles
+	private MazeTiler mazeTiler;
 	private MazeTile[][] tiles;
-	private int size;
-	private BufferedImage image;
+	// maze property
+	private int size;	
+	// ensure player is drawn correctly
+	private Image image;
+	// players
+	private MazePlayer[] mazePlayers;
+	// preferred dimensions
+	private int maxHeight, maxWidth;
 	
-	private Timer timer;
-	private MazePlayer players[];
-	private PriorityQueue<MazeEffect> activatedEffects;
-	private ConcurrentHashMap<Character, Long> keyPresses; 
-
-	/**
-	 * Generates a new MazeJPanel 
-	 * @param size size of the maze
-	 */
-	public MazeGamePanel(int size) {
+	public MazeGamePanel(int maxHeight, int maxWidth) {
 		// double buffered JPanel
 		super(true);
 		this.setFocusable(true);
 
+		this.maxHeight = maxHeight;
+		this.maxWidth = maxWidth;
+		this.setMaximumSize(new Dimension(maxHeight, maxWidth));
+		
+		this.image = null;
+		this.tiles = null;
+		this.size = 0;
+		this.mazePlayers = null;
+		this.mazeTiler = null;
+	}
+	
+	public void setup(int size, MazeGenerator mazeGenerator, MazePlayer[] mazePlayers) {
 		// size
 		this.size = size;
+		// we can now set a preferred height
+		this.setPreferredSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));
+		this.setMinimumSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));
 		
 		// generate tiles;
 		this.tiles = new MazeTile[size][size];
+		mazeGenerator.setDifficulty(10);
+		mazeGenerator.generateMaze(this.tiles);
 		
-		this.tileImages = new BufferedImage[TileType.values().length];
-		for (int i = 0; i < TileType.values().length; i++) {
-			try {
-				System.out.println(i);
-				tileImages[i] = ImageIO.read(new File("images/tiles/tile_" + i + ".png"));
-			} catch (IOException e) {
-				throw new RuntimeException("Tile images missing!");
-			}
-		}
-		
-		MazeGenerator heh = new RandomMazeGenerator(size);
-		heh.generateMaze(tiles);
-		heh.setDifficulty(10);
-		
-		setTileImages();
-		
-		// key presses
-		this.keyPresses = new ConcurrentHashMap<Character, Long>();
-		this.addKeyListener(new MazeJPanelKeyListener(this));
-		
-		// make da players
-		this.players = new MazePlayer[NUM_PLAYERS];
-		for (int i = 0; i < NUM_PLAYERS; i++) {
-			this.players[i] = new MazePlayer(i);
-		}
-		
-		// create the effects PQ
-		this.activatedEffects = new PriorityQueue<MazeEffect>(10, new Comparator<MazeEffect>() {
-			@Override
-			public int compare(MazeEffect a, MazeEffect b) {
-				return (int) (b.getEndTime() - a.getEndTime());
-			}
-		});
-		
+		// (temporary) set effects
 		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
 		this.tiles[4][0].setEffect(new GlobalSpeedDownEffect());
 		this.tiles[4][4].setEffect(new RotateLeftEffect());
 		this.tiles[6][6].setEffect(new RotateRightEffect());
+
+		// tile maze
+		this.mazeTiler = new CarCityMazeTiler(tiles, size, (int) this.getPreferredSize().getHeight(), (int) this.getPreferredSize().getWidth());
+		this.mazeTiler.tileMaze();
+		this.image = this.mazeTiler.getImage();
 		
-		// allocate timer and start when ready - MUST BE LAST
-		this.timer = new Timer();
-		this.timer.scheduleAtFixedRate(new MazeJPanelTimer(this), 0, 1000 / REFRESH_RATE);
+		// add players
+		this.mazePlayers = mazePlayers;
 	}
 	
-	public void setTileImages() {
-		this.image = new BufferedImage((int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D imageG2D = this.image.createGraphics();
-		
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (!tiles[i][j].isWall()) {
-					int neighbours = numNeighbours(i, j);
-					setTileImage(imageG2D, i, j, neighbours);
-				} else {
-					setWallImage(imageG2D, i, j);
-				}
-			}
-		}
-		imageG2D.dispose();
-	}
-	
-	private void setWallImage(Graphics2D imageG2D, int i, int j) {
-		int width = (int) this.getPreferredSize().getWidth() / size;
-		int height = (int) this.getPreferredSize().getHeight() / size;
-		int x = j * width;
-		int y = i * height;
-		
-		Image img = null;
-		if (i % 4 == 0 || i % 6 == 0 || i % 2 == 0) {
-			img = new ImageIcon("images/tiles/house.png").getImage();
-		} else if (j % 4 == 0 || j % 6 == 0) {
-			img = new ImageIcon("images/tiles/building.png").getImage();
-		} else {
-			img = new ImageIcon("images/tiles/treegreen.png").getImage();
-		}
-		imageG2D.drawImage(img, x, y, width, height, null);
-	}
-	
-	
-	private void setTileImage(Graphics2D imageG2D, int i, int j, int neighbours) {
-		BufferedImage tileImage = null;
-		boolean flipX = false;
-		boolean flipY = false;
-		
-		switch (neighbours) {
-			case 1:
-				if (j < size - 1 && !tiles[i][j + 1].isWall()) {
-					tileImage = tileImages[TileType.DEAD_END_HORIZONTAL.ordinal()];
-					flipX = true;
-				} else if (j > 0 && !tiles[i][j - 1].isWall()) {
-					tileImage = tileImages[TileType.DEAD_END_HORIZONTAL.ordinal()];
-				} else if (i < size - 1 && !tiles[i + 1][j].isWall()) {
-					tileImage = tileImages[TileType.DEAD_END_VERTICAL.ordinal()];
-					flipY = true;
-				} else if (i > 0 && !tiles[i - 1][j].isWall()) {
-					tileImage = tileImages[TileType.DEAD_END_VERTICAL.ordinal()];
-				} 
-				break;
-			case 2:
-				if ((j > 0 && j < size - 1) && !tiles[i][j - 1].isWall() && !tiles[i][j+1].isWall()) {
-					tileImage = tileImages[TileType.STRAIGHT_HORIZONTAL.ordinal()];
-				} else if ((i > 0 && i < size - 1) && !tiles[i+1][j].isWall() && !tiles[i - 1][j].isWall()) {
-					tileImage = tileImages[TileType.STRAIGHT_VERTICAL.ordinal()];
-				} else if (i > 0 && j > 0 && !tiles[i-1][j].isWall() && !tiles[i][j-1].isWall()) {
-					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
-					flipX = true;
-				} else if (i > 0 && j < size - 1 && !tiles[i - 1][j].isWall() && !tiles[i][j + 1].isWall()) {
-					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
-				} else if (i < size - 1 && j < size - 1 && !tiles[i + 1][j].isWall() && !tiles[i][j + 1].isWall()) {
-					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
-					flipY = true;
-				} else {
-					tileImage = tileImages[TileType.RIGHT_ANGLE.ordinal()];
-					flipX = true;
-					flipY = true;
-				}
-				
-				break;
-			case 3:
-				if (j == size - 1 || (j < size - 1 && tiles[i][j + 1].isWall())) {
-					tileImage = tileImages[TileType.THREE_INTERSECT_VERTICAL.ordinal()];
-				} else if (j == 0 || (j > 0 && tiles[i][j - 1].isWall())) {
-					tileImage = tileImages[TileType.THREE_INTERSECT_VERTICAL.ordinal()];
-					flipX = true;
-				} else if (i == size - 1 || (i < size - 1 && tiles[i + 1][j].isWall())) {
-					tileImage = tileImages[TileType.THREE_INTERSECT_HORIZONTAL.ordinal()];
-				} else if (i == 0 || (i > 0 && tiles[i - 1][j].isWall())) {
-					tileImage = tileImages[TileType.THREE_INTERSECT_HORIZONTAL.ordinal()];
-					flipY = true;
-				}
-				break;
-			case 4:
-				tileImage = tileImages[TileType.EVERYTHING.ordinal()];
-				break;
-			default:
-				throw new RuntimeException("you fucked up");
-		}
-		
-		int width = (int) this.getPreferredSize().getWidth() / size;
-		int height = (int) this.getPreferredSize().getHeight() / size;
-		int x = j * width;
-		int y = i * height;
-		if (flipX && !flipY) {
-			imageG2D.drawImage(tileImage, x + width, y, -width, height, null);
-		} else if (flipX && flipY) {
-			imageG2D.drawImage(tileImage, x + width, y + height, -width, -height, null);
-		} else if (!flipX && flipY) {
-			imageG2D.drawImage(tileImage, x, y + height, width, -height, null);
-		} else {
-			imageG2D.drawImage(tileImage, x, y, width, height, null);
-		}
-	}
-	
-	/**
-	 * @return the number of non-wall neighbours of a specified tile.
-	 */
-	private int numNeighbours(int i, int j) {
-		int neighbours = 0;
-		
-		/* Check if there's a neighbour to the left */
-		if (i > 0 && !tiles[i-1][j].isWall()) {
-			neighbours++;
-		}
-		
-		/* Check if there's a neighbour on top */
-		if (j > 0 && !tiles[i][j-1].isWall()) {
-			neighbours++;
-		}
-		
-		/* Check if there's a neighbour on the right */
-		if (i < size - 1 && !tiles[i+1][j].isWall()) {
-			neighbours++;
-		}
-		
-		/* Check if there's a neighbour on the bottom */
-		if (j < size - 1 && !tiles[i][j+1].isWall()) {
-			neighbours++;
-		}
-		
-		return neighbours;
-	}
-	
-	/**
-	 * @return the keyPresses
-	 */
-	public ConcurrentHashMap<Character, Long> getKeyPresses() {
-		return keyPresses;
-	}
-	
-	/**
-	 * @return the players
-	 */
-	public MazePlayer[] getPlayers() {
-		return players;
-	}
 		
 	/**
 	 * rotates the map right
@@ -280,9 +98,11 @@ public class MazeGamePanel extends JPanel {
 	        }
 	    }
 	    this.tiles = tiles;
-	    setTileImages();
+	    this.mazeTiler.setTiles(this.tiles);
+	    this.mazeTiler.tileMaze();
+		this.image = this.mazeTiler.getImage();
 	    // rotate players
-	    for (MazePlayer p : this.players) {
+	    for (MazePlayer p : this.mazePlayers) {
 	    	double curX = p.getPosX();
 	    	double curY = p.getPosY();
 	    	p.setPosX(this.getWidth() - curY - this.getWidth() / this.size);
@@ -302,10 +122,12 @@ public class MazeGamePanel extends JPanel {
 	        }
 	    }
 	    this.tiles = tiles;
-	    setTileImages();
+	    this.mazeTiler.setTiles(this.tiles);
+	    this.mazeTiler.tileMaze();
+		this.image = this.mazeTiler.getImage();
 	    
 	    // rotate players
-	    for (MazePlayer p : this.players) {
+	    for (MazePlayer p : this.mazePlayers) {
 	    	double curX = p.getPosX();
 	    	double curY = p.getPosY();
 	    	p.setPosX(curY);
@@ -378,7 +200,7 @@ public class MazeGamePanel extends JPanel {
 		}
 		
 		// ensure player is playing this game
-		MazePlayer p = this.players[player];
+		MazePlayer p = this.mazePlayers[player];
 		if (p != null) {			
 			// prospective to destination
 			// moving from the current position + the distance movable per second * time key held 
@@ -499,128 +321,42 @@ public class MazeGamePanel extends JPanel {
 		}		
 	}
 	
-	
 	/**
-	 * @return the activatedEffects
+	 * @return the mazePlayers
 	 */
-	public PriorityQueue<MazeEffect> getActivatedEffects() {
-		return activatedEffects;
+	public MazePlayer[] getMazePlayers() {
+		return mazePlayers;
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
+		Graphics2D g2d = (Graphics2D) g;
 		int tileWidth = this.getWidth() / size;
 		int tileHeight = this.getHeight() / size;
-		Graphics2D g2d = (Graphics2D) g;
 		
-		// draw base map
-		g2d.drawImage(this.image, 0, 0, this.getWidth(), this.getHeight(), null);
-
-		// draw effects
-		for (int i = 0; i < this.tiles.length; i++) {
-			for (int j = 0; j < this.tiles[i].length; j++) {
-				this.tiles[i][j].draw(g2d, j * tileHeight, i * tileWidth, tileWidth, tileHeight);
+		if (this.image != null) {
+			// draw base map
+			g2d.drawImage(this.image, 0, 0, this.getWidth(), this.getHeight(), null);
+	
+			// draw effects
+			for (int i = 0; i < this.tiles.length; i++) {
+				for (int j = 0; j < this.tiles[i].length; j++) {
+					this.tiles[i][j].draw(g2d, j * tileHeight, i * tileWidth, tileWidth, tileHeight);
+				}
+			}
+		}
+		if (this.mazePlayers != null) {
+			// draw players
+			for (MazePlayer p : this.mazePlayers) {
+				if (p != null) {
+					p.draw(g2d, tileWidth, tileHeight);
+				}
 			}
 		}
 		
-		// draw players
-		for (MazePlayer p : this.players) {
-			if (p != null) {
-				p.draw(g2d, tileWidth, tileHeight);
-			}
-		}
 		// ensure clean and up to date
 		Toolkit.getDefaultToolkit().sync();
 		g.dispose();
-	}
-	
-	/**
-	 * @author oliver
-	 * MazeJPanelTimer allows player listeners and repainting
-	 */
-	private class MazeJPanelTimer extends TimerTask {
-		private MazeGamePanel m;
-		
-		private MazeJPanelTimer(MazeGamePanel m) {
-			this.m = m;
-		}
-		
-		@Override
-		public void run() {
-			// update all the player
-			long curTime = System.currentTimeMillis();
-			for (Entry<Character, Long> e : this.m.getKeyPresses().entrySet()) {
-				long difference = curTime - e.getValue();
-	    		this.m.updatePlayerMovement(e.getKey(), difference);
-				this.m.getKeyPresses().put(e.getKey(), curTime);
-			}
-			// remove unnecessary boosts
-			PriorityQueue<MazeEffect> pq = m.getActivatedEffects();
-			while (!pq.isEmpty()) {
-				if (pq.peek().getEndTime() <= curTime) {
-					System.out.println("die potato");
-					pq.poll().deactivate(m);
-				} else {
-					break;
-				}
-			}
-			// repaint the maze since there are updates
-			this.m.repaint();
-		}
-	}
-	
-	/**
-	 * @author oliver
-	 * Key Listener for the Maze JPanel
-	 */
-	private class MazeJPanelKeyListener implements KeyListener {
-		private MazeGamePanel m;
-		
-		private MazeJPanelKeyListener(MazeGamePanel m) {
-			this.m = m;
-		}		
-		
-		public void keyTyped(KeyEvent e) {
-	    }
-
-	    public void keyPressed(KeyEvent e) {
-	    	char c = Character.toLowerCase(e.getKeyChar());
-	    	if (c >= 'a' && c <= 'z') {
-	    		// activate the next maze effect
-	    		MazePlayer[] mazePlayers = m.getPlayers();
-	    		for (int i = 0; i < mazePlayers.length; i++) {
-	    			if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c) {
-	    				mazePlayers[i].activateNextMazeEffect(m);
-	    			}
-	    		}
-	    		// make sure we register the player's key as pressed
-	    		this.m.getKeyPresses().put(c, System.currentTimeMillis());
-	    	}
-	    }
-
-	    public void keyReleased(KeyEvent e) {
-	    	char c = Character.toLowerCase(e.getKeyChar());
-	    	if (c >= 'a' && c <= 'z') {
-	    		// in case remove doesn't exist
-	    		Long releasedTime = this.m.getKeyPresses().remove(c);
-	    		if (releasedTime != null) {
-		    		// update the player's movement
-		    		long difference = System.currentTimeMillis() - releasedTime;
-		    		this.m.updatePlayerMovement(c, difference);
-	    		}
-	    	}
-	    }
-	}
-	
-	private enum TileType {
-		EVERYTHING,
-		THREE_INTERSECT_HORIZONTAL,
-		THREE_INTERSECT_VERTICAL,
-		RIGHT_ANGLE,
-		STRAIGHT_HORIZONTAL,
-		STRAIGHT_VERTICAL,
-		DEAD_END_HORIZONTAL,
-		DEAD_END_VERTICAL
 	}
 }
