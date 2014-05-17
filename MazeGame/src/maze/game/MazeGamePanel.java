@@ -200,124 +200,126 @@ public class MazeGamePanel extends JPanel {
 		}
 		
 		// ensure player is playing this game
-		MazePlayer p = this.mazePlayers[player];
-		if (p != null) {			
-			// prospective to destination
-			// moving from the current position + the distance movable per second * time key held 
-			double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * xDir);
-			double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * yDir);
-						
-			// get nearest obstacle x-ways
-			int tileWidth = this.getWidth() / size;
-			int tileHeight = this.getHeight() / size;
-			
-			int leeWayX = 0;
-			int leeWayY = 0;
-			
-			int maxLeeWayX = Math.max(tileWidth > 2 ? 2 : (tileWidth > 1 ? 1 : 0), (int) (tileWidth * 0.2));
-			int maxLeeWayY = Math.max(tileHeight > 2 ? 2 : (tileHeight > 0 ? 1 : 0), (int) (tileHeight * 0.2));
-						
-			// since being EXACT is hard, we allow a little bit of leeway
-			// for players, so turning corners is nicer
-			// calculate distance from the start of current tile
-			int distFromTileStartX = (int) p.getPosX() % tileWidth;			
-			if (distFromTileStartX + maxLeeWayX > tileWidth) {
-				// you are almost at the end of one tile
-				// make it so that you are there
-				leeWayX = tileWidth - distFromTileStartX;
-			} else if (distFromTileStartX < maxLeeWayX) {
-				// you are almost at the start of the tile
-				// shift yourself there
-				leeWayX = -distFromTileStartX;
-			}
-			
-			// do something similar for y
-			int distFromTileStartY = (int) p.getPosY() % tileHeight;
-			if (distFromTileStartY + maxLeeWayY > tileHeight) {
-				leeWayY = tileHeight - distFromTileStartY;
-			} else if (distFromTileStartY < maxLeeWayY) {
-				leeWayY = -distFromTileStartY;
-			}
-			
-			// figure out which tiles the player is overlapping with
-			// we find the tile (in the array) of the leftmost tile
-			// and the tile at the right hand size
-			int currentTileXs[] = { (int) (p.getPosX()) / tileWidth, (int) ((p.getPosX() + tileWidth - 1) / tileWidth) } ;
-			int currentTileYs[] = { (int) (p.getPosY()) / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };
-			for (int tileX : currentTileXs) {
-				for (int tileY : currentTileYs) {
-					MazeEffect effect = this.tiles[tileY][tileX].getEffect();
-					if (effect != null) {
-						// activate effect
-						this.tiles[tileY][tileX].setEffect(null);
-						p.addMazeEffect(effect);				
-					}
-				}
-			}
-			
-			// add leeways to the tiles, so players don't bash against the wall
-			// if they're one pixel off
-			int tileXs[] = { (int) (p.getPosX() + leeWayX) / tileWidth, (int) ((p.getPosX() + tileWidth  + leeWayX - 1) / tileWidth) } ;
-			int tileYs[] = { (int) (p.getPosY() + leeWayY) / tileHeight, (int) ((p.getPosY() + tileHeight  + leeWayY - 1) / tileHeight) };
-			
-			// scan through all potential collisions between the player's current position
-			// and where there will potentially move to
-			for (int tileX : tileXs) {
-				for (int tileY : tileYs) {
-					int i;
+		if (this.mazePlayers.length > player) {
+			MazePlayer p = this.mazePlayers[player];
+			if (p != null) {			
+				// prospective to destination
+				// moving from the current position + the distance movable per second * time key held 
+				double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * xDir);
+				double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * yDir);
+							
+				// get nearest obstacle x-ways
+				int tileWidth = this.getWidth() / size;
+				int tileHeight = this.getHeight() / size;
 				
-					// check moving  positive in X direction
-					// looks for closest wall 
-					for (i = tileX + 1; i < size; i++) {
-						if (tiles[tileY][i].isWall()) {
-							break;
-						}
-					}
-					if (i < size) {
-						// make sure we don't go past the nearest wall
-						xTo = Math.min((i - 1) * tileWidth, xTo);
-					}
-					// vice versa for negative in X direction
-					for (i = tileX; i >= 0; i--) {
-						if (tiles[tileY][i].isWall()) {
-							break;
-						}
-					}
-					if (i >= 0) {
-						// make sure we don't go past that wall either
-						xTo = Math.max((i + 1) * tileWidth, xTo);
-					}
-					
-					// and we do the same thing for the Y direction
-				    for (i = tileY + 1; i < size; i++) {
-		                if (tiles[i][tileX].isWall()) {
-		                    break;
-		                }
-		            }
-		            if (i < size) {
-		                yTo = Math.min((i - 1) * tileHeight, yTo);
-		            }
-				    for (i = tileY; i >= 0; i--) {
-		                if (tiles[i][tileX].isWall()) {
-		                    break;
-		                }
-		            }
-		            if (i >= 0) {
-		                yTo = Math.max((i + 1) * tileHeight, yTo);
-		            }
+				int leeWayX = 0;
+				int leeWayY = 0;
+				
+				int maxLeeWayX = Math.max(tileWidth > 2 ? 2 : (tileWidth > 1 ? 1 : 0), (int) (tileWidth * 0.2));
+				int maxLeeWayY = Math.max(tileHeight > 2 ? 2 : (tileHeight > 0 ? 1 : 0), (int) (tileHeight * 0.2));
+							
+				// since being EXACT is hard, we allow a little bit of leeway
+				// for players, so turning corners is nicer
+				// calculate distance from the start of current tile
+				int distFromTileStartX = (int) p.getPosX() % tileWidth;			
+				if (distFromTileStartX + maxLeeWayX > tileWidth) {
+					// you are almost at the end of one tile
+					// make it so that you are there
+					leeWayX = tileWidth - distFromTileStartX;
+				} else if (distFromTileStartX < maxLeeWayX) {
+					// you are almost at the start of the tile
+					// shift yourself there
+					leeWayX = -distFromTileStartX;
 				}
+				
+				// do something similar for y
+				int distFromTileStartY = (int) p.getPosY() % tileHeight;
+				if (distFromTileStartY + maxLeeWayY > tileHeight) {
+					leeWayY = tileHeight - distFromTileStartY;
+				} else if (distFromTileStartY < maxLeeWayY) {
+					leeWayY = -distFromTileStartY;
+				}
+				
+				// figure out which tiles the player is overlapping with
+				// we find the tile (in the array) of the leftmost tile
+				// and the tile at the right hand size
+				int currentTileXs[] = { (int) (p.getPosX()) / tileWidth, (int) ((p.getPosX() + tileWidth - 1) / tileWidth) } ;
+				int currentTileYs[] = { (int) (p.getPosY()) / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };
+				for (int tileX : currentTileXs) {
+					for (int tileY : currentTileYs) {
+						MazeEffect effect = this.tiles[tileY][tileX].getEffect();
+						if (effect != null) {
+							// activate effect
+							this.tiles[tileY][tileX].setEffect(null);
+							p.addMazeEffect(effect);				
+						}
+					}
+				}
+				
+				// add leeways to the tiles, so players don't bash against the wall
+				// if they're one pixel off
+				int tileXs[] = { (int) (p.getPosX() + leeWayX) / tileWidth, (int) ((p.getPosX() + tileWidth  + leeWayX - 1) / tileWidth) } ;
+				int tileYs[] = { (int) (p.getPosY() + leeWayY) / tileHeight, (int) ((p.getPosY() + tileHeight  + leeWayY - 1) / tileHeight) };
+				
+				// scan through all potential collisions between the player's current position
+				// and where there will potentially move to
+				for (int tileX : tileXs) {
+					for (int tileY : tileYs) {
+						int i;
+					
+						// check moving  positive in X direction
+						// looks for closest wall 
+						for (i = tileX + 1; i < size; i++) {
+							if (tiles[tileY][i].isWall()) {
+								break;
+							}
+						}
+						if (i < size) {
+							// make sure we don't go past the nearest wall
+							xTo = Math.min((i - 1) * tileWidth, xTo);
+						}
+						// vice versa for negative in X direction
+						for (i = tileX; i >= 0; i--) {
+							if (tiles[tileY][i].isWall()) {
+								break;
+							}
+						}
+						if (i >= 0) {
+							// make sure we don't go past that wall either
+							xTo = Math.max((i + 1) * tileWidth, xTo);
+						}
+						
+						// and we do the same thing for the Y direction
+					    for (i = tileY + 1; i < size; i++) {
+			                if (tiles[i][tileX].isWall()) {
+			                    break;
+			                }
+			            }
+			            if (i < size) {
+			                yTo = Math.min((i - 1) * tileHeight, yTo);
+			            }
+					    for (i = tileY; i >= 0; i--) {
+			                if (tiles[i][tileX].isWall()) {
+			                    break;
+			                }
+			            }
+			            if (i >= 0) {
+			                yTo = Math.max((i + 1) * tileHeight, yTo);
+			            }
+					}
+				}
+				// bounded by 4 walls
+				xTo = Math.max(0, Math.min(xTo, tileWidth * (size - 1)));
+				yTo = Math.max(0, Math.min(yTo, tileHeight * (size - 1)));
+				// change direction to face
+				if (Math.abs(xTo - p.getPosX()) >= 0.01 || Math.abs(yTo - p.getPosY()) >= 0.01) {
+					p.setDirX(xDir);
+					p.setDirY(yDir);
+				}
+				// set position - but make sure we don't fall off the grid :)
+				p.setPosX(xTo);
+				p.setPosY(yTo);
 			}
-			// bounded by 4 walls
-			xTo = Math.max(0, Math.min(xTo, tileWidth * (size - 1)));
-			yTo = Math.max(0, Math.min(yTo, tileHeight * (size - 1)));
-			// change direction to face
-			if (Math.abs(xTo - p.getPosX()) >= 0.01 || Math.abs(yTo - p.getPosY()) >= 0.01) {
-				p.setDirX(xDir);
-				p.setDirY(yDir);
-			}
-			// set position - but make sure we don't fall off the grid :)
-			p.setPosX(xTo);
-			p.setPosY(yTo);
 		}		
 	}
 	
