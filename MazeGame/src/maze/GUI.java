@@ -12,6 +12,11 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -23,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 import maze.game.MazeBasePanel;
 import maze.generator.RandomMazeGenerator;
 
@@ -63,6 +70,7 @@ public class GUI implements ActionListener {
 		this.frame = frame;
 		this.difficulty = 5;
 		this.numPlayers = 2;
+		this.playMusic();
 	}
 	
 	
@@ -381,6 +389,30 @@ public class GUI implements ActionListener {
 	        super.paintComponent(G);
 	        G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
 	    }
-
+	}
+	
+	/***
+	 * Pump da music!
+	 * TODO: Continuous and mute
+	 * @param filename
+	 */
+	public void playMusic() {
+		String filename = "music/Pamgaea.wav";
+		InputStream in = null;
+		AudioStream as = null;
+		try {
+			//create audio data source
+			in = new FileInputStream(new File(filename));
+		} catch(FileNotFoundException fnfe) {
+			System.out.println("The audio file was not found");
+		}
+		
+		try {
+			//create audio stream from file stream
+			as = new AudioStream(in);
+		} catch(IOException ie) {
+			System.out.println("Audio stream could not be created");
+		}
+		AudioPlayer.player.start(as);
 	}
 }
