@@ -1,5 +1,6 @@
 package maze.effect;
 import java.awt.Graphics2D;
+import java.awt.Image;
 
 import maze.game.MazeGamePanel;
 import maze.game.MazePlayer;
@@ -35,4 +36,10 @@ public interface MazeEffect {
 	 * @param height height to draw
 	 */
 	public void draw(Graphics2D g2d, int x, int y, int width, int height);
+	
+	/**
+	 * Return the image of the effect
+	 * @return
+	 */
+	public Image getImage();
 }

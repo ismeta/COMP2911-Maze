@@ -58,5 +58,8 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		g2d.drawImage(this.image, x, y, width, height, null);
 	}
-
+	
+	public Image getImage() {
+		return this.image;
+	}
 }

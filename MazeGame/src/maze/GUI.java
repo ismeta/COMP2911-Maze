@@ -1,5 +1,6 @@
 package maze;
 
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -25,6 +26,9 @@ import javax.swing.JRadioButton;
 import maze.game.MazeBasePanel;
 import maze.generator.RandomMazeGenerator;
 
+/**
+ * @author davina
+ */
 public class GUI implements ActionListener {
 
 	private JFrame frame;
@@ -44,7 +48,7 @@ public class GUI implements ActionListener {
 	private JButton systemSaveButton;
 	private JButton systemBackButton;
 
-	private static final int TILE_SIZE_ORIGINAL = 30;
+	private static final int TILE_SIZE_ORIGINAL = 20;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 
 	private int difficulty;
@@ -299,7 +303,7 @@ public class GUI implements ActionListener {
 	 * Maze Card
 	 */
 	public void initialiseMazeCard() {
-		mazeCard = new MazeBasePanel();
+		mazeCard = new MazeBasePanel(this);
 		cards.add(mazeCard, "maze");
 		cards.setFocusable(true);
 	}
@@ -332,9 +336,9 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == optionsButton) {
 			cl.show(cards, "system");
 		} else if (e.getSource() == helpButton) {
-			cl.show(cards, "home");
+			this.displayHelpWindow();
 		} else if (e.getSource() == exitButton) {
-			this.frame.dispose();
+			this.dispose();
 		} else if (e.getSource() == playSaveButton) {
 			System.out.println(difficulty);
 			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
@@ -345,6 +349,23 @@ public class GUI implements ActionListener {
 				|| e.getSource() == systemBackButton) {
 			cl.show(cards, "home");
 		}
+	}
+	
+	/**
+	 * Display help window as pop up
+	 */
+	public void displayHelpWindow() {
+		JFrame help = new JFrame("Help");
+		help.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		help.setMinimumSize(new Dimension(500, 500));
+		help.setVisible(true);
+	}
+	
+	/**
+	 * Exit the app
+	 */
+	public void dispose() {
+		this.frame.dispose();
 	}
 	
 	private class ImagePanel extends JPanel {		

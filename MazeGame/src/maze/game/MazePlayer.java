@@ -1,5 +1,6 @@
 package maze.game;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,14 +22,13 @@ public class MazePlayer {
 	private double speedModifier;
 	private Queue<MazeEffect> effectQueue;
 	private BufferedImage image;
+	private MazePlayerPanel mazePlayerPanel;
 
 	/**
 	 * @param id
 	 *            the id of the player
-	 * @param color
-	 *            the color to draw the player
 	 */
-	public MazePlayer(int id) {
+	public MazePlayer(int id, MazePlayerPanel mazePlayerPanel) {
 		this.id = id;
 		this.posX = 0;
 		this.posY = 0;
@@ -36,6 +36,7 @@ public class MazePlayer {
 		this.dirY = 0;
 		this.speedModifier = 1.0;
 		this.effectQueue = new LinkedList<MazeEffect>();
+		this.mazePlayerPanel = mazePlayerPanel;
 
 		// generate transparent image
 		try {
@@ -44,7 +45,6 @@ public class MazePlayer {
 		} catch (IOException e) {
 			throw new RuntimeException("player image missing!");
 		}
-		
 	}
 	
 	/**
@@ -88,6 +88,7 @@ public class MazePlayer {
 			if (ef.getEndTime() >= System.currentTimeMillis()) {
 				m.getActivatedEffects().add(ef);
 			}
+			this.mazePlayerPanel.updateBuffs(this.effectQueue);
 		}
 	}
 
@@ -101,6 +102,10 @@ public class MazePlayer {
 		if (this.effectQueue.size() < MAX_EFFECTS) {
 			this.effectQueue.add(mf);
 		}
+		
+		/* Gui */
+		// Draw effect to buffs display
+		this.mazePlayerPanel.updateBuffs(this.effectQueue);
 	}
 
 	/**
@@ -206,6 +211,4 @@ public class MazePlayer {
 	public BufferedImage getImage() {
 		return image;
 	}
-	
-	
 }
