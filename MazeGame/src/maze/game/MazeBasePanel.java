@@ -1,7 +1,5 @@
 package maze.game;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
@@ -111,17 +109,13 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses = null;
 	}
 	
-	
-	
 	/**
 	 * @return the mazeGamePanel
 	 */
 	public MazeGamePanel getMazeGamePanel() {
 		return mazeGamePanel;
 	}
-
-
-
+	
 	/**
 	 * @author oliver
 	 * MazeJPanelTimer allows player listeners and repainting

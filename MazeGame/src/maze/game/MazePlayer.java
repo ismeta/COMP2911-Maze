@@ -149,9 +149,10 @@ public class MazePlayer {
 		Graphics2D g = (Graphics2D) g2d.create();
 		// rotate based on where we are going if orientation is set
 		if (orientation) {
-			g.rotate(Math.toRadians(dirX * 90 + (dirY == 0 ? 0 : (dirY + 1) * 90)), (int) this.posX + width/2, (int) this.posY + height/2);
+			Double rotateFactor = Math.PI / 2;
+			g.rotate(dirX * rotateFactor + (dirY == 0 ? 0 : (dirY + 1) * rotateFactor), ((int) this.posX) + width/2, ((int) this.posY) + height/2);
 		}
-		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
+		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);		
 		g.dispose();
 	}
 
