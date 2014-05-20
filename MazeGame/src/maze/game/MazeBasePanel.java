@@ -31,23 +31,6 @@ import maze.player.MazePlayer;
 import maze.player.MazePlayerPanel;
 
 public class MazeBasePanel extends JPanel {
-	private static final long serialVersionUID = 7399404361523168614L;
-	public static int REFRESH_RATE = 60;
-	public static final char[] MAZE_EFFECT_ACTIVATE_KEYS = { 'e', 'y', 'o' };
-	
-	private Timer timer;
-	private MazePlayer mazePlayers[];
-	private PriorityQueue<MazeEffect> activatedEffects;
-	private ConcurrentHashMap<Character, Long> keyPresses; 	
-	private MazeGamePanel mazeGamePanel;	
-	private Image image;
-	private GUI frameGui;
-	private GridBagConstraints g;
-	private long lastPauseTime;
-	
-	// maze state
-	private MazeGameState gameState;
-	
 	public MazeBasePanel(GUI frameGui) {
 		super(true);
 		this.setFocusable(true);
@@ -157,11 +140,14 @@ public class MazeBasePanel extends JPanel {
 	}
 
 	public void setup(int size, int numPlayers, MazeGenerator mazeGenerator, GUI gui) {
+		Color purple = new Color(174, 79, 255);
+		Color blue   = new Color(0, 156, 255);
 		
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors.add(Color.RED);
-		colors.add(new Color(174, 79, 255));
-		colors.add(new Color(0, 156, 255));
+		colors.add(purple);
+		colors.add(blue);
+		
 		// Gui
 		JPanel playerStatus = new JPanel();
 		playerStatus.setOpaque(false);
@@ -364,4 +350,27 @@ public class MazeBasePanel extends JPanel {
 	    	}
 	    }
 	}
+	
+	private static final long serialVersionUID = 7399404361523168614L;
+	
+	/* how often the maze should be refreshed every second */
+	public static int REFRESH_RATE = 60;
+	
+	/* the keys which activate maze effects for different players */
+	public static final char[] MAZE_EFFECT_ACTIVATE_KEYS = { 'e', 'y', 'o' };
+	
+	private Timer timer;
+	private MazePlayer mazePlayers[];
+	private PriorityQueue<MazeEffect> activatedEffects;
+	private ConcurrentHashMap<Character, Long> keyPresses; 
+	
+	private MazeGamePanel mazeGamePanel;
+	
+	private Image image;
+	private GUI frameGui;
+	private GridBagConstraints g;
+	private long lastPauseTime;
+	
+	/* the current state of the maze */
+	private MazeGameState gameState;
 }

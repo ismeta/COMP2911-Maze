@@ -37,29 +37,6 @@ import maze.generator.RandomMazeGenerator;
  * @author davina
  */
 public class GUI implements ActionListener {
-	private static final int TILE_SIZE_ORIGINAL = 20;
-	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
-
-	private JFrame frame;
-
-	private JPanel cards;
-	private ImagePanel homeCard;
-	private ImagePanel playOptionsCard;
-	private JPanel systemopsCard;
-	private MazeBasePanel mazeCard;
-
-	private JButton playButton;
-	private JButton optionsButton;
-	private JButton helpButton;
-	private JButton exitButton;
-	private JButton playSaveButton;
-	private JButton playBackButton;
-	private JButton systemSaveButton;
-	private JButton systemBackButton;
-
-	private int difficulty;
-	private int numPlayers;
-
 	/**
 	 * Gui
 	 * 
@@ -71,8 +48,6 @@ public class GUI implements ActionListener {
 		this.numPlayers = 2;
 		this.playMusic();
 	}
-	
-	
 
 	/**
 	 * @return the cards
@@ -80,8 +55,6 @@ public class GUI implements ActionListener {
 	public JPanel getCards() {
 		return cards;
 	}
-
-
 
 	/**
 	 * Generate card for card layout
@@ -375,21 +348,6 @@ public class GUI implements ActionListener {
 		this.frame.dispose();
 	}
 	
-	private class ImagePanel extends JPanel {		
-		private static final long serialVersionUID = 1;
-	    Image image;
-
-	    public void setBackground(Image image) {
-	        this.image = image;
-	    }
-
-	    @Override
-	    public void paintComponent(Graphics G) {
-	        super.paintComponent(G);
-	        G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
-	    }
-	}
-	
 	/***
 	 * Pump da music!
 	 * TODO: Continuous and mute
@@ -415,4 +373,45 @@ public class GUI implements ActionListener {
 		}
 		//AudioPlayer.player.start(as);
 	}
+	
+	private class ImagePanel extends JPanel {		
+		private static final long serialVersionUID = 1;
+	    Image image;
+
+	    public void setBackground(Image image) {
+	        this.image = image;
+	    }
+
+	    @Override
+	    public void paintComponent(Graphics G) {
+	        super.paintComponent(G);
+	        G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
+	    }
+	}
+	
+	/* approximate size of each maze tile */
+	private static final int TILE_SIZE_ORIGINAL = 20;
+	
+	/* actual size of each maze tile - required to be an odd number */
+	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
+
+	private JFrame frame;
+
+	private JPanel cards;
+	private ImagePanel homeCard;
+	private ImagePanel playOptionsCard;
+	private JPanel systemopsCard;
+	private MazeBasePanel mazeCard;
+
+	private JButton playButton;
+	private JButton optionsButton;
+	private JButton helpButton;
+	private JButton exitButton;
+	private JButton playSaveButton;
+	private JButton playBackButton;
+	private JButton systemSaveButton;
+	private JButton systemBackButton;
+
+	private int difficulty;
+	private int numPlayers;
 }

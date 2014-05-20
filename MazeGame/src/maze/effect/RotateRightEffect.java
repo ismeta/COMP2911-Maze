@@ -10,10 +10,11 @@ import javax.imageio.ImageIO;
 import maze.game.MazeGamePanel;
 import maze.player.MazePlayer;
 
+/**
+ * Effect which rotates the maze to the right by 90 degrees
+ * @author Oliver
+ */
 public class RotateRightEffect implements MazeEffect {
-	private static final String EFFECT_IMAGE = "images/sprites/rotateright.png";
-	private Image image;
-	
 	public RotateRightEffect() {
 		try {
 			this.image = ImageIO.read(new File(EFFECT_IMAGE));
@@ -46,7 +47,12 @@ public class RotateRightEffect implements MazeEffect {
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		g2d.drawImage(this.image, x, y, width, height, null);
 	}
+	
 	public Image getImage() {
 		return this.image;
 	}
+	
+	private static final String EFFECT_IMAGE = "images/sprites/rotateright.png";
+	
+	private Image image;
 }

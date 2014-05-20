@@ -17,14 +17,6 @@ import javax.swing.border.TitledBorder;
 import maze.effect.MazeEffect;
 
 public class MazePlayerPanel extends JPanel {
-	private static final long serialVersionUID = 2639646226913308598L;
-
-	private Color color;
-	private int playerID;
-	private Image img;
-	private Image buff;
-	private LinkedList<Image> buffs;
-	
 	/**
 	 * @param player
 	 */
@@ -78,4 +70,16 @@ public class MazePlayerPanel extends JPanel {
 		}
 		this.repaint();
 	}
+	
+	private static final long serialVersionUID = 2639646226913308598L;
+
+	/* colour of this panel */
+	private Color color;
+	
+	/* id of the player this panel displays information for */
+	private int playerID;
+	
+	private Image img;
+	private Image buff;
+	private LinkedList<Image> buffs;
 }

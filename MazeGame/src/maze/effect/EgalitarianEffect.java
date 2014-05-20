@@ -1,6 +1,3 @@
-/**
- * 
- */
 package maze.effect;
 
 import java.awt.Graphics2D;
@@ -16,8 +13,10 @@ import maze.game.MazeGamePanel;
 import maze.player.MazePlayer;
 
 /**
- * @author ness
- *
+ * This effect slows down the player/s closest to the end,
+ * the definition of 'closest' being the path distance rather
+ * than the straight-line distance to the goal.  
+ * @author Vanessa
  */
 public class EgalitarianEffect implements MazeEffect {
 
@@ -214,10 +213,16 @@ public class EgalitarianEffect implements MazeEffect {
 	}
 
 	private static final String IMAGE_FILE = "images/sprites/equalise.png";
+	
+	/* duration of the effect in milliseconds */
 	private static final long EFFECT_DURATION = 10000;
+	
+	/* the multiplier which the winning players' speeds should be slowed by */
 	private static final double SPEED_MODIFIER = 0.5;
 	
+	/* when the effect should finish */
 	private long endTime;
+	
 	private ArrayList<MazePlayer> winningPlayers;
 	private Image image;
 }

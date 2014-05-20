@@ -10,15 +10,12 @@ import javax.imageio.ImageIO;
 import maze.game.MazeGamePanel;
 import maze.player.MazePlayer;
 
+/**
+ * Effect which slows down every player except the player
+ * invoking the effect.
+ * @author Oliver
+ */
 public class GlobalSpeedDownEffect implements MazeEffect {
-	private static final String EFFECT_IMAGE = "images/sprites/slow.png";
-	
-	private static final long DURATION = 10000;
-	private static final double SPEED_MODIFIER = 0.75;
-	private long endTime;
-	private MazePlayer p;
-	private Image image;
-	
 	public GlobalSpeedDownEffect() {
 		try {
 			this.image = ImageIO.read(new File(EFFECT_IMAGE));
@@ -27,6 +24,9 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 		}
 	}
 	
+	/**
+	 * put the effect into action
+	 */
 	@Override
 	public void activate(MazeGamePanel m, MazePlayer p) {
 		this.p = p;
@@ -39,6 +39,9 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 		}
 	}
 
+	/**
+	 * @return when the effect should end.
+	 */
 	@Override
 	public long getEndTime() {
 		return endTime;
@@ -49,6 +52,9 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 		this.endTime += add;
 	}
 
+	/**
+	 * Deactivate the effect
+	 */
 	@Override
 	public void deactivate(MazeGamePanel m) {
 		// speed up other players
@@ -59,12 +65,30 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 		}
 	}
 
+	/**
+	 * Draw this effect at the specified coordinates.
+	 */
 	@Override
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		g2d.drawImage(this.image, x, y, width, height, null);
 	}
 	
+	/**
+	 * @return image for the effect.
+	 */
 	public Image getImage() {
 		return this.image;
 	}
+	
+	private static final String EFFECT_IMAGE = "images/sprites/slow.png";
+	
+	/* time that the effect should be in place - in milliseconds */
+	private static final long DURATION = 10000;
+	
+	/* multiplier to multiply the player's speed by for this effect */
+	private static final double SPEED_MODIFIER = 0.75;
+	
+	private long endTime;
+	private MazePlayer p;
+	private Image image;
 }

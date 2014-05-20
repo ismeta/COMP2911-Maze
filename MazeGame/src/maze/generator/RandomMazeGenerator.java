@@ -3,6 +3,12 @@ package maze.generator;
 import java.util.ArrayList;
 import java.util.Random;
 
+import maze.effect.EgalitarianEffect;
+import maze.effect.GlobalSpeedDownEffect;
+import maze.effect.MazeEffect;
+import maze.effect.RotateLeftEffect;
+import maze.effect.RotateRightEffect;
+import maze.effect.SelfSpeedUpEffect;
 import maze.game.MazeTile;
 
 /**
@@ -184,19 +190,17 @@ public class RandomMazeGenerator implements MazeGenerator {
 			}
 			
 			/* otherwise, make this a not-wall as well as the wall joining
-			 * it to the previous node
-			 */
+			 * it to the previous node */
 			tiles[p.x][p.y] = new MazeTile();
 			
 			/* the tile between this and the previous point can be fetched
-			 * by taking the midpoint of their coordinates.
-			 */
+			 * by taking the midpoint of their coordinates.	 */
 			tiles[(prev.x + p.x) / 2][(prev.y + p.y) / 2] = new MazeTile();
 			
 			/* update which set this tile belongs to (just whatever the previous
-			 * tile belonged to)
-			 */
+			 * tile belonged to) */
 			inStartSet[p.x][p.y] = inStartSet[prev.x][prev.y];
+			
 			/* add the tiles around it to the to-be-visited list */
 			tilesToVisit.add(new PointState(new Point(p.x + 2, p.y), p));
 			tilesToVisit.add(new PointState(new Point(p.x, p.y + 2), p));
@@ -208,8 +212,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		}
 		
 		/* Phase 2: remove n walls between the start and goal tiles, where
-		 * n is a number of our choosing.
-		 */
+		 * n is a number of our choosing. */
 		Point wallToRemove;
 		
 		/* This is a naive measure of difficulty - we should change this later */
@@ -218,7 +221,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		while (wallsToRemove > 0 && boundaries.size() > 0) {
 			/* remove a random wall */
 			wallToRemove = boundaries.remove(rand.nextInt(boundaries.size()));
-			/*wallToRemove = boundaries.remove(boundaries.size() - 1);*/
+			
 			tiles[wallToRemove.x][wallToRemove.y] = new MazeTile();
 			wallsToRemove--;
 		}
@@ -233,6 +236,110 @@ public class RandomMazeGenerator implements MazeGenerator {
 				}
 			}
 		}
+		
+		/* (optional) Phase 4: generate some boosts! */
+		generateBoosts(tiles);
+	}
+	
+	/**
+	 * Adds boosts to the tiles.
+	 * - Speed boosts are added randomly to deadends
+	 * - Board rotations are added randomly to any tile
+	 * @param tiles The maze to add boosts to.
+	 */
+	private void generateBoosts(MazeTile[][] tiles) {
+		Random rand = new Random();
+		
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				MazeEffect effect;
+				
+				/* if it's a wall or the start/goal tile then don't bother
+				 * putting boosts on this tile  */
+				if (tiles[i][j].isWall() || tiles[i][j].isGoal() || 
+						(i == this.startP.x || j == this.startP.y)) {
+					continue;
+				}
+				
+				/* if we have one neighbour then we're at a dead end - so generate
+				 * a speed boost otherwise generate one of the other boosts */
+				if (numPathNeighbours(tiles, i, j) == 1) {
+					/* only proceed for a small percentage of cases - there are
+					 * 'usableTiles' possible tiles we can put boosts on. */
+					if (rand.nextDouble() >= SPEED_BOOST_ADUNDANCE) {
+						continue;
+					}
+					
+					/* change the integer bound based on the number of possible effects! */
+					int choice = rand.nextInt(3);
+					
+					switch (choice) {
+						case 0:
+							effect = new GlobalSpeedDownEffect();
+							break;
+						case 1:
+							effect = new SelfSpeedUpEffect();
+							break;
+						case 2:
+							effect = new EgalitarianEffect();
+							break;
+						default:
+							throw new RuntimeException(
+									"random generated too large a number! " + choice);
+					}
+				} else {
+					/* only proceed for a small percentage of cases - there are
+					 * 'usableTiles' possible tiles we can put boosts on. */
+					if (rand.nextDouble() >= ROTATE_BOOST_ABUNDANCE) {
+						continue;
+					}
+					
+					/* change the integer bound based on the number of possible effects! */
+					int choice = rand.nextInt(2);
+					
+					switch (choice) {
+						case 0:
+							effect = new RotateLeftEffect();
+							break;
+						case 1:
+							effect = new RotateRightEffect();
+							break;
+						default:
+							throw new RuntimeException(
+									"random generated too large a number! " + choice);
+					}
+				}
+				
+				/* set the effect for the tile! */
+				tiles[i][j].setEffect(effect);
+			}
+		}
+	}
+	
+	/**
+	 * Checks how many neighbours of the specified tile are part of the path
+	 * @param tiles the maze tiles
+	 * @param x 
+	 * @param y
+	 */
+	private int numPathNeighbours(MazeTile[][] tiles, int x, int y) {
+		int neighbours = 0;
+		
+		/* check all around ourselves! */
+		if (x > 0 && !tiles[x - 1][y].isWall()) {
+			neighbours++;
+		}
+		if (y > 0 && !tiles[x][y - 1].isWall()) {
+			neighbours++;
+		}
+		if (x < size - 1 && !tiles[x + 1][y].isWall()) {
+			neighbours++;
+		}
+		if (y < size - 1 && !tiles[x][y + 1].isWall()) {
+			neighbours++;
+		}
+		
+		return neighbours;
 	}
 	
 	/**
@@ -314,6 +421,12 @@ public class RandomMazeGenerator implements MazeGenerator {
 		public final Point current;
 		public final Point previous;
 	}
+	
+	/* approximately what percentage of the maze should contain boosts
+	 * If set to one, all non-wall and non-start/end tiles will contain
+	 * boosts. If set to zero, no tiles will contain any boosts. */
+	private static final double SPEED_BOOST_ADUNDANCE = 0.20;
+	private static final double ROTATE_BOOST_ABUNDANCE = 0.01;
 	
 	private final int size;
 	private int difficulty;

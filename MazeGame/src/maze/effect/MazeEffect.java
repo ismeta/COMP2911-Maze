@@ -5,8 +5,6 @@ import java.awt.Image;
 import maze.game.MazeGamePanel;
 import maze.player.MazePlayer;
 
-
-
 public interface MazeEffect {
 	/**
 	 * What the boost will do upon activation
@@ -43,10 +41,7 @@ public interface MazeEffect {
 	public void draw(Graphics2D g2d, int x, int y, int width, int height);
 	
 	/**
-	 * Return the image of the effect
-	 * @return
+	 * @return the image of the effect
 	 */
 	public Image getImage();
-	
-	
 }

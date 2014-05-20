@@ -14,13 +14,10 @@ import maze.game.MazeGamePanel;
 import maze.player.MazePlayer;
 
 /**
+ * Effect which rotates the board to the left by 90 degrees.
  * @author oliver
- *
  */
 public class RotateLeftEffect implements MazeEffect {
-	private static final String EFFECT_IMAGE = "images/sprites/rotateleft.png";
-	private Image image;
-	
 	public RotateLeftEffect() {
 		try {
 			this.image = ImageIO.read(new File(EFFECT_IMAGE));
@@ -59,4 +56,7 @@ public class RotateLeftEffect implements MazeEffect {
 		return this.image;
 	}
 
+	private static final String EFFECT_IMAGE = "images/sprites/rotateleft.png";
+	
+	private Image image;
 }
