@@ -12,20 +12,10 @@ import javax.imageio.ImageIO;
 import maze.effect.MazeEffect;
 import maze.game.MazeBasePanel;
 
+/**
+ * Representation of a player within the game.
+ */
 public class MazePlayer {
-	private static final int UNRANKED = 0;
-	
-	public static final int MAX_EFFECTS = 2;
-	private int id;
-	private double posX;
-	private double posY;
-	private MazePlayerDirection direction;
-	private double speedModifier;
-	private Queue<MazeEffect> effectQueue;
-	private BufferedImage image;
-	private MazePlayerPanel mazePlayerPanel;
-	private int ranking;
-	
 	/**
 	 * @param id
 	 *            the id of the player
@@ -91,8 +81,7 @@ public class MazePlayer {
 			this.effectQueue.add(mf);
 		}
 		
-		/* Gui */
-		// Draw effect to buffs display
+		/* Gui - Draw effect to buffs display */
 		this.mazePlayerPanel.updateBuffs(this.effectQueue);
 	}
 
@@ -138,14 +127,16 @@ public class MazePlayer {
 	 * @param inGame whether this is the in game drawing
 	 */
 	public void draw(Graphics2D g2d, int width, int height, boolean inGame) {
-		// clone car graphics instance
+		/* clone car graphics instance */
 		Graphics2D g = (Graphics2D) g2d.create();
-		// rotate based on where we are going if orientation is set
+		
+		/* rotate based on where we are going */
 		if (inGame) {
 			Double rotateFactor = Math.PI / 2;			
 			g.rotate(rotateFactor * this.direction.ordinal(), ((int) this.posX) + width/2, ((int) this.posY) + height/2);
 		}
-		// draw as long as player is unranked
+		
+		/* draw as long as player is unranked */
 		if (!inGame || this.ranking == UNRANKED) {
 			g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
 		}
@@ -217,6 +208,35 @@ public class MazePlayer {
 	public void setRanking(int ranking) {
 		this.ranking = ranking;
 	}
+
+	/* use this to denote a player's ranking if they haven't finished */
+	private static final int UNRANKED = 0;
 	
+	/* maximum number of effects that a player can hold at one time */
+	public static final int MAX_EFFECTS = 2;
 	
+	private int id;
+	
+	/* player's current position (in pixels) on the board */
+	private double posX;
+	private double posY;
+	
+	/* which direction the player is facing */
+	private MazePlayerDirection direction;
+	
+	/* their speed multiplier: 1 represents a normal speed, higher represents
+	 * a faster speed and lower represents a lower speed */
+	private double speedModifier;
+	
+	/* the effects that a player is in possession of - should not
+	 * have more than MAX_EFFECTS effects in the queue at one time */
+	private Queue<MazeEffect> effectQueue;
+	
+	/* the image to display for this player */
+	private BufferedImage image;
+	
+	private MazePlayerPanel mazePlayerPanel;
+	
+	/* what position they finished in - or UNRANKED if they haven't finished */
+	private int ranking;
 }

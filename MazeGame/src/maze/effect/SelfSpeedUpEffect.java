@@ -14,16 +14,10 @@ import maze.game.MazeGamePanel;
 import maze.player.MazePlayer;
 
 /**
- * @author oliver
- *
+ * Effect which increases the speed of the invoking player.
+ * @author Oliver
  */
 public class SelfSpeedUpEffect implements MazeEffect {
-	private static final String EFFECT_IMAGE = "images/sprites/speedup.png";
-	private static final long DURATION = 10000;
-	private static final double SPEED_MODIFIER = 2.0;
-	private long endTime;
-	private MazePlayer p;
-	private Image image;
 	
 	public SelfSpeedUpEffect() {
 		try {
@@ -63,4 +57,16 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	public Image getImage() {
 		return this.image;
 	}
+
+	private static final String EFFECT_IMAGE = "images/sprites/speedup.png";
+	
+	/* duration in milliseconds of the effect */
+	private static final long DURATION = 10000;
+	
+	/* multiplier for the current player's speed when effect is activated */
+	private static final double SPEED_MODIFIER = 2.0;
+	
+	private long endTime;
+	private MazePlayer p;
+	private Image image;
 }

@@ -5,13 +5,10 @@ import java.awt.Rectangle;
 
 import maze.effect.MazeEffect;
 
-
+/**
+ * Represents a tile in the maze.
+ */
 public class MazeTile {
-	private boolean isWall;
-	private boolean isGoal;
-	/* effect stored on maze */
-	private MazeEffect effect;
-	
 	public MazeTile() {
 		this.isWall = false;
 		this.isGoal = false;
@@ -72,4 +69,10 @@ public class MazeTile {
 		}
 		
 	}
+	
+	private boolean isWall;
+	private boolean isGoal;
+	
+	/* effect on this tile */
+	private MazeEffect effect;
 }

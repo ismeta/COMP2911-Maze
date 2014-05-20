@@ -220,7 +220,9 @@ public class EgalitarianEffect implements MazeEffect {
 	/* the multiplier which the winning players' speeds should be slowed by */
 	private static final double SPEED_MODIFIER = 0.5;
 	
+	/* when the effect should finish */
 	private long endTime;
+	
 	private ArrayList<MazePlayer> winningPlayers;
 	private Image image;
 }

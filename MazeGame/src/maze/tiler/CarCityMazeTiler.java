@@ -42,6 +42,9 @@ public class CarCityMazeTiler implements MazeTiler {
 		}
 	}	
 	
+	/**
+	 * Set the image tiles for the maze.
+	 */
 	@Override
 	public void tileMaze() {
 		this.image = new BufferedImage(this.tileWidth, this.tileHeight, BufferedImage.TYPE_INT_ARGB);
@@ -49,6 +52,8 @@ public class CarCityMazeTiler implements MazeTiler {
 		
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
+				/* tile it differently depending on whether the current tile
+				 * is a wall or not  */
 				if (!tiles[i][j].isWall()) {
 					int neighbours = numNeighbours(i, j);
 					setTileImage(imageG2D, i, j, neighbours);
@@ -65,6 +70,12 @@ public class CarCityMazeTiler implements MazeTiler {
 		return this.image;
 	}
 	
+	/**
+	 * Sets a wall image for a given tile.
+	 * @param imageG2D
+	 * @param i which row to set the image for
+	 * @param j which column to set the image for
+	 */
 	private void setWallImage(Graphics2D imageG2D, int i, int j) {
 		int width = this.tileWidth / size;
 		int height = this.tileHeight / size;
@@ -72,7 +83,7 @@ public class CarCityMazeTiler implements MazeTiler {
 		int y = i * height;
 		
 		Image img = null;
-		if (i % 4 == 0 || i % 6 == 0 || i % 2 == 0) {
+		if (i % 2 == 0) {
 			img = new ImageIcon("images/tiles/house.png").getImage();
 		} else if (j % 4 == 0 || j % 6 == 0) {
 			img = new ImageIcon("images/tiles/building.png").getImage();
@@ -82,13 +93,22 @@ public class CarCityMazeTiler implements MazeTiler {
 		imageG2D.drawImage(img, x, y, width, height, null);
 	}
 	
-	
+	/**
+	 * Set the image for a tile based on the tiles around it - i.e.
+	 * what kind of intersection it is. Rotates the image based on 
+	 * where the walls are.
+	 * @param imageG2D
+	 * @param i the row of the tile
+	 * @param j the column of the tile
+	 * @param neighbours the number of non-wall neighbours the tile has
+	 */
 	private void setTileImage(Graphics2D imageG2D, int i, int j, int neighbours) {
 		BufferedImage tileImage = null;
 		boolean flipX = false;
 		boolean flipY = false;
 		
 		switch (neighbours) {
+			/* one neighbour means that this tile is a dead end */
 			case 1:
 				if (j < size - 1 && !tiles[i][j + 1].isWall()) {
 					tileImage = tileImages[CarMazeCityTileType.DEAD_END_HORIZONTAL.ordinal()];
@@ -102,6 +122,9 @@ public class CarCityMazeTiler implements MazeTiler {
 					tileImage = tileImages[CarMazeCityTileType.DEAD_END_VERTICAL.ordinal()];
 				} 
 				break;
+				
+			/* two neighbours means that it either is a right angled intersection,
+			 * or is just a straight line - just a continuation of a road. */
 			case 2:
 				if ((j > 0 && j < size - 1) && !tiles[i][j - 1].isWall() && !tiles[i][j+1].isWall()) {
 					tileImage = tileImages[CarMazeCityTileType.STRAIGHT_HORIZONTAL.ordinal()];
@@ -122,6 +145,8 @@ public class CarCityMazeTiler implements MazeTiler {
 				}
 				
 				break;
+				
+			/* 3 - T intersection! */
 			case 3:
 				if (j == size - 1 || (j < size - 1 && tiles[i][j + 1].isWall())) {
 					tileImage = tileImages[CarMazeCityTileType.THREE_INTERSECT_VERTICAL.ordinal()];
@@ -135,17 +160,24 @@ public class CarCityMazeTiler implements MazeTiler {
 					flipY = true;
 				}
 				break;
+				
+			/* four neighbours is the easiest case - big intersection! */
 			case 4:
 				tileImage = tileImages[CarMazeCityTileType.EVERYTHING.ordinal()];
 				break;
 			default:
-				throw new RuntimeException("you fucked up");
+				throw new RuntimeException("illegal number of neighbours: " + neighbours);
 		}
 		
+		/* figure out how wide each tile is */
 		int width = (int) this.tileWidth / size;
 		int height = (int) this.tileHeight / size;
+		
+		/* figure out where on the screen we need to draw the tile */
 		int x = j * width;
 		int y = i * height;
+		
+		/* actually draw the image - employ some flipping if necessary  */
 		if (flipX && !flipY) {
 			imageG2D.drawImage(tileImage, x + width, y, -width, height, null);
 		} else if (flipX && flipY) {
