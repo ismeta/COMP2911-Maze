@@ -13,6 +13,8 @@ import maze.effect.MazeEffect;
 import maze.game.MazeBasePanel;
 
 public class MazePlayer {
+	private static final int UNRANKED = 0;
+	
 	public static final int MAX_EFFECTS = 2;
 	private int id;
 	private double posX;
@@ -22,7 +24,8 @@ public class MazePlayer {
 	private Queue<MazeEffect> effectQueue;
 	private BufferedImage image;
 	private MazePlayerPanel mazePlayerPanel;
-
+	private int ranking;
+	
 	/**
 	 * @param id
 	 *            the id of the player
@@ -35,6 +38,7 @@ public class MazePlayer {
 		this.speedModifier = 1.0;
 		this.effectQueue = new LinkedList<MazeEffect>();
 		this.mazePlayerPanel = mazePlayerPanel;
+		this.ranking = UNRANKED;
 
 		// generate transparent image
 		try {
@@ -131,18 +135,20 @@ public class MazePlayer {
 	 *            width of player
 	 * @param height
 	 *            height of player
-	 * @param orientation whether to take the direction player is facing into account
+	 * @param inGame whether this is the in game drawing
 	 */
-	public void draw(Graphics2D g2d, int width, int height, boolean orientation) {
+	public void draw(Graphics2D g2d, int width, int height, boolean inGame) {
 		// clone car graphics instance
 		Graphics2D g = (Graphics2D) g2d.create();
 		// rotate based on where we are going if orientation is set
-		if (orientation) {
-			Double rotateFactor = Math.PI / 2;
-			
+		if (inGame) {
+			Double rotateFactor = Math.PI / 2;			
 			g.rotate(rotateFactor * this.direction.ordinal(), ((int) this.posX) + width/2, ((int) this.posY) + height/2);
 		}
-		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);		
+		// draw as long as player is unranked
+		if (!inGame || this.ranking == UNRANKED) {
+			g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);
+		}
 		g.dispose();
 	}
 
@@ -197,4 +203,20 @@ public class MazePlayer {
 	public BufferedImage getImage() {
 		return image;
 	}
+
+	/**
+	 * @return the ranking
+	 */
+	public int getRanking() {
+		return ranking;
+	}
+
+	/**
+	 * @param ranking the ranking to set
+	 */
+	public void setRanking(int ranking) {
+		this.ranking = ranking;
+	}
+	
+	
 }

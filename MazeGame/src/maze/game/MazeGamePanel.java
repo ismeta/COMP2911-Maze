@@ -44,7 +44,8 @@ public class MazeGamePanel extends JPanel {
 	private MazePlayer[] mazePlayers;
 	// preferred dimensions
 	private int maxHeight, maxWidth;
-	
+	// current ranking
+	private int minRanking;	
 	
 	public MazeGamePanel(int maxHeight, int maxWidth) {
 		// double buffered JPanel
@@ -356,6 +357,12 @@ public class MazeGamePanel extends JPanel {
 				// set position - but make sure we don't fall off the grid :)
 				p.setPosX(xTo);
 				p.setPosY(yTo);
+				
+				// are we ABSOLUTELY at the goal?
+				if (this.mazeTiles[(int) (p.getPosY() / tileHeight)][(int) (p.getPosX() / tileWidth)].isGoal() &&
+						this.mazeTiles[(int) ((p.getPosY() + tileHeight) / tileHeight)][(int) ((p.getPosX() + tileWidth) / tileWidth)].isGoal()) {
+					p.setRanking(this.minRanking++);
+				}
 			}
 		}		
 	}
@@ -381,6 +388,22 @@ public class MazeGamePanel extends JPanel {
 		return size;
 	}
 	
+	
+	
+	/**
+	 * @return the minRanking
+	 */
+	public int getMinRanking() {
+		return minRanking;
+	}
+
+	/**
+	 * @param minRanking the minRanking to set
+	 */
+	public void setMinRanking(int minRanking) {
+		this.minRanking = minRanking;
+	}
+
 	/**
 	 * Takes an array of size at least 2 and writes the player's coordinates
 	 * into the first two locations in the array. location[0] will store

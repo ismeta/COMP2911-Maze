@@ -259,6 +259,14 @@ public class MazeBasePanel extends JPanel {
 		this.frameGui.dispose();
 	}
 	
+
+	public void checkGameOver() {
+		// all players assigned rank
+		if (this.mazeGamePanel.getMinRanking() == this.mazePlayers.length) {
+			this.gameState = MazeGameState.FINISHED;
+		}
+	}
+	
 	/**
 	 * @return the mazeGamePanel
 	 */
@@ -273,6 +281,7 @@ public class MazeBasePanel extends JPanel {
 	public MazeGameState getGameState() {
 		return gameState;
 	}
+	
 
 
 	/**
@@ -310,8 +319,6 @@ public class MazeBasePanel extends JPanel {
 			}
 		}
 	}
-	
-	
 	
 	/**
 	 * @author oliver
