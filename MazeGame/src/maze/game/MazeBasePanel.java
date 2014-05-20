@@ -225,7 +225,7 @@ public class MazeBasePanel extends JPanel {
 	public void unpause() {
 		long pauseDuration = System.currentTimeMillis() - this.lastPauseTime;
 		for (MazeEffect me : this.activatedEffects) {
-			me.addEndTime(pauseDuration)
+			me.addEndTime(pauseDuration);
 		}
 		this.gameState = MazeGameState.PLAYING;
 	}
