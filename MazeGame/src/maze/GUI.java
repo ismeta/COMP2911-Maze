@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import maze.game.MazeBasePanel;
-import maze.generator.maze.RecursiveBacktrackerMazeGenerator;
+import maze.generator.maze.RandomMazeGenerator;
 import sun.audio.AudioStream;
 
 /**
@@ -320,8 +320,8 @@ public class GUI implements ActionListener {
 			this.dispose();
 		} else if (e.getSource() == playSaveButton) {
 			System.out.println(difficulty);
-			mazeCard.setup(TILE_SIZE, numPlayers, new RecursiveBacktrackerMazeGenerator(TILE_SIZE), this);
-			//mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
+			//mazeCard.setup(TILE_SIZE, numPlayers, new RecursiveBacktrackerMazeGenerator(TILE_SIZE), this);
+			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
 			cl.show(cards, "maze");
 		} else if (e.getSource() == playBackButton) {
 			cl.show(cards, "home");
