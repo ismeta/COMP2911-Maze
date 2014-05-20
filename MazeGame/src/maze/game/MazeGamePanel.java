@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
+import maze.effect.EgalitarianEffect;
 import maze.effect.GlobalSpeedDownEffect;
 import maze.effect.MazeEffect;
 import maze.effect.RotateLeftEffect;
@@ -81,6 +82,7 @@ public class MazeGamePanel extends JPanel {
 		this.mazeTiles[4][0].setEffect(new GlobalSpeedDownEffect());
 		this.mazeTiles[4][4].setEffect(new RotateLeftEffect());
 		this.mazeTiles[6][6].setEffect(new RotateRightEffect());
+		this.mazeTiles[8][8].setEffect(new EgalitarianEffect());
 
 		// tile maze
 		this.mazeTiler = new CarCityMazeTiler(mazeTiles, size, (int) this.getPreferredSize().getHeight(), (int) this.getPreferredSize().getWidth());
