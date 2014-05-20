@@ -65,8 +65,13 @@ public class MazeGamePanel extends JPanel {
 		this.setPreferredSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));
 		this.setMinimumSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));
 		
-		// generate tiles;
+		// generate tiles - startX, startY represent the x-y coordinate
+		// of the starting tile for all the players
+		int startX = 0;
+		int startY = 0;
+		
 		this.tiles = new MazeTile[size][size];
+		mazeGenerator.setStartTile(startX, startY);
 		mazeGenerator.setDifficulty(10);
 		mazeGenerator.generateMaze(this.tiles);
 		
@@ -83,6 +88,25 @@ public class MazeGamePanel extends JPanel {
 		
 		// add players
 		this.mazePlayers = mazePlayers;
+		
+		int carDirX = 0;
+		int carDirY = 0;
+		
+		/* determine the starting direction of the car */
+		if (startX > 0 && !this.tiles[startX - 1][startY].isWall()) {
+			carDirY = -1;
+		} else if (startX < size - 1 && !this.tiles[startX + 1][startY].isWall()) {
+			carDirY = 1;
+		} else if (startY > 0 && !this.tiles[startX][startY - 1].isWall()) {
+			carDirX = -1;
+		} else {
+			carDirX = 1;
+		}
+		
+		for (MazePlayer player : this.mazePlayers) {
+			player.setDirY(carDirY);
+			player.setDirX(carDirX);
+		}
 	}
 	
 		
