@@ -1,14 +1,27 @@
 package maze.game;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import maze.GUI;
@@ -27,18 +40,95 @@ public class MazeBasePanel extends JPanel {
 	
 	private MazeGamePanel mazeGamePanel;
 	
-	public MazeBasePanel() {
+	private Image image;
+	private GUI frameGui;
+	private GridBagConstraints g;
+	
+	public MazeBasePanel(GUI frameGui) {
 		super(true);
 		this.setFocusable(true);
 		
+		this.setLayout(new GridBagLayout());
 		this.timer = null;
 		this.mazePlayers = null;
 		this.activatedEffects = null;
 		this.keyPresses = null;
-		this.mazeGamePanel = new MazeGamePanel(600, 600);
-		this.add(this.mazeGamePanel);
+		this.mazeGamePanel = new MazeGamePanel(800, 800);
+		this.image = null;
+		this.frameGui = frameGui;
+		this.setupGui();
 	}
 	
+	/**
+	 * @author davina
+	 */
+	private void setupGui() {
+		// Header
+		JPanel header = new JPanel();
+		header.setPreferredSize(new Dimension(700, 65));
+		header.setOpaque(false);
+		
+		g = new GridBagConstraints();
+		g.gridx = 1;
+		g.gridy = 0;
+		g.weighty = 1;
+		this.add(header, g);
+		
+		// Buttons
+		JButton pause = new JButton(new ImageIcon("images/player/pauseb.png"));
+		pause.setBorderPainted(false);
+		pause.setContentAreaFilled(false);
+		
+		JButton help = new JButton(new ImageIcon("images/player/help.png"));
+		help.setBorderPainted(false);
+		help.setContentAreaFilled(false);
+		
+		JButton exit = new JButton(new ImageIcon("images/player/exit.png"));
+		exit.setBorderPainted(false);
+		exit.setContentAreaFilled(false);
+		
+		header.add(pause);
+		header.add(help);
+		header.add(exit);
+		
+		// Action Listeners for buttons
+		exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	frameGui.dispose();
+            }
+        });
+		
+		help.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	frameGui.displayHelpWindow();
+            }
+        });
+		
+		// Game panel
+		g.anchor = GridBagConstraints.NORTH;
+		g.gridwidth = 1;
+		g.gridx = 0;
+		g.gridy = 1;
+		g.weightx = 0.1;
+		this.add(this.mazeGamePanel, g);
+		
+		// Background
+		Image img = new ImageIcon("images/gui/nature.png").getImage();
+		this.setBackground(img);
+	}
+	
+    public void setBackground(Image image) {
+        this.image = image;
+    }
+
+    @Override
+    public void paintComponent(Graphics G) {
+        super.paintComponent(G);
+        G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
+    }
+    
 	/**
 	 * @return the mazePlayers
 	 */
@@ -61,15 +151,39 @@ public class MazeBasePanel extends JPanel {
 	}
 
 	public void setup(int size, int numPlayers, MazeGenerator mazeGenerator, GUI gui) {
+		
+		LinkedList<Color> colors = new LinkedList<Color>();
+		colors.add(Color.RED);
+		colors.add(new Color(174, 79, 255));
+		colors.add(new Color(0, 156, 255));
+		// Gui
+		JPanel playerStatus = new JPanel();
+		playerStatus.setOpaque(false);
+		playerStatus.setLayout(new GridBagLayout());
+		
 		// make da players
 		this.mazePlayers = new MazePlayer[numPlayers];
+		
+		int padding = 200 / numPlayers;
 		for (int i = 0; i < numPlayers; i++) {
-			this.mazePlayers[i] = new MazePlayer(i);
-			
+			MazePlayerPanel s = new MazePlayerPanel(colors.get(i), i);
+			this.mazePlayers[i] = new MazePlayer(i, s);
 			// temporary
-			MazePlayerPanel s = new MazePlayerPanel(this.mazePlayers[i]);
-			this.add(s);
+			//MazePlayerPanel s = new MazePlayerPanel(this.mazePlayers[i]);
+			// Gui
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridx = 0;
+			gbc.gridy = i;
+			gbc.weighty = 0.5;
+			gbc.insets = new Insets(0,0,padding,0);
+			playerStatus.add(s, gbc);
+			
 		}
+		g.anchor = GridBagConstraints.CENTER;
+		g.gridx = 1;
+		g.gridy = 1;
+		this.add(playerStatus, g);
+		
 		
 		// now we can #mazeit
 		this.mazeGamePanel.setup(size, mazeGenerator, this.mazePlayers);
@@ -77,7 +191,11 @@ public class MazeBasePanel extends JPanel {
 		// maze keypresses and listener
 		this.keyPresses = new ConcurrentHashMap<Character, Long>();
 		this.addKeyListener(new MazeBasePanelKeyListener(this));
-		gui.getCards().addKeyListener(new MazeBasePanelKeyListener(this));
+		Component parent = this.getParent();
+		while (parent != null) {
+			parent.addKeyListener(new MazeBasePanelKeyListener(this));
+			parent = parent.getParent();
+		}
 		
 		// create the effects PQ
 		this.activatedEffects = new PriorityQueue<MazeEffect>(10, new Comparator<MazeEffect>() {
@@ -92,7 +210,7 @@ public class MazeBasePanel extends JPanel {
 		this.timer.scheduleAtFixedRate(new MazeBasePanelTimer(this), 0, 1000 / REFRESH_RATE);
 	}
 	
-	public void exit(GUI gui) {
+	public void exit() {
 		this.timer.purge();
 		this.timer = null;
 		
@@ -103,10 +221,16 @@ public class MazeBasePanel extends JPanel {
 		
 		for (KeyListener kl : this.getKeyListeners()) {
 			this.removeKeyListener(kl);
-			gui.getCards().removeKeyListener(kl);
+			Component parent = this.getParent();
+			while (parent != null) {
+				parent.removeKeyListener(kl);
+				parent = parent.getParent();
+			}
 		}
 		this.keyPresses.clear();
 		this.keyPresses = null;
+		
+		this.frameGui.dispose();
 	}
 	
 	/**

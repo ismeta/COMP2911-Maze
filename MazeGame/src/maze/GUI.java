@@ -1,5 +1,6 @@
 package maze;
 
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -11,6 +12,11 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -22,9 +28,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 import maze.game.MazeBasePanel;
 import maze.generator.RandomMazeGenerator;
 
+/**
+ * @author davina
+ */
 public class GUI implements ActionListener {
 	private static final int TILE_SIZE_ORIGINAL = 20;
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
@@ -58,6 +69,7 @@ public class GUI implements ActionListener {
 		this.frame = frame;
 		this.difficulty = 5;
 		this.numPlayers = 2;
+		this.playMusic();
 	}
 	
 	
@@ -298,7 +310,7 @@ public class GUI implements ActionListener {
 	 * Maze Card
 	 */
 	public void initialiseMazeCard() {
-		mazeCard = new MazeBasePanel();
+		mazeCard = new MazeBasePanel(this);
 		cards.add(mazeCard, "maze");
 		cards.setFocusable(true);
 	}
@@ -331,9 +343,9 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == optionsButton) {
 			cl.show(cards, "system");
 		} else if (e.getSource() == helpButton) {
-			cl.show(cards, "home");
+			this.displayHelpWindow();
 		} else if (e.getSource() == exitButton) {
-			this.frame.dispose();
+			this.dispose();
 		} else if (e.getSource() == playSaveButton) {
 			System.out.println(difficulty);
 			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
@@ -344,6 +356,23 @@ public class GUI implements ActionListener {
 				|| e.getSource() == systemBackButton) {
 			cl.show(cards, "home");
 		}
+	}
+	
+	/**
+	 * Display help window as pop up
+	 */
+	public void displayHelpWindow() {
+		JFrame help = new JFrame("Help");
+		help.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		help.setMinimumSize(new Dimension(500, 500));
+		help.setVisible(true);
+	}
+	
+	/**
+	 * Exit the app
+	 */
+	public void dispose() {
+		this.frame.dispose();
 	}
 	
 	private class ImagePanel extends JPanel {		
@@ -359,6 +388,30 @@ public class GUI implements ActionListener {
 	        super.paintComponent(G);
 	        G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
 	    }
-
+	}
+	
+	/***
+	 * Pump da music!
+	 * TODO: Continuous and mute
+	 * @param filename
+	 */
+	public void playMusic() {
+		String filename = "music/Pamgaea.wav";
+		InputStream in = null;
+		AudioStream as = null;
+		try {
+			//create audio data source
+			in = new FileInputStream(new File(filename));
+		} catch(FileNotFoundException fnfe) {
+			System.out.println("The audio file was not found");
+		}
+		
+		try {
+			//create audio stream from file stream
+			as = new AudioStream(in);
+		} catch(IOException ie) {
+			System.out.println("Audio stream could not be created");
+		}
+		AudioPlayer.player.start(as);
 	}
 }
