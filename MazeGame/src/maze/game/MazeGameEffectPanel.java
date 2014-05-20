@@ -8,7 +8,7 @@ import maze.effect.MazeEffect;
 import maze.player.MazePlayer;
 
 public class MazeGameEffectPanel {
-	private static int DURATION = 2500;
+	private static int DURATION = 4000;
 	private static int PROPORTION = 4;
 	private MazePlayer player;
 	private MazeEffect effect;
@@ -28,7 +28,8 @@ public class MazeGameEffectPanel {
 	public void paint(Graphics g, int width, int height) {
 		Graphics2D g2d = (Graphics2D) g.create();
 		// transparent - fades out over time
-		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (0.6f - ((System.currentTimeMillis() - this.startTime) / (float) DURATION) * 0.6f)));
+		float maxTransparency = 0.7f;
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (maxTransparency - ((System.currentTimeMillis() - this.startTime) / (float) DURATION) * maxTransparency)));
 		int imageWidth = width/PROPORTION;
 		int imageHeight = height/PROPORTION;
 		// draw effect centrally on screen

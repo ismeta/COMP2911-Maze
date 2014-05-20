@@ -362,16 +362,16 @@ public class GUI implements ActionListener {
 			//create audio data source
 			in = new FileInputStream(new File(filename));
 		} catch(FileNotFoundException fnfe) {
-			System.out.println("The audio file was not found");
+			System.err.println("The audio file was not found");
 		}
 		
 		try {
 			//create audio stream from file stream
 			as = new AudioStream(in);
 		} catch(IOException ie) {
-			System.out.println("Audio stream could not be created");
+			System.err.println("Audio stream could not be created");
 		}
-		//AudioPlayer.player.start(as);
+		AudioPlayer.player.start(as);
 	}
 	
 	private class ImagePanel extends JPanel {		
