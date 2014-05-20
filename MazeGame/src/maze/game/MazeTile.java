@@ -60,8 +60,7 @@ public class MazeTile {
 		this.isWall = isWall;
 	}
 	
-	public void draw(Graphics2D g, int x, int y, int width, int height) {
-		Graphics2D g2d = (Graphics2D) g.create();
+	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		if (this.isGoal) {
 			g2d.setPaint(Color.CYAN);
 			g2d.fill(new Rectangle(x, y, width, height));

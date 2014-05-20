@@ -393,6 +393,7 @@ public class GUI implements ActionListener {
 	/***
 	 * Pump da music!
 	 * TODO: Continuous and mute
+	 * maybe different music between MazeGameState = UNSETUP and PLAY,PAUSED and SUCCESS
 	 * @param filename
 	 */
 	public void playMusic() {

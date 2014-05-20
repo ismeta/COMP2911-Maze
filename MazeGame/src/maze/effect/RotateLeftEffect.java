@@ -11,7 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import maze.game.MazeGamePanel;
-import maze.game.MazePlayer;
+import maze.player.MazePlayer;
 
 /**
  * @author oliver
@@ -38,6 +38,11 @@ public class RotateLeftEffect implements MazeEffect {
 	@Override
 	public long getEndTime() {
 		return 0;
+	}
+	
+	@Override
+	public void addEndTime(long add) {
+		// not affected
 	}
 
 	@Override

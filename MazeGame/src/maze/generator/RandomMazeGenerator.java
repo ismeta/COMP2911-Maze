@@ -67,30 +67,10 @@ public class RandomMazeGenerator implements MazeGenerator {
 		assert(tiles != null);
 		assert(startP.x != goalP.x || startP.y != goalP.y);
 		
-		/* can't really trust our array - initialise everything to null
-		 * and tell off the programmer if it's not initialised to null.
-		 * (or modified after being initialised)
-		 */
-		boolean warning = false;
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (tiles[i][j] != null) {
-					warning = true;
-				}
-			}
-		}
-		if (warning) {
-			System.out.println("warning: make sure your tiles are initialised" +
-							   " to null before generating the maze");
-		}
-		
 		/* Keeps track of which set each tile belongs to. */
 		boolean[][] inStartSet = new boolean[size][size];
 		inStartSet[startP.x][startP.y] = true;
 		inStartSet[goalP.x][goalP.y]   = false;
-		
-		System.out.println("start tile is " + startP);
-		System.out.println("goal tile is " + goalP);
 		
 		/* There are several ways we can keep track of what 
 		 * tile to visit. Here, we simply keep a list of tiles
@@ -120,7 +100,6 @@ public class RandomMazeGenerator implements MazeGenerator {
 				continue;
 			} else {
 				tilesToVisit.add(new PointState(next, goalP));
-				System.out.println("added " + next);
 				break;
 			}
 		}
@@ -144,7 +123,6 @@ public class RandomMazeGenerator implements MazeGenerator {
 				continue;
 			} else {
 				tilesToVisit.add(new PointState(next, startP));
-				System.out.println("added " + next);
 				break;
 			}
 		}
@@ -172,8 +150,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		 * visited the start/goal tiles.
 		 */
 		int unvisitedTiles = (((size / 2) + 1) * ((size / 2) + 1)) - 2;
-		System.out.println(unvisitedTiles + " tiles you need to visit");
-	
+		
 		/* Phase 1: randomly visit tiles until they have all been visited. */
 		PointState pointToCheck;
 		Point p, prev;
@@ -241,7 +218,6 @@ public class RandomMazeGenerator implements MazeGenerator {
 		/* This is a naive measure of difficulty - we should change this later */
 		int wallsToRemove = 11 - difficulty;
 		
-		System.out.println(boundaries.size() + " potential boundaries");
 		while (wallsToRemove > 0 && boundaries.size() > 0) {
 			/* remove a random wall */
 			wallToRemove = boundaries.remove(rand.nextInt(boundaries.size()));

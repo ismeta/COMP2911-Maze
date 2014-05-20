@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import maze.game.MazeGamePanel;
-import maze.game.MazePlayer;
+import maze.player.MazePlayer;
 
 public class GlobalSpeedDownEffect implements MazeEffect {
 	private static final String EFFECT_IMAGE = "images/sprites/slow.png";
@@ -42,6 +42,11 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 	@Override
 	public long getEndTime() {
 		return endTime;
+	}
+	
+	@Override
+	public void addEndTime(long add) {
+		this.endTime += add;
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 import maze.game.MazeTile;
 import maze.game.MazeGamePanel;
-import maze.game.MazePlayer;
+import maze.player.MazePlayer;
 
 /**
  * This effect slows down the player/s closest to the end,
@@ -160,7 +160,12 @@ public class EgalitarianEffect implements MazeEffect {
 	public long getEndTime() {
 		return this.endTime;
 	}
-
+	
+	@Override
+	public void addEndTime(long add) {
+		this.endTime += add;
+	}
+	
 	/* (non-Javadoc)
 	 * @see maze.effect.MazeEffect#deactivate(maze.game.MazeGamePanel)
 	 */

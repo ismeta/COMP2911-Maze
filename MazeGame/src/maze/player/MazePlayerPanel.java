@@ -1,4 +1,4 @@
-package maze.game;
+package maze.player;
 
 import java.awt.Color;
 import java.awt.Dimension;

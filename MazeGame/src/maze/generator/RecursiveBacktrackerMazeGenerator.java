@@ -26,26 +26,6 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 		assert(tiles != null);
 		assert(startP.x != goalP.x || startP.y != goalP.y);
 		
-		/* can't really trust our array - initialise everything to null
-		 * and tell off the programmer if it's not initialised to null.
-		 * (or modified after being initialised)
-		 */
-		boolean warning = false;
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (tiles[i][j] != null) {
-					warning = true;
-				}
-			}
-		}
-		if (warning) {
-			System.out.println("warning: make sure your tiles are initialised" +
-							   " to null before generating the maze");
-		}
-		
-		System.out.println("start tile is " + startP);
-		System.out.println("goal tile is " + goalP);
-		
 		Random rand = new Random();
 		
 		/* Don't forget to initialise our start tile :P */
@@ -68,8 +48,7 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 		 * visited the start/goal tiles.
 		 */
 		int unvisitedTiles = (((size / 2) + 1) * ((size / 2) + 1)) - 1;
-		System.out.println(unvisitedTiles + " tiles you need to visit");
-	
+		
 		/* Phase 1: randomly visit tiles until they have all been visited. */
 		Point p, newP;
 

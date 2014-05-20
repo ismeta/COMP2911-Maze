@@ -11,7 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import maze.game.MazeGamePanel;
-import maze.game.MazePlayer;
+import maze.player.MazePlayer;
 
 /**
  * @author oliver
@@ -43,6 +43,11 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	@Override
 	public long getEndTime() {
 		return endTime;
+	}
+	
+	@Override
+	public void addEndTime(long add) {
+		this.endTime += add;
 	}
 
 	@Override
