@@ -218,8 +218,11 @@ public class MazeBasePanel extends JPanel {
 	}
 	
 	public void pause() {
+		// change state and last paused stuff
 		this.gameState = MazeGameState.PAUSED;
 		this.lastPauseTime = System.currentTimeMillis();
+		// clear the keys pressed
+		this.keyPresses.clear();
 	}
 	
 	public void unpause() {
@@ -323,8 +326,8 @@ public class MazeBasePanel extends JPanel {
 	    }
 
 	    public void keyPressed(KeyEvent e) {
+	    	char c = Character.toLowerCase(e.getKeyChar());
 	    	if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
-		    	char c = Character.toLowerCase(e.getKeyChar());
 		    	if (c >= 'a' && c <= 'z') {
 		    		// activate the next maze effect
 		    		MazePlayer[] mazePlayers = mbp.getMazePlayers();
@@ -340,8 +343,8 @@ public class MazeBasePanel extends JPanel {
 	    }
 
 	    public void keyReleased(KeyEvent e) {
+	    	char c = Character.toLowerCase(e.getKeyChar());
 	    	if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
-		    	char c = Character.toLowerCase(e.getKeyChar());
 		    	if (c >= 'a' && c <= 'z') {
 		    		// in case remove doesn't exist
 		    		Long releasedTime = this.mbp.getKeyPresses().remove(c);
