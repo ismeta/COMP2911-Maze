@@ -320,7 +320,6 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == exitButton) {
 			this.dispose();
 		} else if (e.getSource() == playSaveButton) {
-			System.out.println(difficulty);
 			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
 			cl.show(cards, "maze");
 		} else if (e.getSource() == playBackButton) {
