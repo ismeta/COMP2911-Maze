@@ -206,6 +206,7 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 	}
 	
 	private final int size;
+	@SuppressWarnings("unused")
 	private int difficulty;
 	private Point startP;
 	private Point goalP;

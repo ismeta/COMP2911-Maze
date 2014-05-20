@@ -89,23 +89,21 @@ public class MazeGamePanel extends JPanel {
 		// add players
 		this.mazePlayers = mazePlayers;
 		
-		int carDirX = 0;
-		int carDirY = 0;
+		MazePlayerDirection direction;
 		
 		/* determine the starting direction of the car */
 		if (startX > 0 && !this.tiles[startX - 1][startY].isWall()) {
-			carDirY = -1;
+			direction = MazePlayerDirection.UP;
 		} else if (startX < size - 1 && !this.tiles[startX + 1][startY].isWall()) {
-			carDirY = 1;
+			direction = MazePlayerDirection.DOWN;
 		} else if (startY > 0 && !this.tiles[startX][startY - 1].isWall()) {
-			carDirX = -1;
+			direction = MazePlayerDirection.LEFT;
 		} else {
-			carDirX = 1;
+			direction = MazePlayerDirection.RIGHT;
 		}
 		
 		for (MazePlayer player : this.mazePlayers) {
-			player.setDirY(carDirY);
-			player.setDirX(carDirX);
+			player.setDirection(direction);
 		}
 	}
 	
@@ -337,8 +335,18 @@ public class MazeGamePanel extends JPanel {
 				yTo = Math.max(0, Math.min(yTo, tileHeight * (size - 1)));
 				// change direction to face
 				if (Math.abs(xTo - p.getPosX()) >= 0.01 || Math.abs(yTo - p.getPosY()) >= 0.01) {
-					p.setDirX(xDir);
-					p.setDirY(yDir);
+					if (xDir == -1) {
+						p.setDirection(MazePlayerDirection.LEFT);
+					} else if (xDir == 1) {
+						p.setDirection(MazePlayerDirection.RIGHT);
+					} else if (yDir == -1) {
+						p.setDirection(MazePlayerDirection.UP);
+					} else if (yDir == 1) {
+						p.setDirection(MazePlayerDirection.DOWN);
+					} else {
+						throw new RuntimeException(
+								"unrecognised player direction: " + xDir + ", " + yDir);
+					}
 				}
 				// set position - but make sure we don't fall off the grid :)
 				p.setPosX(xTo);
@@ -352,6 +360,36 @@ public class MazeGamePanel extends JPanel {
 	 */
 	public MazePlayer[] getMazePlayers() {
 		return mazePlayers;
+	}
+	
+	/**
+	 * @return an array of the maze tiles
+	 */
+	public MazeTile[][] getMazeTiles() {
+		return tiles;
+	}
+	
+	/**
+	 * @return the height/width of the maze (a square)
+	 */
+	public int getMazeSize() {
+		return size;
+	}
+	
+	/**
+	 * Takes an array of size at least 2 and writes the player's coordinates
+	 * into the first two locations in the array. location[0] will store
+	 * the row of the player, location[1] will store the column of the player.
+	 * @param location The array to write the player's x, y coordinates into.
+	 * @param p the player to check the coordinates for.
+	 */
+	public void getPlayerTileLocation(int[] location, MazePlayer p) {
+		/* get the tile width/height */
+		int tileWidth  = this.getWidth() / size;
+		int tileHeight = this.getHeight() / size;
+		
+		location[0] = (int) p.getPosX() / tileHeight;
+		location[1] = (int) p.getPosY() / tileWidth;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package maze.game;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,8 +16,7 @@ public class MazePlayer {
 	private int id;
 	private double posX;
 	private double posY;
-	private int dirX;
-	private int dirY;
+	private MazePlayerDirection direction;
 	private double speedModifier;
 	private Queue<MazeEffect> effectQueue;
 	private BufferedImage image;
@@ -32,8 +30,7 @@ public class MazePlayer {
 		this.id = id;
 		this.posX = 0;
 		this.posY = 0;
-		this.dirX = 0;
-		this.dirY = 0;
+		this.direction = MazePlayerDirection.RIGHT;
 		this.speedModifier = 1.0;
 		this.effectQueue = new LinkedList<MazeEffect>();
 		this.mazePlayerPanel = mazePlayerPanel;
@@ -50,29 +47,15 @@ public class MazePlayer {
 	/**
 	 * @return the dirX
 	 */
-	public int getDirX() {
-		return dirX;
+	public MazePlayerDirection getDirection() {
+		return direction;
 	}
 
 	/**
 	 * @param dirX the dirX to set
 	 */
-	public void setDirX(int dirX) {
-		this.dirX = dirX;
-	}
-
-	/**
-	 * @return the dirY
-	 */
-	public int getDirY() {
-		return dirY;
-	}
-
-	/**
-	 * @param dirY the dirY to set
-	 */
-	public void setDirY(int dirY) {
-		this.dirY = dirY;
+	public void setDirection(MazePlayerDirection direction) {
+		this.direction = direction;
 	}
 
 	/**
@@ -155,7 +138,8 @@ public class MazePlayer {
 		// rotate based on where we are going if orientation is set
 		if (orientation) {
 			Double rotateFactor = Math.PI / 2;
-			g.rotate(dirX * rotateFactor + (dirY == 0 ? 0 : (dirY + 1) * rotateFactor), ((int) this.posX) + width/2, ((int) this.posY) + height/2);
+			
+			g.rotate(rotateFactor * this.direction.ordinal(), ((int) this.posX) + width/2, ((int) this.posY) + height/2);
 		}
 		g.drawImage(this.image, (int) this.posX, (int) this.posY, width, height, null);		
 		g.dispose();
