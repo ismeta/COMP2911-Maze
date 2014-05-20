@@ -30,6 +30,7 @@ import javax.swing.JRadioButton;
 
 import maze.game.MazeBasePanel;
 import maze.generator.maze.RandomMazeGenerator;
+import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
 /**
@@ -319,8 +320,6 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == exitButton) {
 			this.dispose();
 		} else if (e.getSource() == playSaveButton) {
-			System.out.println(difficulty);
-			//mazeCard.setup(TILE_SIZE, numPlayers, new RecursiveBacktrackerMazeGenerator(TILE_SIZE), this);
 			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
 			cl.show(cards, "maze");
 		} else if (e.getSource() == playBackButton) {
@@ -362,16 +361,16 @@ public class GUI implements ActionListener {
 			//create audio data source
 			in = new FileInputStream(new File(filename));
 		} catch(FileNotFoundException fnfe) {
-			System.out.println("The audio file was not found");
+			System.err.println("The audio file was not found");
 		}
 		
 		try {
 			//create audio stream from file stream
 			as = new AudioStream(in);
 		} catch(IOException ie) {
-			System.out.println("Audio stream could not be created");
+			System.err.println("Audio stream could not be created");
 		}
-		//AudioPlayer.player.start(as);
+		AudioPlayer.player.start(as);
 	}
 	
 	private class ImagePanel extends JPanel {		
