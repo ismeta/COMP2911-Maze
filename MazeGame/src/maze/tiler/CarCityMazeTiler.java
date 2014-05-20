@@ -11,15 +11,11 @@ import javax.swing.ImageIcon;
 
 import maze.game.MazeTile;
 
+/**
+ * Sets the images for tiles in the maze according to a "car in the city"
+ * style theme.
+ */
 public class CarCityMazeTiler implements MazeTiler {
-	private final BufferedImage[] tileImages;
-	
-	private BufferedImage image;
-	private MazeTile[][] tiles;
-	private int size;
-	private int tileHeight;
-	private int tileWidth;
-	
 	/**
 	 * @param tiles
 	 * @param size
@@ -29,9 +25,10 @@ public class CarCityMazeTiler implements MazeTiler {
 	public CarCityMazeTiler(MazeTile[][] tiles, int size, int height, int width) {
 		this.tiles = tiles;
 		this.size = size;
-		this.tileHeight = height;
-		this.tileWidth = width;
+		this.mazeHeight = height;
+		this.mazeWidth = width;
 		
+		/* read in the tile images */
 		this.tileImages = new BufferedImage[CarMazeCityTileType.values().length];
 		for (int i = 0; i < CarMazeCityTileType.values().length; i++) {
 			try {
@@ -47,7 +44,7 @@ public class CarCityMazeTiler implements MazeTiler {
 	 */
 	@Override
 	public void tileMaze() {
-		this.image = new BufferedImage(this.tileWidth, this.tileHeight, BufferedImage.TYPE_INT_ARGB);
+		this.image = new BufferedImage(this.mazeWidth, this.mazeHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D imageG2D = this.image.createGraphics();
 		
 		for (int i = 0; i < size; i++) {
@@ -77,8 +74,8 @@ public class CarCityMazeTiler implements MazeTiler {
 	 * @param j which column to set the image for
 	 */
 	private void setWallImage(Graphics2D imageG2D, int i, int j) {
-		int width = this.tileWidth / size;
-		int height = this.tileHeight / size;
+		int width = this.mazeWidth / size;
+		int height = this.mazeHeight / size;
 		int x = j * width;
 		int y = i * height;
 		
@@ -170,8 +167,8 @@ public class CarCityMazeTiler implements MazeTiler {
 		}
 		
 		/* figure out how wide each tile is */
-		int width = (int) this.tileWidth / size;
-		int height = (int) this.tileHeight / size;
+		int width = (int) this.mazeWidth / size;
+		int height = (int) this.mazeHeight / size;
 		
 		/* figure out where on the screen we need to draw the tile */
 		int x = j * width;
@@ -233,4 +230,18 @@ public class CarCityMazeTiler implements MazeTiler {
 	public void setTiles(MazeTile[][] tiles) {
 		this.tiles = tiles;
 	}
+
+	/* the images used to tile the image */
+	private final BufferedImage[] tileImages;
+	private BufferedImage image;
+	
+	/* the tiles whose images are being set */
+	private MazeTile[][] tiles;
+	
+	/* the width/height of the maze, in terms of tiles */
+	private int size;
+	
+	/* width/height of the maze, in pixels */
+	private int mazeHeight;
+	private int mazeWidth;
 }

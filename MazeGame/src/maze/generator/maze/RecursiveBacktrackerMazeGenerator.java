@@ -1,9 +1,11 @@
-package maze.generator;
+package maze.generator.maze;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import maze.game.MazeTile;
+import maze.generator.boost.BoostGenerator;
+import maze.generator.boost.RandomBoostGenerator;
 
 /**
  * "It's so easy"
@@ -119,6 +121,10 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 				}
 			}
 		}
+
+		/* (optional) Phase 4: generate some boosts! */
+		BoostGenerator bootGen = new RandomBoostGenerator(size);
+		bootGen.generateBoosts(tiles);
 	}
 	
 	/**

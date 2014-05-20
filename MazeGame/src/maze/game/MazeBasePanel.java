@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 
 import maze.GUI;
 import maze.effect.MazeEffect;
-import maze.generator.MazeGenerator;
+import maze.generator.maze.MazeGenerator;
 import maze.player.MazePlayer;
 import maze.player.MazePlayerPanel;
 

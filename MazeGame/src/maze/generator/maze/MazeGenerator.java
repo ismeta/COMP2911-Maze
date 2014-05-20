@@ -1,4 +1,4 @@
-package maze.generator;
+package maze.generator.maze;
 import maze.game.MazeTile;
 
 

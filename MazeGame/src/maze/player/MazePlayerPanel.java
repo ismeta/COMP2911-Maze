@@ -18,13 +18,13 @@ import maze.effect.MazeEffect;
 
 public class MazePlayerPanel extends JPanel {
 	/**
-	 * @param player
+	 * @param player the player this panel belongs to
 	 */
 	public MazePlayerPanel(Color color, int playerID) {
 		this.color = color;
 		this.playerID = playerID;
-		this.img = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
-		this.buff = new ImageIcon("images/player/player" + playerID + "_buffs.png").getImage();
+		this.keyImage = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
+		this.buffKeyImage = new ImageIcon("images/player/player" + playerID + "_buffs.png").getImage();
 		this.buffs = new LinkedList<Image>();
 		this.setupGui();
 	}
@@ -44,16 +44,21 @@ public class MazePlayerPanel extends JPanel {
 		title.setTitleJustification(TitledBorder.CENTER);
 		title.setTitleFont(f);
 		title.setTitleColor(color);
-		// Background
-		this.setBackground(new Color(45, 45, 45));
+		
+		/* set background colour to gray */
+		Color darkGray = new Color(45, 45, 45);
+		this.setBackground(darkGray);
 		this.setBorder(title);
 	}
 	
+	/**
+	 * redraw the inside of the panel. (buffs, key controls)
+	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(img, 10, 35, 240, 170, null);
-		g.drawImage(buff, 220, 35, 400, 70, null);
+		g.drawImage(keyImage, 10, 35, 240, 170, null);
+		g.drawImage(buffKeyImage, 220, 35, 400, 70, null);
 		
 		int x = 300;
 		int y = 110;
@@ -63,6 +68,10 @@ public class MazePlayerPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Update the buffs for this panel.
+	 * @param effectQueue the new effects to display.
+	 */
 	public void updateBuffs(Queue<MazeEffect> effectQueue) {
 		this.buffs = new LinkedList<Image>();
 		for (MazeEffect e: effectQueue) {
@@ -79,7 +88,12 @@ public class MazePlayerPanel extends JPanel {
 	/* id of the player this panel displays information for */
 	private int playerID;
 	
-	private Image img;
-	private Image buff;
+	/* image of the keyboard controls for this user */
+	private Image keyImage;
+	
+	/* image of the key used to activate buffs for this user */
+	private Image buffKeyImage;
+	
+	/* images of the buffs being displayed */
 	private LinkedList<Image> buffs;
 }

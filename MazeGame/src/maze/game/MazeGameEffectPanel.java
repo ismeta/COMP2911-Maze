@@ -8,12 +8,6 @@ import maze.effect.MazeEffect;
 import maze.player.MazePlayer;
 
 public class MazeGameEffectPanel {
-	private static int DURATION = 2500;
-	private static int PROPORTION = 4;
-	private MazePlayer player;
-	private MazeEffect effect;
-	private long startTime;
-	
 	/**
 	 * @param player
 	 * @param effect
@@ -57,4 +51,11 @@ public class MazeGameEffectPanel {
 	public long getFinishTime() {
 		return startTime  + DURATION;
 	}
+	
+	private static int DURATION = 2500;
+	private static int PROPORTION = 4;
+	private MazePlayer player;
+	private MazeEffect effect;
+	private long startTime;
+	
 }

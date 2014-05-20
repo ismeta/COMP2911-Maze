@@ -9,7 +9,7 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 
 import maze.effect.MazeEffect;
-import maze.generator.MazeGenerator;
+import maze.generator.maze.MazeGenerator;
 import maze.player.MazePlayer;
 import maze.player.MazePlayerDirection;
 import maze.tiler.CarCityMazeTiler;
@@ -25,24 +25,6 @@ import maze.tiler.MazeTiler;
  *
  */
 public class MazeGamePanel extends JPanel {
-	private static final double TILES_PER_SECOND = 4;
-	private static final long serialVersionUID = 4602880844383443785L;
-	
-	// maze tiles
-	private MazeTiler mazeTiler;
-	private MazeTile[][] mazeTiles;
-	// maze property
-	private int size;	
-	// ensure player is drawn correctly
-	private Image image;
-	// players
-	private MazePlayer[] mazePlayers;
-	// preferred dimensions
-	private int maxHeight, maxWidth;
-	// current ranking
-	private int minRanking;	
-	// effect display
-	private MazeGameEffectPanel effectDisplay;
 	
 	public MazeGamePanel(int maxHeight, int maxWidth) {
 		// double buffered JPanel
@@ -466,5 +448,24 @@ public class MazeGamePanel extends JPanel {
 		// ensure clean and up to date
 		Toolkit.getDefaultToolkit().sync();
 		g.dispose();
-	}
+	}	
+	
+	private static final double TILES_PER_SECOND = 4;
+	private static final long serialVersionUID = 4602880844383443785L;
+	
+	// maze tiles
+	private MazeTiler mazeTiler;
+	private MazeTile[][] mazeTiles;
+	// maze property
+	private int size;	
+	// ensure player is drawn correctly
+	private Image image;
+	// players
+	private MazePlayer[] mazePlayers;
+	// preferred dimensions
+	private int maxHeight, maxWidth;
+	// current ranking
+	private int minRanking;	
+	// effect display
+	private MazeGameEffectPanel effectDisplay;
 }
