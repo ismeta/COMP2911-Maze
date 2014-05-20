@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import maze.GUI;
 import maze.effect.MazeEffect;
 import maze.generator.MazeGenerator;
+import maze.player.MazePlayer;
+import maze.player.MazePlayerPanel;
 
 public class MazeBasePanel extends JPanel {
 	private static final long serialVersionUID = 7399404361523168614L;

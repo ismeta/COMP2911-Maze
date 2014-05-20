@@ -1,4 +1,4 @@
-package maze.game;
+package maze.player;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -10,6 +10,7 @@ import java.util.Queue;
 import javax.imageio.ImageIO;
 
 import maze.effect.MazeEffect;
+import maze.game.MazeBasePanel;
 
 public class MazePlayer {
 	public static final int MAX_EFFECTS = 2;

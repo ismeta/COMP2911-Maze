@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 
 import maze.game.MazeTile;
 import maze.game.MazeGamePanel;
-import maze.game.MazePlayer;
+import maze.player.MazePlayer;
 
 /**
  * @author ness

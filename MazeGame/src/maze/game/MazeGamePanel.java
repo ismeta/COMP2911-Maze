@@ -15,6 +15,8 @@ import maze.effect.RotateLeftEffect;
 import maze.effect.RotateRightEffect;
 import maze.effect.SelfSpeedUpEffect;
 import maze.generator.MazeGenerator;
+import maze.player.MazePlayer;
+import maze.player.MazePlayerDirection;
 import maze.tiler.CarCityMazeTiler;
 import maze.tiler.MazeTiler;
 

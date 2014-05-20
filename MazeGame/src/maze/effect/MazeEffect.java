@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import maze.game.MazeGamePanel;
-import maze.game.MazePlayer;
+import maze.player.MazePlayer;
 
 
 
