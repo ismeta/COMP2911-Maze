@@ -38,10 +38,8 @@ public class MazeBasePanel extends JPanel {
 	private Timer timer;
 	private MazePlayer mazePlayers[];
 	private PriorityQueue<MazeEffect> activatedEffects;
-	private ConcurrentHashMap<Character, Long> keyPresses; 
-	
-	private MazeGamePanel mazeGamePanel;
-	
+	private ConcurrentHashMap<Character, Long> keyPresses; 	
+	private MazeGamePanel mazeGamePanel;	
 	private Image image;
 	private GUI frameGui;
 	private GridBagConstraints g;
@@ -319,7 +317,7 @@ public class MazeBasePanel extends JPanel {
 			}
 		}
 	}
-	
+
 	/**
 	 * @author oliver
 	 * Key Listener for the Maze JPanel

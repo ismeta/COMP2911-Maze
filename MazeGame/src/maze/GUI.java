@@ -413,6 +413,6 @@ public class GUI implements ActionListener {
 		} catch(IOException ie) {
 			System.out.println("Audio stream could not be created");
 		}
-		AudioPlayer.player.start(as);
+		//AudioPlayer.player.start(as);
 	}
 }

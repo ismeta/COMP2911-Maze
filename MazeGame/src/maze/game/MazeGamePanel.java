@@ -46,6 +46,8 @@ public class MazeGamePanel extends JPanel {
 	private int maxHeight, maxWidth;
 	// current ranking
 	private int minRanking;	
+	// effect display
+	private MazeGameEffectPanel effectDisplay;
 	
 	public MazeGamePanel(int maxHeight, int maxWidth) {
 		// double buffered JPanel
@@ -61,6 +63,7 @@ public class MazeGamePanel extends JPanel {
 		this.size = 0;
 		this.mazePlayers = null;
 		this.mazeTiler = null;
+		this.effectDisplay = null;
 	}
 	
 	public void setup(int size, MazeGenerator mazeGenerator, MazePlayer[] mazePlayers) {
@@ -368,6 +371,22 @@ public class MazeGamePanel extends JPanel {
 		}		
 	}
 	
+	
+	
+	/**
+	 * @return the effectDisplay
+	 */
+	public MazeGameEffectPanel getEffectDisplay() {
+		return effectDisplay;
+	}
+
+	/**
+	 * @param effectDisplay the effectDisplay to set
+	 */
+	public void setEffectDisplay(MazeGameEffectPanel effectDisplay) {
+		this.effectDisplay = effectDisplay;
+	}
+
 	/**
 	 * @return the mazePlayers
 	 */
@@ -445,6 +464,14 @@ public class MazeGamePanel extends JPanel {
 				if (p != null) {
 					p.draw(g2d, tileWidth, tileHeight);
 				}
+			}
+		}
+
+		if (this.effectDisplay != null) {
+			if (this.effectDisplay.getFinishTime() >= System.currentTimeMillis()) {
+				this.effectDisplay.paint(g, this.getWidth(), this.getHeight());
+			} else {
+				this.effectDisplay = null;
 			}
 		}
 		
