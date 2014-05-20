@@ -43,6 +43,7 @@ public class MazeBasePanel extends JPanel {
 	private Image image;
 	private GUI frameGui;
 	private GridBagConstraints g;
+	private long lastPauseTime;
 	
 	// maze state
 	private MazeGameState gameState;
@@ -187,8 +188,7 @@ public class MazeBasePanel extends JPanel {
 		g.anchor = GridBagConstraints.CENTER;
 		g.gridx = 1;
 		g.gridy = 1;
-		this.add(playerStatus, g);
-		
+		this.add(playerStatus, g);		
 		
 		// now we can #mazeit
 		this.mazeGamePanel.setup(size, mazeGenerator, this.mazePlayers);
@@ -214,6 +214,19 @@ public class MazeBasePanel extends JPanel {
 		this.timer = new Timer();
 		this.timer.scheduleAtFixedRate(new MazeBasePanelTimer(this), 0, 1000 / REFRESH_RATE);
 		
+		this.gameState = MazeGameState.PLAYING;
+	}
+	
+	public void pause() {
+		this.gameState = MazeGameState.PAUSED;
+		this.lastPauseTime = System.currentTimeMillis();
+	}
+	
+	public void unpause() {
+		long pauseDuration = System.currentTimeMillis() - this.lastPauseTime;
+		for (MazeEffect me : this.activatedEffects) {
+			me.addEndTime(pauseDuration)
+		}
 		this.gameState = MazeGameState.PLAYING;
 	}
 	
