@@ -44,6 +44,9 @@ public class MazeBasePanel extends JPanel {
 	private GUI frameGui;
 	private GridBagConstraints g;
 	
+	// maze state
+	private MazeGameState gameState;
+	
 	public MazeBasePanel(GUI frameGui) {
 		super(true);
 		this.setFocusable(true);
@@ -56,6 +59,8 @@ public class MazeBasePanel extends JPanel {
 		this.mazeGamePanel = new MazeGamePanel(800, 800);
 		this.image = null;
 		this.frameGui = frameGui;
+		
+		this.gameState = MazeGameState.UNSETUP;
 		this.setupGui();
 	}
 	
@@ -208,6 +213,8 @@ public class MazeBasePanel extends JPanel {
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();
 		this.timer.scheduleAtFixedRate(new MazeBasePanelTimer(this), 0, 1000 / REFRESH_RATE);
+		
+		this.gameState = MazeGameState.PLAYING;
 	}
 	
 	public void exit() {
@@ -229,6 +236,7 @@ public class MazeBasePanel extends JPanel {
 		}
 		this.keyPresses.clear();
 		this.keyPresses = null;
+		this.gameState = MazeGameState.UNSETUP;
 		
 		this.frameGui.dispose();
 	}
@@ -240,6 +248,15 @@ public class MazeBasePanel extends JPanel {
 		return mazeGamePanel;
 	}
 	
+	
+	/**
+	 * @return the gameState
+	 */
+	public MazeGameState getGameState() {
+		return gameState;
+	}
+
+
 	/**
 	 * @author oliver
 	 * MazeJPanelTimer allows player listeners and repainting
@@ -253,24 +270,26 @@ public class MazeBasePanel extends JPanel {
 		
 		@Override
 		public void run() {
-			// update all the player
-			long curTime = System.currentTimeMillis();
-			for (Entry<Character, Long> e : this.mbp.getKeyPresses().entrySet()) {
-				long difference = curTime - e.getValue();
-	    		this.mbp.getMazeGamePanel().updatePlayerMovement(e.getKey(), difference);
-				this.mbp.getKeyPresses().put(e.getKey(), curTime);
-			}
-			// remove unnecessary boosts
-			PriorityQueue<MazeEffect> pq = mbp.getActivatedEffects();
-			while (!pq.isEmpty()) {
-				if (pq.peek().getEndTime() <= curTime) {
-					pq.poll().deactivate(mbp.getMazeGamePanel());
-				} else {
-					break;
+			if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
+				// update all the player
+				long curTime = System.currentTimeMillis();
+				for (Entry<Character, Long> e : this.mbp.getKeyPresses().entrySet()) {
+					long difference = curTime - e.getValue();
+		    		this.mbp.getMazeGamePanel().updatePlayerMovement(e.getKey(), difference);
+					this.mbp.getKeyPresses().put(e.getKey(), curTime);
 				}
+				// remove unnecessary boosts
+				PriorityQueue<MazeEffect> pq = mbp.getActivatedEffects();
+				while (!pq.isEmpty()) {
+					if (pq.peek().getEndTime() <= curTime) {
+						pq.poll().deactivate(mbp.getMazeGamePanel());
+					} else {
+						break;
+					}
+				}
+				// repaint the maze since there are updates
+				this.mbp.repaint();
 			}
-			// repaint the maze since there are updates
-			this.mbp.repaint();
 		}
 	}
 	
@@ -291,30 +310,34 @@ public class MazeBasePanel extends JPanel {
 	    }
 
 	    public void keyPressed(KeyEvent e) {
-	    	char c = Character.toLowerCase(e.getKeyChar());
-	    	if (c >= 'a' && c <= 'z') {
-	    		// activate the next maze effect
-	    		MazePlayer[] mazePlayers = mbp.getMazePlayers();
-	    		for (int i = 0; i < mazePlayers.length; i++) {
-	    			if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c) {
-	    				mazePlayers[i].activateNextMazeEffect(mbp);
-	    			}
-	    		}
-	    		// make sure we register the player's key as pressed
-	    		mbp.getKeyPresses().put(c, System.currentTimeMillis());
+	    	if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
+		    	char c = Character.toLowerCase(e.getKeyChar());
+		    	if (c >= 'a' && c <= 'z') {
+		    		// activate the next maze effect
+		    		MazePlayer[] mazePlayers = mbp.getMazePlayers();
+		    		for (int i = 0; i < mazePlayers.length; i++) {
+		    			if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c) {
+		    				mazePlayers[i].activateNextMazeEffect(mbp);
+		    			}
+		    		}
+		    		// make sure we register the player's key as pressed
+		    		mbp.getKeyPresses().put(c, System.currentTimeMillis());
+		    	}
 	    	}
 	    }
 
 	    public void keyReleased(KeyEvent e) {
-	    	char c = Character.toLowerCase(e.getKeyChar());
-	    	if (c >= 'a' && c <= 'z') {
-	    		// in case remove doesn't exist
-	    		Long releasedTime = this.mbp.getKeyPresses().remove(c);
-	    		if (releasedTime != null) {
-		    		// update the player's movement
-		    		long difference = System.currentTimeMillis() - releasedTime;
-		    		this.mbp.getMazeGamePanel().updatePlayerMovement(c, difference);
-	    		}
+	    	if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
+		    	char c = Character.toLowerCase(e.getKeyChar());
+		    	if (c >= 'a' && c <= 'z') {
+		    		// in case remove doesn't exist
+		    		Long releasedTime = this.mbp.getKeyPresses().remove(c);
+		    		if (releasedTime != null) {
+			    		// update the player's movement
+			    		long difference = System.currentTimeMillis() - releasedTime;
+			    		this.mbp.getMazeGamePanel().updatePlayerMovement(c, difference);
+		    		}
+		    	}
 	    	}
 	    }
 	}

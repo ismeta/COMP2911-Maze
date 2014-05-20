@@ -42,6 +42,7 @@ public class MazeGamePanel extends JPanel {
 	// preferred dimensions
 	private int maxHeight, maxWidth;
 	
+	
 	public MazeGamePanel(int maxHeight, int maxWidth) {
 		// double buffered JPanel
 		super(true);

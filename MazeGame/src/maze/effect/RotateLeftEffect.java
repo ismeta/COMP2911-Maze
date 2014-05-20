@@ -39,6 +39,11 @@ public class RotateLeftEffect implements MazeEffect {
 	public long getEndTime() {
 		return 0;
 	}
+	
+	@Override
+	public void addEndTime(long add) {
+		// not affected
+	}
 
 	@Override
 	public void deactivate(MazeGamePanel m) {

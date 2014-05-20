@@ -17,9 +17,14 @@ public interface MazeEffect {
 	public void activate(MazeGamePanel m, MazePlayer p);
 	
 	/**
-	 * @return when the boost, upon activation, will deactivate
+	 * @return when the boost, upon activation, should deactivate (in milliseconds)
 	 */
 	public long getEndTime();
+	
+	/**
+	 * @param add the amount of time in milliseconds to add
+	 */
+	public void addEndTime(long add);
 	
 	/**
 	 * What the boost will do upon deactivation
@@ -42,4 +47,6 @@ public interface MazeEffect {
 	 * @return
 	 */
 	public Image getImage();
+	
+	
 }

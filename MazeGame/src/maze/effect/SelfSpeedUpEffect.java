@@ -44,6 +44,11 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	public long getEndTime() {
 		return endTime;
 	}
+	
+	@Override
+	public void addEndTime(long add) {
+		this.endTime += add;
+	}
 
 	@Override
 	public void deactivate(MazeGamePanel m) {
