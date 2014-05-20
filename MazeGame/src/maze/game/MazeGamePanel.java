@@ -32,7 +32,7 @@ public class MazeGamePanel extends JPanel {
 	
 	// maze tiles
 	private MazeTiler mazeTiler;
-	private MazeTile[][] tiles;
+	private MazeTile[][] mazeTiles;
 	// maze property
 	private int size;	
 	// ensure player is drawn correctly
@@ -52,7 +52,7 @@ public class MazeGamePanel extends JPanel {
 		this.setMaximumSize(new Dimension(maxHeight, maxWidth));
 		
 		this.image = null;
-		this.tiles = null;
+		this.mazeTiles = null;
 		this.size = 0;
 		this.mazePlayers = null;
 		this.mazeTiler = null;
@@ -70,19 +70,19 @@ public class MazeGamePanel extends JPanel {
 		int startX = 0;
 		int startY = 0;
 		
-		this.tiles = new MazeTile[size][size];
+		this.mazeTiles = new MazeTile[size][size];
 		mazeGenerator.setStartTile(startX, startY);
 		mazeGenerator.setDifficulty(10);
-		mazeGenerator.generateMaze(this.tiles);
+		mazeGenerator.generateMaze(this.mazeTiles);
 		
 		// (temporary) set effects
-		this.tiles[2][0].setEffect(new SelfSpeedUpEffect());
-		this.tiles[4][0].setEffect(new GlobalSpeedDownEffect());
-		this.tiles[4][4].setEffect(new RotateLeftEffect());
-		this.tiles[6][6].setEffect(new RotateRightEffect());
+		this.mazeTiles[2][0].setEffect(new SelfSpeedUpEffect());
+		this.mazeTiles[4][0].setEffect(new GlobalSpeedDownEffect());
+		this.mazeTiles[4][4].setEffect(new RotateLeftEffect());
+		this.mazeTiles[6][6].setEffect(new RotateRightEffect());
 
 		// tile maze
-		this.mazeTiler = new CarCityMazeTiler(tiles, size, (int) this.getPreferredSize().getHeight(), (int) this.getPreferredSize().getWidth());
+		this.mazeTiler = new CarCityMazeTiler(mazeTiles, size, (int) this.getPreferredSize().getHeight(), (int) this.getPreferredSize().getWidth());
 		this.mazeTiler.tileMaze();
 		this.image = this.mazeTiler.getImage();
 		
@@ -92,11 +92,11 @@ public class MazeGamePanel extends JPanel {
 		MazePlayerDirection direction;
 		
 		/* determine the starting direction of the car */
-		if (startX > 0 && !this.tiles[startX - 1][startY].isWall()) {
+		if (startX > 0 && !this.mazeTiles[startX - 1][startY].isWall()) {
 			direction = MazePlayerDirection.UP;
-		} else if (startX < size - 1 && !this.tiles[startX + 1][startY].isWall()) {
+		} else if (startX < size - 1 && !this.mazeTiles[startX + 1][startY].isWall()) {
 			direction = MazePlayerDirection.DOWN;
-		} else if (startY > 0 && !this.tiles[startX][startY - 1].isWall()) {
+		} else if (startY > 0 && !this.mazeTiles[startX][startY - 1].isWall()) {
 			direction = MazePlayerDirection.LEFT;
 		} else {
 			direction = MazePlayerDirection.RIGHT;
@@ -116,11 +116,11 @@ public class MazeGamePanel extends JPanel {
 		MazeTile tiles[][] = new MazeTile[this.size][this.size];
 	    for (int i = 0; i < this.size; ++i) {
 	        for (int j = 0; j < this.size; ++j) {
-	            tiles[i][j] = this.tiles[this.size - j - 1][i];
+	            tiles[i][j] = this.mazeTiles[this.size - j - 1][i];
 	        }
 	    }
-	    this.tiles = tiles;
-	    this.mazeTiler.setTiles(this.tiles);
+	    this.mazeTiles = tiles;
+	    this.mazeTiler.setTiles(this.mazeTiles);
 	    this.mazeTiler.tileMaze();
 		this.image = this.mazeTiler.getImage();
 	    // rotate players
@@ -140,11 +140,11 @@ public class MazeGamePanel extends JPanel {
 		MazeTile tiles[][] = new MazeTile[this.size][this.size];
 	    for (int i = 0; i < this.size; ++i) {
 	        for (int j = 0; j < this.size; ++j) {
-	            tiles[i][j] = this.tiles[j][this.size - i - 1];
+	            tiles[i][j] = this.mazeTiles[j][this.size - i - 1];
 	        }
 	    }
-	    this.tiles = tiles;
-	    this.mazeTiler.setTiles(this.tiles);
+	    this.mazeTiles = tiles;
+	    this.mazeTiler.setTiles(this.mazeTiles);
 	    this.mazeTiler.tileMaze();
 		this.image = this.mazeTiler.getImage();
 	    
@@ -269,10 +269,10 @@ public class MazeGamePanel extends JPanel {
 				int currentTileYs[] = { (int) (p.getPosY()) / tileHeight, (int) ((p.getPosY() + tileHeight - 1) / tileHeight) };
 				for (int tileX : currentTileXs) {
 					for (int tileY : currentTileYs) {
-						MazeEffect effect = this.tiles[tileY][tileX].getEffect();
+						MazeEffect effect = this.mazeTiles[tileY][tileX].getEffect();
 						if (effect != null) {
 							// activate effect
-							this.tiles[tileY][tileX].setEffect(null);
+							this.mazeTiles[tileY][tileX].setEffect(null);
 							p.addMazeEffect(effect);				
 						}
 					}
@@ -292,7 +292,7 @@ public class MazeGamePanel extends JPanel {
 						// check moving  positive in X direction
 						// looks for closest wall 
 						for (i = tileX + 1; i < size; i++) {
-							if (tiles[tileY][i].isWall()) {
+							if (mazeTiles[tileY][i].isWall()) {
 								break;
 							}
 						}
@@ -302,7 +302,7 @@ public class MazeGamePanel extends JPanel {
 						}
 						// vice versa for negative in X direction
 						for (i = tileX; i >= 0; i--) {
-							if (tiles[tileY][i].isWall()) {
+							if (mazeTiles[tileY][i].isWall()) {
 								break;
 							}
 						}
@@ -313,7 +313,7 @@ public class MazeGamePanel extends JPanel {
 						
 						// and we do the same thing for the Y direction
 					    for (i = tileY + 1; i < size; i++) {
-			                if (tiles[i][tileX].isWall()) {
+			                if (mazeTiles[i][tileX].isWall()) {
 			                    break;
 			                }
 			            }
@@ -321,7 +321,7 @@ public class MazeGamePanel extends JPanel {
 			                yTo = Math.min((i - 1) * tileHeight, yTo);
 			            }
 					    for (i = tileY; i >= 0; i--) {
-			                if (tiles[i][tileX].isWall()) {
+			                if (mazeTiles[i][tileX].isWall()) {
 			                    break;
 			                }
 			            }
@@ -366,7 +366,7 @@ public class MazeGamePanel extends JPanel {
 	 * @return an array of the maze tiles
 	 */
 	public MazeTile[][] getMazeTiles() {
-		return tiles;
+		return mazeTiles;
 	}
 	
 	/**
@@ -404,9 +404,9 @@ public class MazeGamePanel extends JPanel {
 			g2d.drawImage(this.image, 0, 0, this.getWidth(), this.getHeight(), null);
 	
 			// draw effects
-			for (int i = 0; i < this.tiles.length; i++) {
-				for (int j = 0; j < this.tiles[i].length; j++) {
-					this.tiles[i][j].draw(g2d, j * tileHeight, i * tileWidth, tileWidth, tileHeight);
+			for (int i = 0; i < this.mazeTiles.length; i++) {
+				for (int j = 0; j < this.mazeTiles[i].length; j++) {
+					this.mazeTiles[i][j].draw(g2d, j * tileHeight, i * tileWidth, tileWidth, tileHeight);
 				}
 			}
 		}
