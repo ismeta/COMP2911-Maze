@@ -346,14 +346,14 @@ public class MazeGamePanel extends JPanel {
 	/**
 	 * @return the effectDisplay
 	 */
-	public MazeGameEffectPanel getEffectDisplay() {
+	public MazeGameEffectPopup getEffectDisplay() {
 		return effectDisplay;
 	}
 
 	/**
 	 * @param effectDisplay the effectDisplay to set
 	 */
-	public void setEffectDisplay(MazeGameEffectPanel effectDisplay) {
+	public void setEffectDisplay(MazeGameEffectPopup effectDisplay) {
 		this.effectDisplay = effectDisplay;
 	}
 
@@ -467,5 +467,5 @@ public class MazeGamePanel extends JPanel {
 	// current ranking
 	private int minRanking;	
 	// effect display
-	private MazeGameEffectPanel effectDisplay;
+	private MazeGameEffectPopup effectDisplay;
 }

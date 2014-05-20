@@ -7,13 +7,13 @@ import java.awt.Graphics2D;
 import maze.effect.MazeEffect;
 import maze.player.MazePlayer;
 
-public class MazeGameEffectPanel {
+public class MazeGameEffectPopup {
 	/**
 	 * @param player
 	 * @param effect
 	 * @param finishTime
 	 */
-	public MazeGameEffectPanel(MazePlayer player, MazeEffect effect) {
+	public MazeGameEffectPopup(MazePlayer player, MazeEffect effect) {
 		this.player = player;
 		this.effect = effect;
 		this.startTime = System.currentTimeMillis();		

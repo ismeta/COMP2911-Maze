@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 import maze.effect.MazeEffect;
 import maze.game.MazeBasePanel;
-import maze.game.MazeGameEffectPanel;
+import maze.game.MazeGameEffectPopup;
 
 /**
  * Representation of a player within the game.
@@ -67,7 +67,7 @@ public class MazePlayer {
 			if (ef.getEndTime() >= System.currentTimeMillis()) {
 				m.getActivatedEffects().add(ef);
 			}
-			m.getMazeGamePanel().setEffectDisplay(new MazeGameEffectPanel(this, ef));
+			m.getMazeGamePanel().setEffectDisplay(new MazeGameEffectPopup(this, ef));
 			this.mazePlayerPanel.updateBuffs(this.effectQueue);
 		}
 	}
