@@ -1,6 +1,7 @@
 package maze.game;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -190,7 +191,11 @@ public class MazeBasePanel extends JPanel {
 		// maze keypresses and listener
 		this.keyPresses = new ConcurrentHashMap<Character, Long>();
 		this.addKeyListener(new MazeBasePanelKeyListener(this));
-		gui.getCards().addKeyListener(new MazeBasePanelKeyListener(this));
+		Component parent = this.getParent();
+		while (parent != null) {
+			parent.addKeyListener(new MazeBasePanelKeyListener(this));
+			parent = parent.getParent();
+		}
 		
 		// create the effects PQ
 		this.activatedEffects = new PriorityQueue<MazeEffect>(10, new Comparator<MazeEffect>() {
@@ -216,7 +221,11 @@ public class MazeBasePanel extends JPanel {
 		
 		for (KeyListener kl : this.getKeyListeners()) {
 			this.removeKeyListener(kl);
-			this.frameGui.getCards().removeKeyListener(kl);
+			Component parent = this.getParent();
+			while (parent != null) {
+				parent.removeKeyListener(kl);
+				parent = parent.getParent();
+			}
 		}
 		this.keyPresses.clear();
 		this.keyPresses = null;
@@ -224,17 +233,13 @@ public class MazeBasePanel extends JPanel {
 		this.frameGui.dispose();
 	}
 	
-	
-	
 	/**
 	 * @return the mazeGamePanel
 	 */
 	public MazeGamePanel getMazeGamePanel() {
 		return mazeGamePanel;
 	}
-
-
-
+	
 	/**
 	 * @author oliver
 	 * MazeJPanelTimer allows player listeners and repainting

@@ -37,6 +37,8 @@ import maze.generator.RandomMazeGenerator;
  * @author davina
  */
 public class GUI implements ActionListener {
+	private static final int TILE_SIZE_ORIGINAL = 20;
+	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 
 	private JFrame frame;
 
@@ -54,9 +56,6 @@ public class GUI implements ActionListener {
 	private JButton playBackButton;
 	private JButton systemSaveButton;
 	private JButton systemBackButton;
-
-	private static final int TILE_SIZE_ORIGINAL = 20;
-	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 
 	private int difficulty;
 	private int numPlayers;
