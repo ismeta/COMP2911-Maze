@@ -161,7 +161,12 @@ public class EgalitarianEffect implements MazeEffect {
 	public long getEndTime() {
 		return this.endTime;
 	}
-
+	
+	@Override
+	public void addEndTime(long add) {
+		this.endTime += add;
+	}
+	
 	/* (non-Javadoc)
 	 * @see maze.effect.MazeEffect#deactivate(maze.game.MazeGamePanel)
 	 */
