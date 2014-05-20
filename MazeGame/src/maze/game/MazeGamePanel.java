@@ -360,7 +360,8 @@ public class MazeGamePanel extends JPanel {
 				
 				// are we ABSOLUTELY at the goal?
 				if (this.mazeTiles[(int) (p.getPosY() / tileHeight)][(int) (p.getPosX() / tileWidth)].isGoal() &&
-						this.mazeTiles[(int) ((p.getPosY() + tileHeight) / tileHeight)][(int) ((p.getPosX() + tileWidth) / tileWidth)].isGoal()) {
+						((int) (p.getPosY() / tileHeight) * tileHeight) == (int) yTo &&
+						((int) (p.getPosX() / tileWidth) * tileWidth) == (int) xTo) {
 					p.setRanking(this.minRanking++);
 				}
 			}
