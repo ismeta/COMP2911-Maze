@@ -126,6 +126,7 @@ public class RandomMazeGenerator implements MazeGenerator {
 		
 		/* Don't forget to initialise our start/end tiles :P */
 		tiles[startP.x][startP.y] = new MazeTile();
+		tiles[startP.x][startP.y].setStart(true);
 		tiles[goalP.x][goalP.y]   = new MazeTile();
 		tiles[goalP.x][goalP.y].setGoal(true);
 		

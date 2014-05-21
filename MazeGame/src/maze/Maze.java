@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -23,7 +24,11 @@ public class Maze {
         GUI gui = new GUI(frame);
         gui.generate(frame.getContentPane());
         
-        //Display the window.
+        // images
+        frame.setIconImage(new ImageIcon("images/sprites/player0.png").getImage());
+        frame.setTitle("Maze & The City");
+        
+        // Display the window.
         frame.getContentPane().setBackground(Color.YELLOW);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setMinimumSize(screenSize);

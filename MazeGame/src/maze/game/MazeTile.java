@@ -12,6 +12,7 @@ public class MazeTile {
 	public MazeTile() {
 		this.isWall = false;
 		this.isGoal = false;
+		this.isStart = false;
 		this.effect = null;
 	}
 
@@ -57,6 +58,20 @@ public class MazeTile {
 		this.isWall = isWall;
 	}
 	
+	/**
+	 * @return the isStart
+	 */
+	public boolean isStart() {
+		return isStart;
+	}
+
+	/**
+	 * @param isStart the isStart to set
+	 */
+	public void setStart(boolean isStart) {
+		this.isStart = isStart;
+	}
+
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		if (this.isGoal) {
 			g2d.setPaint(Color.CYAN);
@@ -72,6 +87,7 @@ public class MazeTile {
 	
 	private boolean isWall;
 	private boolean isGoal;
+	private boolean isStart;
 	
 	/* effect on this tile */
 	private MazeEffect effect;

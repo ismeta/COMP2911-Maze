@@ -32,6 +32,7 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 		
 		/* Don't forget to initialise our start tile :P */
 		tiles[startP.x][startP.y] = new MazeTile();
+		tiles[startP.x][startP.y].setStart(true);
 		
 		/* Finally, we need a counter of how many tiles we need to visit
 		 * so we know when we should stop. We could have a list of all the
