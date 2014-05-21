@@ -1,17 +1,26 @@
 package maze.game;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -22,29 +31,44 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 import maze.GUI;
 import maze.effect.MazeEffect;
 import maze.generator.maze.MazeGenerator;
 import maze.player.MazePlayer;
 import maze.player.MazePlayerPanel;
 
+
 public class MazeBasePanel extends JPanel {
+	
 	public MazeBasePanel(GUI frameGui) {
+		
 		super(true);
 		this.setFocusable(true);
 		
-		this.setLayout(new GridBagLayout());
 		this.timer = null;
 		this.mazePlayers = null;
 		this.activatedEffects = null;
 		this.keyPresses = null;
-		this.mazeGamePanel = new MazeGamePanel(800, 800);
-		this.image = null;
-		this.frameGui = frameGui;
-		
 		this.gameState = MazeGameState.UNSETUP;
+		
+		/* GUI */
+		/* - Layout */
+		this.setLayout(new GridBagLayout());
+		/* Maze dimensions */
+		Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
+		this.screenWidth = (int) resolution.getWidth();
+		this.screenHeight = (int) resolution.getHeight();
+		this.mazeGamePanel = new MazeGamePanel(screenWidth/2 - 100, screenWidth/2 - 100);
+		/* Set up */
+		this.isMusicOn = true;
+		this.isPlaying = true;
+		this.as = null;
 		this.setupGui();
 	}
 	
@@ -52,64 +76,193 @@ public class MazeBasePanel extends JPanel {
 	 * @author davina
 	 */
 	private void setupGui() {
-		// Header
-		JPanel header = new JPanel();
-		header.setPreferredSize(new Dimension(700, 65));
-		header.setOpaque(false);
+		/* Background */
+		Image img = new ImageIcon("images/gui/nature.png").getImage();
+		this.setBackground(img);
 		
+		/* Maze Game Panel */
 		g = new GridBagConstraints();
-		g.gridx = 1;
-		g.gridy = 0;
-		g.weighty = 1;
-		this.add(header, g);
-		
-		// Buttons
-		JButton pause = new JButton(new ImageIcon("images/player/pauseb.png"));
-		pause.setBorderPainted(false);
-		pause.setContentAreaFilled(false);
-		
-		JButton help = new JButton(new ImageIcon("images/player/help.png"));
-		help.setBorderPainted(false);
-		help.setContentAreaFilled(false);
-		
-		JButton exit = new JButton(new ImageIcon("images/player/exit.png"));
-		exit.setBorderPainted(false);
-		exit.setContentAreaFilled(false);
-		
-		header.add(pause);
-		header.add(help);
-		header.add(exit);
-		
-		// Action Listeners for buttons
-		exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	frameGui.dispose();
-            }
-        });
-		
-		help.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	frameGui.displayHelpWindow();
-            }
-        });
-		
-		// Game panel
-		g.anchor = GridBagConstraints.NORTH;
+		g.anchor = GridBagConstraints.NORTHEAST;
 		g.gridwidth = 1;
 		g.gridx = 0;
 		g.gridy = 1;
 		g.weightx = 0.1;
 		this.add(this.mazeGamePanel, g);
 		
-		// Background
-		Image img = new ImageIcon("images/gui/nature.png").getImage();
-		this.setBackground(img);
+		/* Prompt line  */
+		JLabel headerText = new JLabel("Get to the M1 before the other cars!");
+		headerText.setFont(new Font("verdana", Font.PLAIN, 40));
+		g.anchor = GridBagConstraints.NORTH;
+		g.gridx = 0;
+		g.gridy = 0;
+		g.insets = new Insets(20, 0, 0, 0);
+		this.add(headerText, g);
+		
+		/* TopButtons - contains buttons*/
+		GridLayout buttonsGridLayout = new GridLayout(1, 5);
+		JPanel topButtons = new JPanel();
+		topButtons.setLayout(buttonsGridLayout);
+		topButtons.setPreferredSize(new Dimension(this.screenWidth/2, 50));
+		topButtons.setOpaque(false);
+		g.gridx = 1;
+		g.gridy = 0;
+		g.weighty = 0.1;
+		g.insets = new Insets(20,0,0,0);
+		this.add(topButtons, g);
+		
+		/* - Pause */
+		ImageIcon ico = new ImageIcon("images/gui/maze_pause.png");
+		pause = new JButton(ico);
+		pause.setBorderPainted(false);
+		pause.setContentAreaFilled(false);
+		/* - Sound */
+		ico = new ImageIcon("images/gui/maze_sound.png");
+		sound = new JButton(ico);
+		sound.setBorderPainted(false);
+		sound.setContentAreaFilled(false);
+		/* - Back */
+		ico = new ImageIcon("images/gui/maze_back.png");
+		JButton back = new JButton(ico);
+		back.setBorderPainted(false);
+		back.setContentAreaFilled(false);
+		/* - Help */
+		ico = new ImageIcon("images/gui/maze_help.png");
+		JButton help = new JButton(ico);
+		help.setBorderPainted(false);
+		help.setContentAreaFilled(false);
+		/* - Exit */
+		ico = new ImageIcon("images/gui/maze_exit.png");
+		JButton exit = new JButton(ico);
+		exit.setBorderPainted(false);
+		exit.setContentAreaFilled(false);
+		
+		topButtons.add(pause);
+		topButtons.add(sound);
+		//topButtons.add(back);
+		topButtons.add(help);
+		topButtons.add(exit);
+		
+		/* Action Listeners for buttons */
+		pause.setFocusable(false);
+		pause.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	if (isPlaying) {
+            		// Pause game
+            		isPlaying = false;
+            		pause();
+            		// Change image to play
+            		pause.setIcon(new ImageIcon("images/gui/maze_play.png"));
+            		// Turn music off
+            		stopMusic();
+            	} else {
+            		// Play game
+            		isPlaying = true;
+            		unpause();
+            		// Change image to pause
+            		pause.setIcon(new ImageIcon("images/gui/maze_pause.png"));
+            		// Turn music on
+            		playMusic();
+            		
+            	}
+            }
+        });
+		
+		sound.setFocusable(false);
+		sound.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	if (isMusicOn == true) {
+            		// Mute music
+            		isMusicOn = false;
+            		stopMusic();
+            		// Change image to mute
+            		sound.setIcon(new ImageIcon("images/gui/maze_mute.png"));
+            	} else {
+            		// Play music
+            		isMusicOn = true;
+            		playMusic();
+            		// Change image to play
+            		sound.setIcon(new ImageIcon("images/gui/maze_sound.png"));
+            	}
+            }
+        });
+		/*
+		back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	// Go back to play options page
+            		CardLayout cl = (CardLayout) (frameGui.getPages().getLayout());
+            		cl.show(frameGui.getPages(), "play");
+            }
+        });
+		*/
+		
+		help.setFocusable(false);
+		help.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	// Pause the game
+            	pause();
+            	if (isPlaying) {
+            		isPlaying = false;
+            		// Change image to play
+            		pause.setIcon(new ImageIcon("images/gui/maze_play.png"));
+            	}
+            	// Stop the music
+            	stopMusic();
+            	// Display help window
+            	JFrame helpFrame = new JFrame("Help");
+            	helpFrame.setFocusable(false);
+        		helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        		helpFrame.setMinimumSize(new Dimension(500, 500));
+        		helpFrame.setVisible(true);
+            }
+        });
+		
+		exit.setFocusable(false);
+		exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	// Exit application properly
+            	exit();
+            }
+        });
 	}
 	
-    public void setBackground(Image image) {
-        this.image = image;
+	
+	/***
+	 * Pump da music!
+	 * TODO: Continuous and mute
+	 * maybe different music between MazeGameState = UNSETUP and PLAY,PAUSED and SUCCESS
+	 * @param filename
+	 */
+	public void playMusic() {
+		String filename = "music/Pamgaea.wav";
+		InputStream in = null;
+		//AudioStream as = null;
+		try {
+			//create audio data source
+			in = new FileInputStream(new File(filename));
+		} catch(FileNotFoundException fnfe) {
+			System.err.println("The audio file was not found");
+		}
+		
+		try {
+			//create audio stream from file stream
+			as = new AudioStream(in);
+		} catch(IOException ie) {
+			System.err.println("Audio stream could not be created");
+		}
+		AudioPlayer.player.start(as);
+	}
+	
+	public void stopMusic() {
+		AudioPlayer.player.stop(as);
+	}
+	
+    public void setBackground(Image background) {
+        image = background;
     }
 
     @Override
@@ -140,6 +293,8 @@ public class MazeBasePanel extends JPanel {
 	}
 
 	public void setup(int size, int numPlayers, MazeGenerator mazeGenerator, GUI gui) {
+		/* Play music throughout application unless turned off in system options. */
+		this.playMusic();
 		Color purple = new Color(174, 79, 255);
 		Color blue   = new Color(0, 156, 255);
 		
@@ -156,7 +311,7 @@ public class MazeBasePanel extends JPanel {
 		// make da players
 		this.mazePlayers = new MazePlayer[numPlayers];
 		
-		int padding = 200 / numPlayers;
+		int padding = 140 / numPlayers;
 		for (int i = 0; i < numPlayers; i++) {
 			MazePlayerPanel s = new MazePlayerPanel(colors.get(i), i);
 			this.mazePlayers[i] = new MazePlayer(i, s);
@@ -166,10 +321,9 @@ public class MazeBasePanel extends JPanel {
 			GridBagConstraints gbc = new GridBagConstraints();
 			gbc.gridx = 0;
 			gbc.gridy = i;
-			gbc.weighty = 0.5;
+			//gbc.weighty = 0.5;
 			gbc.insets = new Insets(0,0,padding,0);
 			playerStatus.add(s, gbc);
-			
 		}
 		g.anchor = GridBagConstraints.CENTER;
 		g.gridx = 1;
@@ -240,7 +394,7 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
 		
-		this.frameGui.dispose();
+		System.exit(0);
 	}
 	
 
@@ -362,7 +516,7 @@ public class MazeBasePanel extends JPanel {
 	private Timer timer;
 	private MazePlayer mazePlayers[];
 	private PriorityQueue<MazeEffect> activatedEffects;
-	private ConcurrentHashMap<Character, Long> keyPresses; 
+	private ConcurrentHashMap<Character, Long> keyPresses;
 	
 	private MazeGamePanel mazeGamePanel;
 	
@@ -373,4 +527,14 @@ public class MazeBasePanel extends JPanel {
 	
 	/* the current state of the maze */
 	private MazeGameState gameState;
+	
+	private int screenWidth;
+	private int screenHeight;
+	
+	private boolean isMusicOn;
+	private boolean isPlaying;
+	
+	private JButton pause;
+	private JButton sound;
+	private AudioStream as;
 }
