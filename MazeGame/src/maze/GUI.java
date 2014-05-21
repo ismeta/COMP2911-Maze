@@ -44,18 +44,11 @@ public class GUI implements ActionListener {
 	/**
 	 * @param frame
 	 */
-	public GUI(JFrame frame) {
-		/* One frame (window) used throughout application, except for help. */
-		this.frame = frame;
-		
+	public GUI() {
 		/* Gui has a stack of 'pages' and displays the relevant page.
 		 * Only one page is visible at a time and is switched with the previous card.
 		 */
 		this.pages = new JPanel(new CardLayout());
-		
-		this.playOptionsPage = playOptionsPage;
-		
-		
 	}
 	
 	public JPanel getPages() {
@@ -396,9 +389,6 @@ public class GUI implements ActionListener {
 	private static final int TWO_PLAYERS = 2;
 	private static final int THREE_PLAYERS = 3;
 	
-	/* Frame */
-	private JFrame frame;
-
 	/* Pages */
 	private JPanel pages;
 	private ImagePanel homePage;

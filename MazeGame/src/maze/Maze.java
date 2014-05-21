@@ -21,7 +21,7 @@ public class Maze {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //Create and set up the content pane.
-        GUI gui = new GUI(frame);
+        GUI gui = new GUI();
         gui.generate(frame.getContentPane());
         
         // images

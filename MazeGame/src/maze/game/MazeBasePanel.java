@@ -62,7 +62,6 @@ public class MazeBasePanel extends JPanel {
 		/* Maze dimensions */
 		Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
 		this.screenWidth = (int) resolution.getWidth();
-		this.screenHeight = (int) resolution.getHeight();
 		this.mazeGamePanel = new MazeGamePanel(screenWidth/2 - 100, screenWidth/2 - 100);
 		/* Set up */
 		this.isMusicOn = true;
@@ -524,7 +523,6 @@ public class MazeBasePanel extends JPanel {
 	private MazeGamePanel mazeGamePanel;
 	
 	private Image image;
-	private GUI frameGui;
 	private GridBagConstraints g;
 	private long lastPauseTime;
 	
@@ -532,7 +530,6 @@ public class MazeBasePanel extends JPanel {
 	private MazeGameState gameState;
 	
 	private int screenWidth;
-	private int screenHeight;
 	
 	private boolean isMusicOn;
 	private boolean isPlaying;
