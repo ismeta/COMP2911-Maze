@@ -22,7 +22,7 @@ public class MazeGameEffectPopup {
 	public void paint(Graphics g, int width, int height) {
 		Graphics2D g2d = (Graphics2D) g.create();
 		// transparent - fades out over time
-		float maxTransparency = 0.7f;
+		float maxTransparency = 0.6f;
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (maxTransparency - ((System.currentTimeMillis() - this.startTime) / (float) DURATION) * maxTransparency)));
 		int imageWidth = width/PROPORTION;
 		int imageHeight = height/PROPORTION;

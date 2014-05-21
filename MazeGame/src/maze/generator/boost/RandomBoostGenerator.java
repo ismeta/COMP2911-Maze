@@ -48,7 +48,6 @@ public class RandomBoostGenerator implements BoostGenerator {
 						continue;
 					}
 
-					System.out.println(i + ", " + j);
 					/* change the integer bound based on the number of possible effects! */
 					int choice = rand.nextInt(3);
 					
@@ -73,7 +72,6 @@ public class RandomBoostGenerator implements BoostGenerator {
 						continue;
 					}
 
-					System.out.println(i + ", " + j);
 					/* change the integer bound based on the number of possible effects! */
 					int choice = rand.nextInt(2);
 					

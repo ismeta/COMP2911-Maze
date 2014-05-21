@@ -389,7 +389,7 @@ public class GUI implements ActionListener {
 	}
 	
 	/* approximate size of each maze tile */
-	private static final int TILE_SIZE_ORIGINAL = 20;
+	private static final int TILE_SIZE_ORIGINAL = 30;
 	
 	/* actual size of each maze tile - required to be an odd number */
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
