@@ -1,22 +1,18 @@
 package maze;
 
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -30,78 +26,88 @@ import javax.swing.JRadioButton;
 
 import maze.game.MazeBasePanel;
 import maze.generator.maze.RandomMazeGenerator;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
 /**
+ * GUI.
+ * 
+ * DISPLAY 'PAGES':
+ * Home, Play Options, System Options, Maze Game.
+ * Help (Pop up frame) and Exit (closes application).
+ * 
+ * GUI FLOW/USER INTERACTION:
+ * Listens for when a GUI flow button is pressed e.g. User presses Back.
+ * 
  * @author davina
  */
 public class GUI implements ActionListener {
+	
 	/**
-	 * Gui
-	 * 
 	 * @param frame
 	 */
 	public GUI(JFrame frame) {
+		/* One frame (window) used throughout application, except for help. */
 		this.frame = frame;
-		this.difficulty = 5;
-		this.numPlayers = 2;
-		this.playMusic();
+		
+		/* Gui has a stack of 'pages' and displays the relevant page.
+		 * Only one page is visible at a time and is switched with the previous card.
+		 */
+		this.pages = new JPanel(new CardLayout());
+		
+		this.playOptionsPage = playOptionsPage;
+		
+		
+	}
+	
+	public JPanel getPages() {
+		return this.pages;
 	}
 
-	/**
-	 * @return the cards
-	 */
-	public JPanel getCards() {
-		return cards;
-	}
 
 	/**
-	 * Generate card for card layout
-	 * 
+	 * Set up default settings.
+	 * Generate pages for each page and show home initially.
 	 * @param pane
 	 */
 	public void generate(Container pane) {
+		/* Default difficulty and number of players */
+		difficulty = EASY_MELBOURNE;
+		numPlayers = TWO_PLAYERS;
 
-		difficulty = 1;
+		/* Initialise Pages */
+		this.initialiseHomePage();
+		this.initialisePlayOptionsPage();
+		this.initialiseSystemOptionsPage();
+		this.initialiseMazePage();
 
-		cards = new JPanel(new CardLayout());
-
-		this.initialiseHomeCard();
-		this.initialisePlayOptionsCard();
-		this.initialiseMazeCard();
-		this.initialiseSystemOptionsCard();
-
-		// Display
-		pane.add(cards, BorderLayout.CENTER);
-		CardLayout cl = (CardLayout) (cards.getLayout());
-		cl.show(cards, "home");
+		/* Initial display */
+		pane.add(pages, BorderLayout.CENTER);
+		CardLayout cl = (CardLayout) (pages.getLayout());
+		cl.show(pages, "home");
 	}
 
 	/**
-	 * Home Card
+	 * Home Page
 	 */
-	public void initialiseHomeCard() {
-
-		// HOME CARD - Default layout is border layout
-		homeCard = new ImagePanel();
+	public void initialiseHomePage() {
+		/* Background and Layout */
+		homePage = new ImagePanel();
 		Image img = new ImageIcon("images/gui/mazecityb.png").getImage();
-		homeCard.setBackground(img);
-		homeCard.setLayout(new BorderLayout());
+		homePage.setBackground(img);
+		homePage.setLayout(new BorderLayout());
 
-		// Header (empty)
+		/* Empty Header */
 		JLabel label = new JLabel("");
-		label.setPreferredSize(new Dimension(200, 220));
-		homeCard.add(label, BorderLayout.PAGE_START);
+		label.setPreferredSize(this.getAdjustedDimension(4));
+		homePage.add(label, BorderLayout.PAGE_START);
 
-		// Buttons Panel
+		/* Buttons panel */
 		JPanel buttonsPanel = new JPanel();
 		GridLayout gl = new GridLayout(4, 1);
 		gl.setVgap(20);
 		buttonsPanel.setOpaque(false);
 		buttonsPanel.setLayout(gl);
 
-		// Play
+		/* - Play button */
 		Icon ico = new ImageIcon("images/gui/green_road_sign_play.png");
 		playButton = new JButton(ico);
 		playButton.setContentAreaFilled(false);
@@ -109,7 +115,7 @@ public class GUI implements ActionListener {
 		playButton.addActionListener(this);
 		buttonsPanel.add(playButton);
 
-		// System Options
+		/* - System options */
 		ico = new ImageIcon("images/gui/green_road_sign_options.png");
 		optionsButton = new JButton(ico);
 		optionsButton.setContentAreaFilled(false);
@@ -117,7 +123,7 @@ public class GUI implements ActionListener {
 		optionsButton.addActionListener(this);
 		buttonsPanel.add(optionsButton);
 
-		// Help
+		/* - Help */
 		ico = new ImageIcon("images/gui/green_road_sign_help.png");
 		helpButton = new JButton(ico);
 		helpButton.setContentAreaFilled(false);
@@ -125,7 +131,7 @@ public class GUI implements ActionListener {
 		helpButton.addActionListener(this);
 		buttonsPanel.add(helpButton);
 
-		// Exit
+		/* - Exit */
 		ico = new ImageIcon("images/gui/green_road_sign_exit.png");
 		exitButton = new JButton(ico);
 		exitButton.setContentAreaFilled(false);
@@ -133,60 +139,53 @@ public class GUI implements ActionListener {
 		exitButton.addActionListener(this);
 		buttonsPanel.add(exitButton);
 
-		homeCard.add(buttonsPanel, BorderLayout.CENTER);
+		/* All buttons set, add it to home page in the center. */
+		homePage.add(buttonsPanel, BorderLayout.CENTER);
 
+		/* Empty Footer */
 		label = new JLabel("");
-		label.setPreferredSize(new Dimension(100, 50));
-		homeCard.add(label, BorderLayout.PAGE_END);
+		label.setPreferredSize(this.getAdjustedDimension(18));
+		homePage.add(label, BorderLayout.PAGE_END);
 
-		// Add home card to cardss
-		cards.add(homeCard, "home");
+		/* Add home page to stack of pages */
+		this.pages.add(homePage, "home");
 	}
 
 	/**
-	 * Player Options Card
+	 * Player Options Page
 	 */
-	public void initialisePlayOptionsCard() {
-		playOptionsCard = new ImagePanel();
-		Image img = new ImageIcon("images/gui/mazecity_playerops3.png")
+	public void initialisePlayOptionsPage() {
+		/* Background and Layout */
+		playOptionsPage = new ImagePanel();
+		Image img = new ImageIcon("images/gui/player_options_bg.png")
 				.getImage();
-		playOptionsCard.setBackground(img);
-		playOptionsCard.setLayout(new BorderLayout());
+		playOptionsPage.setBackground(img);
+		playOptionsPage.setLayout(new BorderLayout());
 
+		/* Empty header */
 		JLabel label = new JLabel("");
-		label.setPreferredSize(new Dimension(200, 500));
-		playOptionsCard.add(label, BorderLayout.PAGE_START);
-
-		label = new JLabel("");
-		label.setPreferredSize(new Dimension(500, 500));
-		playOptionsCard.add(label, BorderLayout.LINE_START);
-
-		label = new JLabel("");
-		label.setPreferredSize(new Dimension(500, 400));
-		playOptionsCard.add(label, BorderLayout.LINE_END);
-
-		label = new JLabel("");
-		label.setPreferredSize(new Dimension(300, 200));
-		playOptionsCard.add(label, BorderLayout.PAGE_END);
-
-		// OPTIONS PANEL
+		label.setPreferredSize(this.getAdjustedDimension(3));
+		playOptionsPage.add(label, BorderLayout.PAGE_START);
+	
+		/* Panel with options */
 		JPanel optionPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		optionPanel.setOpaque(false);
 
-		JLabel play_chooseCity = new JLabel("CHOOSE CITY");
-		play_chooseCity.setFont(label.getFont().deriveFont(25f));
+		/* - CHOOSE CITY*/
+		JLabel cityLabel = new JLabel("CHOOSE CITY (DIFFICULTY)");
+		cityLabel.setFont(new Font("verdana", Font.BOLD, 25));
 		gbc.gridwidth = 2;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.weightx = 0.1;
+		gbc.weightx = 0;
 		gbc.weighty = 0.1;
-		optionPanel.add(play_chooseCity, gbc);
+		optionPanel.add(cityLabel, gbc);
 
+		/* -- Melbourne radio button */
 		JRadioButton melbourne = new JRadioButton("Melbourne (Easy)", true);
-		melbourne.setFont(label.getFont().deriveFont(25f));
+		melbourne.setFont(new Font("verdana", Font.PLAIN, 25));
 		melbourne.setOpaque(false);
-		melbourne.putClientProperty("JComponent.sizeVariant", "large");
 		gbc.gridwidth = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -195,12 +194,13 @@ public class GUI implements ActionListener {
 		melbourne.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				difficulty = 5;
+				difficulty = EASY_MELBOURNE;
 			}
 		});
 
+		/* -- Sydney radio button */
 		JRadioButton sydney = new JRadioButton("Sydney (Hard)");
-		sydney.setFont(label.getFont().deriveFont(25f));
+		sydney.setFont(new Font("verdana", Font.PLAIN, 25));
 		sydney.setOpaque(false);
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -209,54 +209,60 @@ public class GUI implements ActionListener {
 		sydney.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				difficulty = 10;
+				difficulty = HARD_SYDNEY;
 			}
 		});
 
+		/* Radio buttons are set up so add to button group */
 		ButtonGroup cityGroup = new ButtonGroup();
 		cityGroup.add(melbourne);
 		cityGroup.add(sydney);
 
-		JLabel play_players = new JLabel("CHOOSE NUMBER OF PLAYERS");
-		play_players.setFont(label.getFont().deriveFont(25f));
+		/* CHOOSE NUM PLAYERS */
+		JLabel playersLabel = new JLabel("CHOOSE NUMBER OF PLAYERS");
+		playersLabel.setFont(new Font("verdana", Font.BOLD, 25));
 		gbc.gridwidth = 2;
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		optionPanel.add(play_players, gbc);
+		optionPanel.add(playersLabel, gbc);
 
-		JRadioButton twoplayer = new JRadioButton("2", true);
-		twoplayer.setFont(twoplayer.getFont().deriveFont(25f));
+		/* - Two player */
+		JRadioButton twoplayer = new JRadioButton("2 Players", true);
+		twoplayer.setFont(new Font("verdana", Font.PLAIN, 25));
 		twoplayer.setOpaque(false);
 		gbc.gridwidth = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		optionPanel.add(twoplayer, gbc);
-		// Set difficulty
+		// Set num players
 		twoplayer.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				numPlayers = 2;
+				numPlayers = TWO_PLAYERS;
 			}
 		});
 
-		JRadioButton threeplayer = new JRadioButton("3");
-		threeplayer.setFont(label.getFont().deriveFont(25f));
+		/* - Three players */
+		JRadioButton threeplayer = new JRadioButton("3 Players");
+		threeplayer.setFont(new Font("verdana", Font.PLAIN, 25));
 		threeplayer.setOpaque(false);
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		optionPanel.add(threeplayer, gbc);
-		// Set difficulty
+		// Set num players
 		threeplayer.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				numPlayers = 3;
+				numPlayers = THREE_PLAYERS;
 			}
 		});
 
+		/* Radio buttons are set up so add to button group */
 		ButtonGroup playerGroup = new ButtonGroup();
 		playerGroup.add(twoplayer);
 		playerGroup.add(threeplayer);
 
+		/* Play Button */
 		Icon ico = new ImageIcon("images/gui/playoptions_playbutton1.png");
 		playSaveButton = new JButton(ico);
 		playSaveButton.setBorderPainted(false);
@@ -266,6 +272,7 @@ public class GUI implements ActionListener {
 		gbc.gridy = 4;
 		optionPanel.add(playSaveButton, gbc);
 
+		/* Back button */
 		ico = new ImageIcon("images/gui/playoptions_backbutton1.png");
 		playBackButton = new JButton(ico);
 		playBackButton.setBorderPainted(false);
@@ -275,21 +282,29 @@ public class GUI implements ActionListener {
 		gbc.gridy = 4;
 		optionPanel.add(playBackButton, gbc);
 
-		playOptionsCard.add(optionPanel);
-		cards.add(playOptionsCard, "play");
+		/* Options GUI set up, add to page */
+		playOptionsPage.add(optionPanel);
+		
+		/* Empty Footer */
+		label = new JLabel("");
+		label.setPreferredSize(this.getAdjustedDimension(5));
+		playOptionsPage.add(label, BorderLayout.PAGE_END);
+		
+		/* Add options page to stack of pages */
+		this.pages.add(playOptionsPage, "play");
 	}
 
 	/**
-	 * Maze Card
+	 * Maze Page - Page with actual maze and game play
 	 */
-	public void initialiseMazeCard() {
-		mazeCard = new MazeBasePanel(this);
-		cards.add(mazeCard, "maze");
-		cards.setFocusable(true);
+	public void initialiseMazePage() {
+		mazePage = new MazeBasePanel(this);
+		this.pages.add(mazePage, "maze");
+		this.pages.setFocusable(true);
 	}
 
-	public void initialiseSystemOptionsCard() {
-		systemopsCard = new JPanel();
+	public void initialiseSystemOptionsPage() {
+		systemopsPage = new JPanel();
 		JLabel system_music = new JLabel("Music:");
 		JLabel systemSoundfx = new JLabel("Sound FX:");
 		systemSaveButton = new JButton("Save");
@@ -297,36 +312,36 @@ public class GUI implements ActionListener {
 		systemBackButton = new JButton("Back");
 		systemBackButton.addActionListener(this);
 
-		systemopsCard.add(system_music);
-		systemopsCard.add(systemSoundfx);
-		systemopsCard.add(systemSaveButton);
-		systemopsCard.add(systemBackButton);
+		systemopsPage.add(system_music);
+		systemopsPage.add(systemSoundfx);
+		systemopsPage.add(systemSaveButton);
+		systemopsPage.add(systemBackButton);
 
-		cards.add(systemopsCard, "system");
+		pages.add(systemopsPage, "system");
 	}
 
 	/**
 	 * Handle actions
 	 */
 	public void actionPerformed(ActionEvent e) {
-		CardLayout cl = (CardLayout) (cards.getLayout());
+		CardLayout cl = (CardLayout) (pages.getLayout());
 
 		if (e.getSource() == playButton) {
-			cl.show(cards, "play");
+			cl.show(pages, "play");
 		} else if (e.getSource() == optionsButton) {
-			cl.show(cards, "system");
+			cl.show(pages, "system");
 		} else if (e.getSource() == helpButton) {
 			this.displayHelpWindow();
 		} else if (e.getSource() == exitButton) {
-			this.dispose();
+			System.exit(0);
 		} else if (e.getSource() == playSaveButton) {
-			mazeCard.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
-			cl.show(cards, "maze");
+			mazePage.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
+			cl.show(pages, "maze");
 		} else if (e.getSource() == playBackButton) {
-			cl.show(cards, "home");
+			cl.show(pages, "home");
 		} else if (e.getSource() == systemSaveButton
 				|| e.getSource() == systemBackButton) {
-			cl.show(cards, "home");
+			cl.show(pages, "home");
 		}
 	}
 	
@@ -347,30 +362,9 @@ public class GUI implements ActionListener {
 		this.frame.dispose();
 	}
 	
-	/***
-	 * Pump da music!
-	 * TODO: Continuous and mute
-	 * maybe different music between MazeGameState = UNSETUP and PLAY,PAUSED and SUCCESS
-	 * @param filename
-	 */
-	public void playMusic() {
-		String filename = "music/Pamgaea.wav";
-		InputStream in = null;
-		AudioStream as = null;
-		try {
-			//create audio data source
-			in = new FileInputStream(new File(filename));
-		} catch(FileNotFoundException fnfe) {
-			System.err.println("The audio file was not found");
-		}
-		
-		try {
-			//create audio stream from file stream
-			as = new AudioStream(in);
-		} catch(IOException ie) {
-			System.err.println("Audio stream could not be created");
-		}
-		AudioPlayer.player.start(as);
+	public void displayPlayOptionsPage() {
+		CardLayout cl = (CardLayout) (pages.getLayout());
+		cl.show(pages, "play");
 	}
 	
 	private class ImagePanel extends JPanel {		
@@ -388,20 +382,43 @@ public class GUI implements ActionListener {
 	    }
 	}
 	
+	/**
+	 * Make GUI nice for all resolutions
+	 * @param divisor
+	 * @return adjusted Dimension
+	 */
+	private Dimension getAdjustedDimension(int divisor) {
+		Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
+		int adjustedWidth = (int) resolution.getWidth()/divisor;
+		int adjustedHeight = (int) resolution.getHeight()/divisor;
+		return new Dimension(adjustedWidth, adjustedHeight);
+	}
+	
 	/* approximate size of each maze tile */
 	private static final int TILE_SIZE_ORIGINAL = 20;
 	
 	/* actual size of each maze tile - required to be an odd number */
 	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
 
+	/* difficulty level - linked to a city */
+	private static final int EASY_MELBOURNE = 5;
+	private static final int HARD_SYDNEY = 10;
+	
+	/* number of players */
+	private static final int TWO_PLAYERS = 2;
+	private static final int THREE_PLAYERS = 3;
+	
+	/* Frame */
 	private JFrame frame;
 
-	private JPanel cards;
-	private ImagePanel homeCard;
-	private ImagePanel playOptionsCard;
-	private JPanel systemopsCard;
-	private MazeBasePanel mazeCard;
+	/* Pages */
+	private JPanel pages;
+	private ImagePanel homePage;
+	private ImagePanel playOptionsPage;
+	private JPanel systemopsPage;
+	private MazeBasePanel mazePage;
 
+	/* Buttons */
 	private JButton playButton;
 	private JButton optionsButton;
 	private JButton helpButton;
@@ -411,6 +428,7 @@ public class GUI implements ActionListener {
 	private JButton systemSaveButton;
 	private JButton systemBackButton;
 
+	/* Option settings */
 	private int difficulty;
 	private int numPlayers;
 }
