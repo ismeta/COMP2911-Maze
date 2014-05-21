@@ -355,18 +355,6 @@ public class GUI implements ActionListener {
 		help.setVisible(true);
 	}
 	
-	/**
-	 * Exit the app
-	 */
-	public void dispose() {
-		this.frame.dispose();
-	}
-	
-	public void displayPlayOptionsPage() {
-		CardLayout cl = (CardLayout) (pages.getLayout());
-		cl.show(pages, "play");
-	}
-	
 	private class ImagePanel extends JPanel {		
 		private static final long serialVersionUID = 1;
 	    Image image;

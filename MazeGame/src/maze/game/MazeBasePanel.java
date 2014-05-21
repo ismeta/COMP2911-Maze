@@ -225,7 +225,7 @@ public class MazeBasePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	// Exit application properly
-            	System.exit(0);
+            	exit();
             }
         });
 	}
@@ -394,7 +394,7 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
 		
-		this.frameGui.dispose();
+		System.exit(0);
 	}
 	
 
