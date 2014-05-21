@@ -1,6 +1,5 @@
 package maze.game;
 
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,13 +34,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 import maze.GUI;
 import maze.effect.MazeEffect;
 import maze.generator.maze.MazeGenerator;
 import maze.player.MazePlayer;
 import maze.player.MazePlayerPanel;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 
 public class MazeBasePanel extends JPanel {
@@ -400,7 +399,11 @@ public class MazeBasePanel extends JPanel {
 
 	public void checkGameOver() {
 		// all players assigned rank
-		if (this.mazeGamePanel.getMinRanking() == this.mazePlayers.length) {
+		boolean isFinished = true;
+		for (MazePlayer mp : this.mazePlayers) {
+			isFinished &= mp.isFinished();
+		}
+		if (isFinished) {
 			this.gameState = MazeGameState.FINISHED;
 		}
 	}
@@ -479,7 +482,7 @@ public class MazeBasePanel extends JPanel {
 		    		// activate the next maze effect
 		    		MazePlayer[] mazePlayers = mbp.getMazePlayers();
 		    		for (int i = 0; i < mazePlayers.length; i++) {
-		    			if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c) {
+		    			if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c && !mazePlayers[i].isFinished()) {
 		    				mazePlayers[i].activateNextMazeEffect(mbp);
 		    			}
 		    		}

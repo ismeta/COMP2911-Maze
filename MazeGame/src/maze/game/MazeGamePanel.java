@@ -203,7 +203,7 @@ public class MazeGamePanel extends JPanel {
 		// ensure player is playing this game
 		if (this.mazePlayers.length > player) {
 			MazePlayer p = this.mazePlayers[player];
-			if (p != null) {			
+			if (p != null && !p.isFinished()) {			
 				// prospective to destination
 				// moving from the current position + the distance movable per second * time key held 
 				double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * xDir);

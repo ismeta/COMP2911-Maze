@@ -211,6 +211,10 @@ public class MazePlayer {
 		this.ranking = ranking;
 	}
 
+	public boolean isFinished() {
+		return (this.ranking != UNRANKED);
+	}
+	
 	/* use this to denote a player's ranking if they haven't finished */
 	private static final int UNRANKED = 0;
 	
