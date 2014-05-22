@@ -37,7 +37,7 @@ public class MazeGamePanel extends JPanel {
 		
 		this.image = null;
 		this.mazeTiles = null;
-		this.size = 0;
+		this.mazeSize = 0;
 		this.mazePlayers = null;
 		this.mazeTiler = null;
 		this.effectDisplay = null;
@@ -45,7 +45,7 @@ public class MazeGamePanel extends JPanel {
 	
 	public void setup(int size, MazeGenerator mazeGenerator, MazePlayer[] mazePlayers) {
 		// size
-		this.size = size;
+		this.mazeSize = size;
 		// we can now set a preferred height
 		this.setPreferredSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));
 		this.setMinimumSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));
@@ -92,10 +92,10 @@ public class MazeGamePanel extends JPanel {
 	 */
 	public void rotateRight() {
 		// rotate tiles
-		MazeTile tiles[][] = new MazeTile[this.size][this.size];
-	    for (int i = 0; i < this.size; ++i) {
-	        for (int j = 0; j < this.size; ++j) {
-	            tiles[i][j] = this.mazeTiles[this.size - j - 1][i];
+		MazeTile tiles[][] = new MazeTile[this.mazeSize][this.mazeSize];
+	    for (int i = 0; i < this.mazeSize; ++i) {
+	        for (int j = 0; j < this.mazeSize; ++j) {
+	            tiles[i][j] = this.mazeTiles[this.mazeSize - j - 1][i];
 	        }
 	    }
 	    this.mazeTiles = tiles;
@@ -106,7 +106,7 @@ public class MazeGamePanel extends JPanel {
 	    for (MazePlayer p : this.mazePlayers) {
 	    	double curX = p.getPosX();
 	    	double curY = p.getPosY();
-	    	p.setPosX(this.getWidth() - curY - this.getWidth() / this.size);
+	    	p.setPosX(this.getWidth() - curY - this.getWidth() / this.mazeSize);
 	    	p.setPosY(curX);
 	    }
 	}
@@ -116,10 +116,10 @@ public class MazeGamePanel extends JPanel {
 	 */
 	public void rotateLeft() {
 		// rotate tiles
-		MazeTile tiles[][] = new MazeTile[this.size][this.size];
-	    for (int i = 0; i < this.size; ++i) {
-	        for (int j = 0; j < this.size; ++j) {
-	            tiles[i][j] = this.mazeTiles[j][this.size - i - 1];
+		MazeTile tiles[][] = new MazeTile[this.mazeSize][this.mazeSize];
+	    for (int i = 0; i < this.mazeSize; ++i) {
+	        for (int j = 0; j < this.mazeSize; ++j) {
+	            tiles[i][j] = this.mazeTiles[j][this.mazeSize - i - 1];
 	        }
 	    }
 	    this.mazeTiles = tiles;
@@ -132,7 +132,7 @@ public class MazeGamePanel extends JPanel {
 	    	double curX = p.getPosX();
 	    	double curY = p.getPosY();
 	    	p.setPosX(curY);
-	    	p.setPosY(this.getHeight() - curX - this.getHeight() / this.size);
+	    	p.setPosY(this.getHeight() - curX - this.getHeight() / this.mazeSize);
 	    }
 	}
 
@@ -206,12 +206,12 @@ public class MazeGamePanel extends JPanel {
 			if (p != null && !p.isFinished()) {			
 				// prospective to destination
 				// moving from the current position + the distance movable per second * time key held 
-				double xTo = (p.getPosX() + (this.getWidth() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * xDir);
-				double yTo = (p.getPosY() + (this.getHeight() / this.size) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * yDir);
+				double xTo = (p.getPosX() + (this.getWidth() / this.mazeSize) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * xDir);
+				double yTo = (p.getPosY() + (this.getHeight() / this.mazeSize) * TILES_PER_SECOND * p.getSpeedModifier() * (time / 1000.0) * yDir);
 							
 				// get nearest obstacle x-ways
-				int tileWidth = this.getWidth() / size;
-				int tileHeight = this.getHeight() / size;
+				int tileWidth = this.getWidth() / mazeSize;
+				int tileHeight = this.getHeight() / mazeSize;
 				
 				int leeWayX = 0;
 				int leeWayY = 0;
@@ -270,12 +270,12 @@ public class MazeGamePanel extends JPanel {
 					
 						// check moving  positive in X direction
 						// looks for closest wall 
-						for (i = tileX + 1; i < size; i++) {
+						for (i = tileX + 1; i < mazeSize; i++) {
 							if (mazeTiles[tileY][i].isWall()) {
 								break;
 							}
 						}
-						if (i < size) {
+						if (i < mazeSize) {
 							// make sure we don't go past the nearest wall
 							xTo = Math.min((i - 1) * tileWidth, xTo);
 						}
@@ -291,12 +291,12 @@ public class MazeGamePanel extends JPanel {
 						}
 						
 						// and we do the same thing for the Y direction
-					    for (i = tileY + 1; i < size; i++) {
+					    for (i = tileY + 1; i < mazeSize; i++) {
 			                if (mazeTiles[i][tileX].isWall()) {
 			                    break;
 			                }
 			            }
-			            if (i < size) {
+			            if (i < mazeSize) {
 			                yTo = Math.min((i - 1) * tileHeight, yTo);
 			            }
 					    for (i = tileY; i >= 0; i--) {
@@ -310,8 +310,8 @@ public class MazeGamePanel extends JPanel {
 					}
 				}
 				// bounded by 4 walls
-				xTo = Math.max(0, Math.min(xTo, tileWidth * (size - 1)));
-				yTo = Math.max(0, Math.min(yTo, tileHeight * (size - 1)));
+				xTo = Math.max(0, Math.min(xTo, tileWidth * (mazeSize - 1)));
+				yTo = Math.max(0, Math.min(yTo, tileHeight * (mazeSize - 1)));
 				// change direction to face
 				if (Math.abs(xTo - p.getPosX()) >= 0.01 || Math.abs(yTo - p.getPosY()) >= 0.01) {
 					if (xDir == -1) {
@@ -375,7 +375,7 @@ public class MazeGamePanel extends JPanel {
 	 * @return the height/width of the maze (a square)
 	 */
 	public int getMazeSize() {
-		return size;
+		return mazeSize;
 	}
 	
 	
@@ -403,8 +403,8 @@ public class MazeGamePanel extends JPanel {
 	 */
 	public void getPlayerTileLocation(int[] location, MazePlayer p) {
 		/* get the tile width/height */
-		int tileWidth  = this.getWidth() / size;
-		int tileHeight = this.getHeight() / size;
+		int tileWidth  = this.getWidth() / mazeSize;
+		int tileHeight = this.getHeight() / mazeSize;
 		
 		location[0] = (int) p.getPosX() / tileHeight;
 		location[1] = (int) p.getPosY() / tileWidth;
@@ -414,8 +414,8 @@ public class MazeGamePanel extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2d = (Graphics2D) g;
-		int tileWidth = this.getWidth() / size;
-		int tileHeight = this.getHeight() / size;
+		int tileWidth = this.getWidth() / mazeSize;
+		int tileHeight = this.getHeight() / mazeSize;
 		
 		if (this.image != null) {
 			// draw base map
@@ -457,7 +457,7 @@ public class MazeGamePanel extends JPanel {
 	private MazeTiler mazeTiler;
 	private MazeTile[][] mazeTiles;
 	// maze property
-	private int size;	
+	private int mazeSize;	
 	// ensure player is drawn correctly
 	private Image image;
 	// players

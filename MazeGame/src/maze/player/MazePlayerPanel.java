@@ -24,8 +24,8 @@ public class MazePlayerPanel extends JPanel {
 		this.color = color;
 		this.playerID = playerID;
 		this.keyImage = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
-		this.buffKeyImage = new ImageIcon("images/player/player" + playerID + "_buffs.png").getImage();
-		this.buffs = new LinkedList<Image>();
+		this.effectKeyImage = new ImageIcon("images/player/player" + playerID + "_effects.png").getImage();
+		this.effects = new LinkedList<Image>();
 		this.setupGui();
 	}
 	
@@ -52,31 +52,31 @@ public class MazePlayerPanel extends JPanel {
 	}
 	
 	/**
-	 * redraw the inside of the panel. (buffs, key controls)
+	 * redraw the inside of the panel. (effects, key controls)
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(keyImage, 10, 35, 240, 170, null);
-		g.drawImage(buffKeyImage, 220, 35, 400, 70, null);
+		g.drawImage(effectKeyImage, 220, 35, 400, 70, null);
 		
 		int x = 300;
 		int y = 110;
-		LinkedList<Image> tempBuffs = new LinkedList<Image>(this.buffs);
-		for (Image img : tempBuffs) {
+		LinkedList<Image> tempeffects = new LinkedList<Image>(this.effects);
+		for (Image img : tempeffects) {
 			g.drawImage(img, x, y, 60, 60, null);
 			x += 100;
 		}
 	}
 	
 	/**
-	 * Update the buffs for this panel.
+	 * Update the effects for this panel.
 	 * @param effectQueue the new effects to display.
 	 */
-	public void updateBuffs(Queue<MazeEffect> effectQueue) {
-		this.buffs = new LinkedList<Image>();
+	public void updateEffects(Queue<MazeEffect> effectQueue) {
+		this.effects = new LinkedList<Image>();
 		for (MazeEffect e: effectQueue) {
-			this.buffs.add(e.getImage());
+			this.effects.add(e.getImage());
 		}
 		this.repaint();
 	}
@@ -92,9 +92,9 @@ public class MazePlayerPanel extends JPanel {
 	/* image of the keyboard controls for this user */
 	private Image keyImage;
 	
-	/* image of the key used to activate buffs for this user */
-	private Image buffKeyImage;
+	/* image of the key used to activate effects for this user */
+	private Image effectKeyImage;
 	
-	/* images of the buffs being displayed */
-	private LinkedList<Image> buffs;
+	/* images of the effects being displayed */
+	private LinkedList<Image> effects;
 }
