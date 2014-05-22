@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import maze.game.MazeTile;
-import maze.generator.boost.BoostGenerator;
-import maze.generator.boost.RandomBoostGenerator;
+import maze.generator.effect.EffectGenerator;
+import maze.generator.effect.RandomEffectGenerator;
 
 /**
  * "It's so easy" - Oliver Tan, 2014
@@ -147,8 +147,8 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 		tiles[goalP.x][goalP.y].setGoal(true);
 
 		/* (optional) Phase 4: generate some boosts! */
-		BoostGenerator bootGen = new RandomBoostGenerator(size);
-		bootGen.generateBoosts(tiles);
+		EffectGenerator bootGen = new RandomEffectGenerator(size);
+		bootGen.generateEffects(tiles);
 	}
 
 	/**
