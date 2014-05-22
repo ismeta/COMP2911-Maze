@@ -8,6 +8,7 @@
 *.war
 *.ear
 */ass3
+*/doc
 ass3.zip
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
