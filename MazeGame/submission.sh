@@ -11,7 +11,7 @@ cp -vr src ass3
 cp -vr doc ass3
 cp -vr images ass3
 cp -vr music ass3
-cp -v uml.pdf ass3
+cp -v uml/uml.pdf ass3
 cp -v compile ass3
 cp -v run ass3
 
