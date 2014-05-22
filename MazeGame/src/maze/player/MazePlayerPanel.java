@@ -47,6 +47,7 @@ public class MazePlayerPanel extends JPanel {
 		 * title is just "P1" or "P0" or "P2" depending on the player the panel
 		 * is for
 		 */
+		playerID += 1;
 		TitledBorder title = BorderFactory.createTitledBorder(blackline, "P"
 				+ playerID);
 		title.setTitlePosition(TitledBorder.DEFAULT_POSITION);
