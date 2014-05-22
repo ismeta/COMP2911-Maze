@@ -76,18 +76,21 @@ public class MazeScorePanel extends JPanel {
 			   }
 		});
 		
-		//TODO: make more generic for more players
-		String[] positions = {"1st", "2nd", "3rd"};
-		
+		String[] positions = {"images/gui/trophyfirst.png",
+				  "images/gui/trophysecond.png",
+				  "images/gui/trophythird.png"};
+
 		/* Results Table */
 		gbc.gridwidth = 1;
 		gbc.weightx = 1;
 		int i = 0;
 		for (i = 0; i < players.length; i++) {
 			// Position
-			JLabel ranking = new JLabel(positions[i]);
+			Image trophy = new ImageIcon(positions[i]).getImage();
+			JLabel ranking = new JLabel(new ImageIcon(getResized(trophy, 130, 70)));
 			ranking.setFont(new Font("verdana", Font.PLAIN, 40));
 			ranking.setForeground(Color.WHITE);
+			gbc.anchor = GridBagConstraints.CENTER;
 			gbc.gridx = 0;
 			gbc.gridy = 2 + i;
 			this.add(ranking, gbc);
