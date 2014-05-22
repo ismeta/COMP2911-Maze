@@ -71,7 +71,6 @@ public class GUI implements ActionListener {
 		/* Initialise Pages */
 		this.initialiseHomePage();
 		this.initialisePlayOptionsPage();
-		this.initialiseSystemOptionsPage();
 		this.initialiseMazePage();
 
 		/* Initial display */
@@ -109,14 +108,6 @@ public class GUI implements ActionListener {
 		playButton.setBorder(BorderFactory.createEmptyBorder());
 		playButton.addActionListener(this);
 		buttonsPanel.add(playButton);
-
-		/* - System options */
-		ico = new ImageIcon("images/gui/green_road_sign_options.png");
-		optionsButton = new JButton(ico);
-		optionsButton.setContentAreaFilled(false);
-		optionsButton.setBorder(BorderFactory.createEmptyBorder());
-		optionsButton.addActionListener(this);
-		buttonsPanel.add(optionsButton);
 
 		/* - Help */
 		ico = new ImageIcon("images/gui/green_road_sign_help.png");
@@ -296,23 +287,6 @@ public class GUI implements ActionListener {
 		mazePage = new MazeBasePanel(this);
 		this.pages.add(mazePage, "maze");
 		this.pages.setFocusable(true);
-	}
-
-	public void initialiseSystemOptionsPage() {
-		systemopsPage = new JPanel();
-		JLabel system_music = new JLabel("Music:");
-		JLabel systemSoundfx = new JLabel("Sound FX:");
-		systemSaveButton = new JButton("Save");
-		systemSaveButton.addActionListener(this);
-		systemBackButton = new JButton("Back");
-		systemBackButton.addActionListener(this);
-
-		systemopsPage.add(system_music);
-		systemopsPage.add(systemSoundfx);
-		systemopsPage.add(systemSaveButton);
-		systemopsPage.add(systemBackButton);
-
-		pages.add(systemopsPage, "system");
 	}
 
 	/**
