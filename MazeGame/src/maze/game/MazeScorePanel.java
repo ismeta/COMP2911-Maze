@@ -79,8 +79,9 @@ public class MazeScorePanel extends JPanel {
 			}
 		});
 
-		String[] positions = { "images/gui/trophyfirst.png",
-				"images/gui/trophysecond.png", "images/gui/trophythird.png" };
+		String[] positions = { "images/gui/trophy_first.png",
+							   "images/gui/trophy_second.png",
+							   "images/gui/trophy_third.png" };
 
 		/* Results Table */
 		gbc.gridwidth = 1;

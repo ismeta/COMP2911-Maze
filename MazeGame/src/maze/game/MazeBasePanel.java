@@ -45,18 +45,18 @@ import sun.audio.AudioStream;
 import maze.game.MazeScorePanel;
 
 public class MazeBasePanel extends JPanel {
-	
+
 	public MazeBasePanel(GUI frameGui) {
-		
+
 		super(true);
 		this.setFocusable(true);
-		
+
 		this.timer = null;
 		this.mazePlayers = null;
 		this.activatedEffects = null;
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
-		
+
 		/* GUI */
 		/* - Layout */
 		this.setLayout(new GridBagLayout());
@@ -70,7 +70,7 @@ public class MazeBasePanel extends JPanel {
 		this.as = null;
 		this.setupGui();
 	}
-	
+
 	/**
 	 * @author davina
 	 */
@@ -78,7 +78,7 @@ public class MazeBasePanel extends JPanel {
 		/* Background */
 		Image img = new ImageIcon("images/gui/nature.png").getImage();
 		this.setBackground(img);
-		
+
 		/* Maze Game Panel */
 		g = new GridBagConstraints();
 		g.anchor = GridBagConstraints.NORTHEAST;
@@ -87,7 +87,7 @@ public class MazeBasePanel extends JPanel {
 		g.gridy = 1;
 		g.weightx = 0.1;
 		this.add(this.mazeGamePanel, g);
-		
+
 		/* Prompt line  */
 		JLabel headerText = new JLabel("Get to the M1 before the other cars!");
 		headerText.setFont(new Font("verdana", Font.PLAIN, 40));
@@ -96,7 +96,7 @@ public class MazeBasePanel extends JPanel {
 		g.gridy = 0;
 		g.insets = new Insets(20, 0, 0, 0);
 		this.add(headerText, g);
-		
+
 		/* TopButtons - contains buttons*/
 		GridLayout buttonsGridLayout = new GridLayout(1, 5);
 		JPanel topButtons = new JPanel();
@@ -108,7 +108,7 @@ public class MazeBasePanel extends JPanel {
 		g.weighty = 0.1;
 		g.insets = new Insets(20,0,0,0);
 		this.add(topButtons, g);
-		
+
 		/* - Pause */
 		ImageIcon ico = new ImageIcon("images/gui/maze_pause.png");
 		pause = new JButton(ico);
@@ -134,13 +134,13 @@ public class MazeBasePanel extends JPanel {
 		JButton exit = new JButton(ico);
 		exit.setBorderPainted(false);
 		exit.setContentAreaFilled(false);
-		
+
 		topButtons.add(pause);
 		topButtons.add(sound);
 		//topButtons.add(back);
 		topButtons.add(help);
 		topButtons.add(exit);
-		
+
 		/* Action Listeners for buttons */
 		pause.setFocusable(false);
 		pause.addActionListener(new ActionListener() {
@@ -164,7 +164,7 @@ public class MazeBasePanel extends JPanel {
             	}
             }
         });
-		
+
 		sound.setFocusable(false);
 		sound.addActionListener(new ActionListener() {
             @Override
@@ -194,7 +194,7 @@ public class MazeBasePanel extends JPanel {
             }
         });
 		*/
-		
+
 		help.setFocusable(false);
 		help.addActionListener(new ActionListener() {
             @Override
@@ -215,7 +215,7 @@ public class MazeBasePanel extends JPanel {
         		helpFrame.setVisible(true);
             }
         });
-		
+
 		exit.setFocusable(false);
 		exit.addActionListener(new ActionListener() {
             @Override
@@ -225,8 +225,8 @@ public class MazeBasePanel extends JPanel {
             }
         });
 	}
-	
-	
+
+
 	/***
 	 * Pump da music!
 	 * TODO: Continuous and mute
@@ -243,7 +243,7 @@ public class MazeBasePanel extends JPanel {
 		} catch(FileNotFoundException fnfe) {
 			System.err.println("The audio file was not found");
 		}
-		
+
 		try {
 			//create audio stream from file stream
 			as = new AudioStream(in);
@@ -252,11 +252,11 @@ public class MazeBasePanel extends JPanel {
 		}
 		AudioPlayer.player.start(as);
 	}
-	
+
 	public void stopMusic() {
 		AudioPlayer.player.stop(as);
 	}
-	
+
     public void setBackground(Image background) {
         image = background;
     }
@@ -293,20 +293,20 @@ public class MazeBasePanel extends JPanel {
 		this.playMusic();
 		Color purple = new Color(174, 79, 255);
 		Color blue   = new Color(0, 156, 255);
-		
+
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors.add(Color.RED);
 		colors.add(purple);
 		colors.add(blue);
-		
+
 		// Gui
 		JPanel playerStatus = new JPanel();
 		playerStatus.setOpaque(false);
 		playerStatus.setLayout(new GridBagLayout());
-		
+
 		// make da players
 		this.mazePlayers = new MazePlayer[numPlayers];
-		
+
 		int padding = 140 / numPlayers;
 		for (int i = 0; i < numPlayers; i++) {
 			MazePlayerPanel s = new MazePlayerPanel(colors.get(i), i);
@@ -325,10 +325,10 @@ public class MazeBasePanel extends JPanel {
 		g.gridx = 1;
 		g.gridy = 1;
 		this.add(playerStatus, g);		
-		
+
 		// now we can #mazeit
 		this.mazeGamePanel.setup(size, mazeGenerator, this.mazePlayers);
-		
+
 		// maze keypresses and listener
 		this.keyPresses = new ConcurrentHashMap<Character, Long>();
 		this.addKeyListener(new MazeBasePanelKeyListener(this));
@@ -337,7 +337,7 @@ public class MazeBasePanel extends JPanel {
 			parent.addKeyListener(new MazeBasePanelKeyListener(this));
 			parent = parent.getParent();
 		}
-		
+
 		// create the effects PQ
 		this.activatedEffects = new PriorityQueue<MazeEffect>(10, new Comparator<MazeEffect>() {
 			@Override
@@ -345,14 +345,14 @@ public class MazeBasePanel extends JPanel {
 				return (int) (b.getEndTime() - a.getEndTime());
 			}
 		});
-		
+
 		// allocate timer and start when ready - MUST BE LAST
 		this.timer = new Timer();
 		this.timer.scheduleAtFixedRate(new MazeBasePanelTimer(this), 0, 1000 / REFRESH_RATE);
-		
+
 		this.gameState = MazeGameState.PLAYING;
 	}
-	
+
 	public void pause() {
 		// change state and last paused stuff
 		this.gameState = MazeGameState.PAUSED;
@@ -360,7 +360,7 @@ public class MazeBasePanel extends JPanel {
 		// clear the keys pressed
 		this.keyPresses.clear();
 	}
-	
+
 	public void unpause() {
 		long pauseDuration = System.currentTimeMillis() - this.lastPauseTime;
 		for (MazeEffect me : this.activatedEffects) {
@@ -368,16 +368,16 @@ public class MazeBasePanel extends JPanel {
 		}
 		this.gameState = MazeGameState.PLAYING;
 	}
-	
+
 	public void exit() {
 		this.timer.purge();
 		this.timer = null;
-		
+
 		this.mazePlayers = null;
-		
+
 		this.activatedEffects.clear();
 		this.activatedEffects = null;
-		
+
 		for (KeyListener kl : this.getKeyListeners()) {
 			this.removeKeyListener(kl);
 			Component parent = this.getParent();
@@ -389,11 +389,11 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses.clear();
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
-		
+
 		//TODO: turn timer off
 		System.exit(0);
 	}
-	
+
 
 	public void checkGameOver() {
 		// all players assigned rank
@@ -405,35 +405,35 @@ public class MazeBasePanel extends JPanel {
 			this.gameState = MazeGameState.FINISHED;
 		}
 	}
-	
+
 	/**
 	 * @return the mazeGamePanel
 	 */
 	public MazeGamePanel getMazeGamePanel() {
 		return mazeGamePanel;
 	}
-	
-	
+
+
 	/**
 	 * @return the gameState
 	 */
 	public MazeGameState getGameState() {
 		return gameState;
 	}
-	
 
-	
+
+
 	/**
 	 * @author oliver
 	 * MazeJPanelTimer allows player listeners and repainting
 	 */
 	private class MazeBasePanelTimer extends TimerTask {
 		private MazeBasePanel mbp;
-		
+
 		private MazeBasePanelTimer(MazeBasePanel mbp) {
 			this.mbp = mbp;
 		}
-		
+
 		@Override
 		public void run() {
 			checkGameOver();
@@ -464,7 +464,7 @@ public class MazeBasePanel extends JPanel {
 				this.mbp.repaint();
 			}
 		}
-		
+
 		/**
 		 * @author davina
 		 * Display score panel - when game over
@@ -493,11 +493,11 @@ public class MazeBasePanel extends JPanel {
 	 */
 	private class MazeBasePanelKeyListener implements KeyListener {
 		private MazeBasePanel mbp;
-		
+
 		private MazeBasePanelKeyListener(MazeBasePanel mbp) {
 			this.mbp = mbp;
 		}		
-		
+
 		public void keyTyped(KeyEvent e) {
 	    }
 
@@ -533,36 +533,36 @@ public class MazeBasePanel extends JPanel {
 	    	}
 	    }
 	}
-	
+
 	private static final long serialVersionUID = 7399404361523168614L;
-	
+
 	/* how often the maze should be refreshed every second */
 	public static int REFRESH_RATE = 60;
-	
+
 	/* the keys which activate maze effects for different players */
 	public static final char[] MAZE_EFFECT_ACTIVATE_KEYS = { 'e', 'y', 'o' };
-	
+
 	private Timer timer;
 	private MazePlayer mazePlayers[];
 	private PriorityQueue<MazeEffect> activatedEffects;
 	private ConcurrentHashMap<Character, Long> keyPresses;
-	
+
 	private MazeGamePanel mazeGamePanel;
-	
+
 	private Image image;
 	private GridBagConstraints g;
 	private long lastPauseTime;
-	
+
 	/* the current state of the maze */
 	private MazeGameState gameState;
 
 	/* width dimensions */
 	private int screenWidth;
 	private int mazeGamePanelWidth;
-	
+
 	/* toggles for music*/
 	private boolean isMusicOn;
-	
+
 	/* buttons and audio stream */
 	private JButton pause;
 	private JButton sound;
