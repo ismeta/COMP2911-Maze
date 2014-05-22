@@ -24,9 +24,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,8 +41,6 @@ import maze.effect.MazeEffect;
 import maze.generator.maze.MazeGenerator;
 import maze.player.MazePlayer;
 import maze.player.MazePlayerPanel;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
 public class MazeBasePanel extends JPanel {
 	public MazeBasePanel(GUI frameGui) {
@@ -57,14 +57,14 @@ public class MazeBasePanel extends JPanel {
 		/* GUI */
 		/* - Layout */
 		this.setLayout(new GridBagLayout());
-		
+
 		/* Maze dimensions */
 		Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
 		this.screenWidth = (int) resolution.getWidth();
 		this.mazeGamePanelWidth = screenWidth / 2 - 100;
 		this.mazeGamePanel = new MazeGamePanel(screenWidth / 2 - 100,
 				screenWidth / 2 - 100);
-		
+
 		/* Set up */
 		this.isMusicOn = true;
 		try {
@@ -115,31 +115,31 @@ public class MazeBasePanel extends JPanel {
 		g.weighty = 0.1;
 		g.insets = new Insets(20, 0, 0, 0);
 		this.add(topButtons, g);
-		
+
 		/* - Pause */
 		ImageIcon ico = new ImageIcon(MAZE_PAUSE_IMAGE_FILE);
 		pause = new JButton(ico);
 		pause.setBorderPainted(false);
 		pause.setContentAreaFilled(false);
-		
+
 		/* - Sound */
 		ico = new ImageIcon(MAZE_SOUND_IMAGE_FILE);
 		sound = new JButton(ico);
 		sound.setBorderPainted(false);
 		sound.setContentAreaFilled(false);
-		
+
 		/* - Back */
 		ico = new ImageIcon(MAZE_BACK_IMAGE_FILE);
 		JButton back = new JButton(ico);
 		back.setBorderPainted(false);
 		back.setContentAreaFilled(false);
-		
+
 		/* - Help */
 		ico = new ImageIcon(MAZE_HELP_IMAGE_FILE);
 		JButton help = new JButton(ico);
 		help.setBorderPainted(false);
 		help.setContentAreaFilled(false);
-		
+
 		/* - Exit */
 		ico = new ImageIcon(MAZE_EXIT_IMAGE_FILE);
 		JButton exit = new JButton(ico);
@@ -160,19 +160,19 @@ public class MazeBasePanel extends JPanel {
 				if (gameState.equals(MazeGameState.PLAYING)) {
 					/* Pause game */
 					pause();
-					
+
 					/* Change image to play */
 					pause.setIcon(new ImageIcon(MAZE_PLAY_IMAGE_FILE));
-					
+
 					/* Turn music off */
 					stopMusic();
 				} else {
 					/* Play game */
 					unpause();
-					
+
 					/* Change image to pause */
 					pause.setIcon(new ImageIcon(MAZE_PAUSE_IMAGE_FILE));
-					
+
 					/* Turn music on */
 					playMusic();
 
@@ -188,14 +188,14 @@ public class MazeBasePanel extends JPanel {
 					/* Mute music */
 					isMusicOn = false;
 					stopMusic();
-					
+
 					/* Change image to mute */
 					sound.setIcon(new ImageIcon(MAZE_MUTE_IMAGE_FILE));
 				} else {
 					/* Play music */
 					isMusicOn = true;
 					playMusic();
-					
+
 					/* Change image to play */
 					sound.setIcon(new ImageIcon(MAZE_SOUND_IMAGE_FILE));
 				}
@@ -219,13 +219,13 @@ public class MazeBasePanel extends JPanel {
 					/* Change image to play */
 					pause.setIcon(new ImageIcon(MAZE_PLAY_IMAGE_FILE));
 				}
-				
+
 				/* Pause the game */
 				pause();
-				
+
 				/* Stop the music */
 				stopMusic();
-				
+
 				/* Display help window */
 				JFrame helpFrame = new JFrame("Help");
 				helpFrame.setFocusable(false);
@@ -244,17 +244,24 @@ public class MazeBasePanel extends JPanel {
 			}
 		});
 	}
+
 	/***
-	 * Pump da music!
-	 * maybe different music between MazeGameState = UNSETUP and PLAY,PAUSED and SUCCESS
+	 * Pump da music! 
 	 */
 	public void playMusic() {
-	    try {
-	        File soundFile = new File("music/test.mp3");
+		try {
+			File soundFile = new File(GAME_MUSIC_FILE);
 			AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
+
+			AudioInputStream soundIn = AudioSystem
+					.getAudioInputStream(soundFile);
+			AudioFormat format = soundIn.getFormat();
+			DataLine.Info info = new DataLine.Info(Clip.class, format);
+
+			clip = (Clip) AudioSystem.getLine(info);
 			clip.open(ais);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
-		    clip.start();
+			clip.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -264,7 +271,11 @@ public class MazeBasePanel extends JPanel {
 	 * Stop the music.
 	 */
 	public void stopMusic() {
-		clip.stop();
+		try {
+			clip.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -434,10 +445,10 @@ public class MazeBasePanel extends JPanel {
 	public void checkGameOver() {
 		/* all players assigned rank */
 		boolean isFinished = true;
-		
+
 		/*
-		 * check if the maze players aren't null - can happen because
-		 * of race conditions when the game ends
+		 * check if the maze players aren't null - can happen because of race
+		 * conditions when the game ends
 		 */
 		if (this.mazePlayers != null) {
 			for (MazePlayer mp : this.mazePlayers) {
@@ -583,36 +594,36 @@ public class MazeBasePanel extends JPanel {
 
 	/* how often the maze should be refreshed every second */
 	public static int REFRESH_RATE = 60;
-	
+
 	/* the keys which activate maze effects for different players */
 	public static final char[] MAZE_EFFECT_ACTIVATE_KEYS = { 'e', 'y', 'o' };
-	
+
 	private static final long serialVersionUID = 7399404361523168614L;
 
 	/* GUI background image */
 	private static final String GUI_BACKGROUND_IMAGE_FILE = "images/gui/nature.png";
-	
+
 	/* music to be played during the game */
-	private static final String GAME_MUSIC_FILE = "music/Pamgaea.wav";
-	
+	private static final String GAME_MUSIC_FILE = "music/moo.wav";
+
 	/* Image to be displayed for the play button */
 	private static final String MAZE_PLAY_IMAGE_FILE = "images/gui/maze_play.png";
-	
+
 	/* Image to be displayed for the pause button */
 	private static final String MAZE_PAUSE_IMAGE_FILE = "images/gui/maze_pause.png";
-	
+
 	/* sound image file */
 	private static final String MAZE_SOUND_IMAGE_FILE = "images/gui/maze_sound.png";
-	
+
 	/* Mute button image */
 	private static final String MAZE_MUTE_IMAGE_FILE = "images/gui/maze_mute.png";
-	
+
 	/* image to display when the back button is clicked */
 	private static final String MAZE_BACK_IMAGE_FILE = "images/gui/maze_back.png";
-	
+
 	/* image to display for the help button */
 	private static final String MAZE_HELP_IMAGE_FILE = "images/gui/maze_help.png";
-	
+
 	/* image to display for the exit button */
 	private static final String MAZE_EXIT_IMAGE_FILE = "images/gui/maze_exit.png";
 
@@ -641,6 +652,6 @@ public class MazeBasePanel extends JPanel {
 	private JButton pause;
 	private JButton sound;
 	Clip clip;
-	
+
 	private GUI frameGui;
 }
