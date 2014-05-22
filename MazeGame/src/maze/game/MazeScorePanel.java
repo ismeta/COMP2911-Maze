@@ -22,8 +22,9 @@ import maze.player.MazePlayer;
 
 /**
  * Maze Score Panel displays score board
+ * 
  * @author davina
- *
+ * 
  */
 public class MazeScorePanel extends JPanel {
 
@@ -41,23 +42,25 @@ public class MazeScorePanel extends JPanel {
 
 	/**
 	 * Set up score panel
+	 * 
 	 * @param players
 	 */
 	public void setup(MazePlayer[] players) {
 		/* Background and Layout */
 		this.setLayout(new GridBagLayout());
 		this.setBackground(new Color(45, 45, 45));
-		
+
 		/* Border */
 		Font f = new Font("verdana", Font.PLAIN, 40);
 		Border line = BorderFactory.createLineBorder(Color.YELLOW, 10);
-		TitledBorder title = BorderFactory.createTitledBorder(line, "GAME OVER!");
+		TitledBorder title = BorderFactory.createTitledBorder(line,
+				"GAME OVER!");
 		title.setTitlePosition(TitledBorder.DEFAULT_POSITION);
 		title.setTitleJustification(TitledBorder.CENTER);
 		title.setTitleFont(f);
 		title.setTitleColor(Color.WHITE);
 		this.setBorder(title);
-		
+
 		/* Score Board Header */
 		GridBagConstraints gbc = new GridBagConstraints();
 		JLabel header = new JLabel("SCORE BOARD");
@@ -65,20 +68,19 @@ public class MazeScorePanel extends JPanel {
 		header.setForeground(Color.YELLOW);
 		gbc.gridwidth = 4;
 		gbc.gridx = 0;
-		gbc.gridy = 0;	
+		gbc.gridy = 0;
 		gbc.weighty = 1;
 		this.add(header, gbc);
-		
+
 		/* Sort Players by Ranking */
-		Arrays.sort(players, new Comparator<MazePlayer>(){
-			   public int compare(MazePlayer p1, MazePlayer p2){
-			      return p1.getRanking() - p2.getRanking();
-			   }
+		Arrays.sort(players, new Comparator<MazePlayer>() {
+			public int compare(MazePlayer p1, MazePlayer p2) {
+				return p1.getRanking() - p2.getRanking();
+			}
 		});
-		
-		String[] positions = {"images/gui/trophyfirst.png",
-				  "images/gui/trophysecond.png",
-				  "images/gui/trophythird.png"};
+
+		String[] positions = { "images/gui/trophyfirst.png",
+				"images/gui/trophysecond.png", "images/gui/trophythird.png" };
 
 		/* Results Table */
 		gbc.gridwidth = 1;
@@ -87,7 +89,8 @@ public class MazeScorePanel extends JPanel {
 		for (i = 0; i < players.length; i++) {
 			// Position
 			Image trophy = new ImageIcon(positions[i]).getImage();
-			JLabel ranking = new JLabel(new ImageIcon(getResized(trophy, 130, 70)));
+			JLabel ranking = new JLabel(new ImageIcon(getResized(trophy, 130,
+					70)));
 			ranking.setFont(new Font("verdana", Font.PLAIN, 40));
 			ranking.setForeground(Color.WHITE);
 			gbc.anchor = GridBagConstraints.CENTER;
@@ -101,21 +104,22 @@ public class MazeScorePanel extends JPanel {
 			gbc.gridx = 1;
 			this.add(playerImage, gbc);
 			// Player Number
-			JLabel playerID = new JLabel("Player " + Integer.toString(players[i].getId()+1));
+			JLabel playerID = new JLabel("Player "
+					+ Integer.toString(players[i].getId() + 1));
 			playerID.setFont(new Font("verdana", Font.PLAIN, 40));
 			playerID.setForeground(Color.WHITE);
 			gbc.gridx = 2;
 			this.add(playerID, gbc);
-			//TODO: display actual time
+			// TODO: display actual time
 			JLabel time = new JLabel("Time");
 			time.setFont(new Font("verdana", Font.PLAIN, 40));
 			time.setForeground(Color.WHITE);
 			gbc.gridx = 3;
 			this.add(time, gbc);
 		}
-		
+
 		/* Play again button */
-		//TODO: do we want to give play again option
+		// TODO: do we want to give play again option
 		JLabel restart = new JLabel("PLAY AGAIN");
 		restart.setFont(new Font("verdana", Font.PLAIN, 40));
 		restart.setForeground(Color.YELLOW);
@@ -124,21 +128,23 @@ public class MazeScorePanel extends JPanel {
 		gbc.gridy = 2 + i;
 		this.add(restart, gbc);
 	}
-	
+
 	/**
 	 * Resize image
+	 * 
 	 * @param srcImg
 	 * @param w
 	 * @param h
 	 * @return
 	 */
-	 private Image getResized(Image srcImg, int w, int h){
-		 BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		 Graphics2D g2 = resizedImg.createGraphics();
-		 g2.drawImage(srcImg, 0, 0, w, h, null);
-		 g2.dispose();
-		 return resizedImg;
-		}
-	  
-	  private static final long serialVersionUID = 7399404361523168615L;
+	private Image getResized(Image srcImg, int w, int h) {
+		BufferedImage resizedImg = new BufferedImage(w, h,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = resizedImg.createGraphics();
+		g2.drawImage(srcImg, 0, 0, w, h, null);
+		g2.dispose();
+		return resizedImg;
+	}
+
+	private static final long serialVersionUID = 7399404361523168615L;
 }

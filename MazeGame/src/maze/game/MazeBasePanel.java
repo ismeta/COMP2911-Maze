@@ -438,7 +438,6 @@ public class MazeBasePanel extends JPanel {
 		public void run() {
 			checkGameOver();
 	    	if (mbp.getGameState().equals(MazeGameState.FINISHED)) {
-	    		// Stop the timer
 	    		this.cancel();
 	    		// Display score board
 	    		displayScorePanel();
