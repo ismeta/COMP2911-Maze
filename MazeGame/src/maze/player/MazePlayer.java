@@ -68,7 +68,7 @@ public class MazePlayer {
 				m.getActivatedEffects().add(ef);
 			}
 			m.getMazeGamePanel().setEffectDisplay(new MazeGameEffectPopup(this, ef));
-			this.mazePlayerPanel.updateBuffs(this.effectQueue);
+			this.mazePlayerPanel.updateEffects(this.effectQueue);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class MazePlayer {
 		}
 		
 		/* Gui - Draw effect to buffs display */
-		this.mazePlayerPanel.updateBuffs(this.effectQueue);
+		this.mazePlayerPanel.updateEffects(this.effectQueue);
 	}
 
 	/**
