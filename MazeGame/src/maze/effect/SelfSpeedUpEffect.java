@@ -29,7 +29,7 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	
 	@Override
 	public void activate(MazeGamePanel m, MazePlayer p) {
-		this.p = p;
+		this.player = p;
 		this.endTime = System.currentTimeMillis() + DURATION;
 		p.setSpeedModifier(p.getSpeedModifier() * SPEED_MODIFIER);
 	}
@@ -46,7 +46,7 @@ public class SelfSpeedUpEffect implements MazeEffect {
 
 	@Override
 	public void deactivate(MazeGamePanel m) {
-		p.setSpeedModifier(p.getSpeedModifier() / SPEED_MODIFIER);
+		player.setSpeedModifier(player.getSpeedModifier() / SPEED_MODIFIER);
 	}
 
 	@Override
@@ -67,6 +67,6 @@ public class SelfSpeedUpEffect implements MazeEffect {
 	private static final double SPEED_MODIFIER = 2.0;
 	
 	private long endTime;
-	private MazePlayer p;
+	private MazePlayer player;
 	private Image image;
 }

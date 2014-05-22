@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class Maze {
+public class MazeMain {
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the

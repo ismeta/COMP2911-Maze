@@ -24,11 +24,17 @@ public class MazePlayerPanel extends JPanel {
 	public MazePlayerPanel(Color color, int playerID) {
 		this.color = color;
 		this.playerID = playerID;
+<<<<<<< HEAD
 		this.keyImage = new ImageIcon("images/player/player" + playerID
 				+ "_keys.png").getImage();
 		this.buffKeyImage = new ImageIcon("images/player/player" + playerID
 				+ "_buffs.png").getImage();
 		this.buffs = new LinkedList<Image>();
+=======
+		this.keyImage = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
+		this.effectKeyImage = new ImageIcon("images/player/player" + playerID + "_effects.png").getImage();
+		this.effects = new LinkedList<Image>();
+>>>>>>> b7c6e0d0fd19a8f54b7294c0c7f49383d0e5b43d
 		this.setupGui();
 	}
 
@@ -63,7 +69,7 @@ public class MazePlayerPanel extends JPanel {
 	}
 
 	/**
-	 * redraw the inside of the panel. (buffs, key controls)
+	 * redraw the inside of the panel. (effects, key controls)
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
@@ -71,22 +77,28 @@ public class MazePlayerPanel extends JPanel {
 
 		/* draw the images of the controls to move for players */
 		g.drawImage(keyImage, 10, 35, 240, 170, null);
+<<<<<<< HEAD
 		g.drawImage(buffKeyImage, 220, 35, 400, 70, null);
 
 		/*
 		 * draw on the player's buffs (if they have any) (x, y) represents from
 		 * where the buffs should be drawn
 		 */
+=======
+		g.drawImage(effectKeyImage, 220, 35, 400, 70, null);
+		
+>>>>>>> b7c6e0d0fd19a8f54b7294c0c7f49383d0e5b43d
 		int x = 300;
 		int y = 110;
-		LinkedList<Image> tempBuffs = new LinkedList<Image>(this.buffs);
-		for (Image img : tempBuffs) {
+		LinkedList<Image> tempeffects = new LinkedList<Image>(this.effects);
+		for (Image img : tempeffects) {
 			g.drawImage(img, x, y, 60, 60, null);
 			x += 100;
 		}
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Update the buffs for this panel.
 	 * 
 	 * @param effectQueue
@@ -96,6 +108,15 @@ public class MazePlayerPanel extends JPanel {
 		this.buffs = new LinkedList<Image>();
 		for (MazeEffect e : effectQueue) {
 			this.buffs.add(e.getImage());
+=======
+	 * Update the effects for this panel.
+	 * @param effectQueue the new effects to display.
+	 */
+	public void updateEffects(Queue<MazeEffect> effectQueue) {
+		this.effects = new LinkedList<Image>();
+		for (MazeEffect e: effectQueue) {
+			this.effects.add(e.getImage());
+>>>>>>> b7c6e0d0fd19a8f54b7294c0c7f49383d0e5b43d
 		}
 		this.repaint();
 	}
@@ -110,10 +131,19 @@ public class MazePlayerPanel extends JPanel {
 
 	/* image of the keyboard controls for this user */
 	private Image keyImage;
+<<<<<<< HEAD
 
 	/* image of the key used to activate buffs for this user */
 	private Image buffKeyImage;
 
 	/* images of the buffs being displayed */
 	private LinkedList<Image> buffs;
+=======
+	
+	/* image of the key used to activate effects for this user */
+	private Image effectKeyImage;
+	
+	/* images of the effects being displayed */
+	private LinkedList<Image> effects;
+>>>>>>> b7c6e0d0fd19a8f54b7294c0c7f49383d0e5b43d
 }

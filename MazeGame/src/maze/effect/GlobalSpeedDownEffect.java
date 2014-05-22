@@ -29,7 +29,7 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 	 */
 	@Override
 	public void activate(MazeGamePanel m, MazePlayer p) {
-		this.p = p;
+		this.unaffectedPlayer = p;
 		this.endTime = System.currentTimeMillis() + DURATION;
 		// speed down other players
 		for (MazePlayer mp : m.getMazePlayers()) {
@@ -59,7 +59,7 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 	public void deactivate(MazeGamePanel m) {
 		// speed up other players
 		for (MazePlayer mp : m.getMazePlayers()) {
-			if (mp != p) {
+			if (mp != unaffectedPlayer) {
 				mp.setSpeedModifier(mp.getSpeedModifier() / SPEED_MODIFIER);
 			}
 		}
@@ -89,6 +89,6 @@ public class GlobalSpeedDownEffect implements MazeEffect {
 	private static final double SPEED_MODIFIER = 0.75;
 	
 	private long endTime;
-	private MazePlayer p;
+	private MazePlayer unaffectedPlayer;
 	private Image image;
 }

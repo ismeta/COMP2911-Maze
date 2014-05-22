@@ -18,8 +18,8 @@ import maze.game.MazeTile;
  * generates board rotations at non-dead end tiles
  */
 public class RandomBoostGenerator implements BoostGenerator {
-	public RandomBoostGenerator(int size) {
-		this.size = size;
+	public RandomBoostGenerator (int size) {
+		this.mazeSize = size;
 	}
 
 	/**
@@ -32,11 +32,10 @@ public class RandomBoostGenerator implements BoostGenerator {
 	public void generateBoosts(MazeTile[][] tiles) {
 		Random rand = new Random();
 
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
+		for (int i = 0; i < mazeSize; i++) {
+			for (int j = 0; j < mazeSize; j++) {
 				/* don't generate boosts on the start tile */
-				if (tiles[i][j].isWall() || tiles[i][j].isGoal()
-						|| tiles[i][j].isStart()) {
+				if (tiles[i][j].isWall() || tiles[i][j].isGoal() || tiles[i][j].isStart()) {
 					continue;
 				}
 				MazeEffect effect;
@@ -46,7 +45,7 @@ public class RandomBoostGenerator implements BoostGenerator {
 				 * generate a speed boost otherwise generate one of the other
 				 * boosts
 				 */
-				if (numPathNeighbours(tiles, i, j, size) == 1) {
+				if (numPathNeighbours(tiles, i, j, mazeSize) == 1) {
 					/*
 					 * only proceed for a small percentage of cases - there are
 					 * 'usableTiles' possible tiles we can put boosts on.
@@ -155,5 +154,5 @@ public class RandomBoostGenerator implements BoostGenerator {
 	private static final double ROTATE_BOOST_ABUNDANCE = 0.01;
 
 	/* width/height of the maze (in tiles) */
-	private final int size;
+	private final int mazeSize;
 }
