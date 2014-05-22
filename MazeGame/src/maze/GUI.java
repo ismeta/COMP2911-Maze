@@ -66,7 +66,7 @@ public class GUI implements ActionListener {
 	public void generate(Container pane) {
 		/* Default difficulty and number of players */
 		this.numPlayers = TWO_PLAYERS;
-		this.difficulty = MazeDifficulty.MELBOURNE;
+		this.requestedDifficulty = MazeDifficulty.MELBOURNE;
 
 		/* Initialise Pages */
 		this.initialiseHomePage();
@@ -180,7 +180,7 @@ public class GUI implements ActionListener {
 		melbourne.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				difficulty = MazeDifficulty.MELBOURNE;
+				requestedDifficulty = MazeDifficulty.MELBOURNE;
 			}
 		});
 
@@ -195,7 +195,7 @@ public class GUI implements ActionListener {
 		sydney.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				difficulty = MazeDifficulty.SYDNEY;
+				requestedDifficulty = MazeDifficulty.SYDNEY;
 			}
 		});
 
@@ -305,9 +305,9 @@ public class GUI implements ActionListener {
 			System.exit(0);
 		} else if (e.getSource() == playSaveButton) {
 			MazeGenerator generator = null;
-			if (this.difficulty.equals(MazeDifficulty.MELBOURNE)) {
+			if (this.requestedDifficulty.equals(MazeDifficulty.MELBOURNE)) {
 				generator = new RecursiveBacktrackerMazeGenerator(TILE_SIZE);
-			} else if (this.difficulty.equals(MazeDifficulty.SYDNEY)) {
+			} else if (this.requestedDifficulty.equals(MazeDifficulty.SYDNEY)) {
 				generator = new RandomMazeGenerator(TILE_SIZE);
 			} else {
 				throw new RuntimeException("Unknown difficulty");
@@ -411,7 +411,7 @@ public class GUI implements ActionListener {
 
 	/* Option settings */
 	private int numPlayers;
-	private MazeDifficulty difficulty;
+	private MazeDifficulty requestedDifficulty;
 	
 	private enum MazeDifficulty {
 		SYDNEY,
