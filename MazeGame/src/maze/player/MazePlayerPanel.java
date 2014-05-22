@@ -18,8 +18,8 @@ import maze.effect.MazeEffect;
 
 public class MazePlayerPanel extends JPanel {
 	/**
-	 * @param player
-	 *            the player this panel belongs to
+	 * @param color Color of player
+	 * @param playerID id of player
 	 */
 	public MazePlayerPanel(Color color, int playerID) {
 		this.color = color;

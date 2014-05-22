@@ -13,7 +13,6 @@ public class MazeGameEffectPopup {
 	/**
 	 * @param player
 	 * @param effect
-	 * @param finishTime
 	 */
 	public MazeGameEffectPopup(MazePlayer player, MazeEffect effect) {
 		this.player = player;

@@ -48,7 +48,7 @@ public class MazePlayer {
 	}
 
 	/**
-	 * @param dirX the dirX to set
+	 * @param direction the direction to set
 	 */
 	public void setDirection(MazePlayerDirection direction) {
 		this.direction = direction;

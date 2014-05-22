@@ -232,7 +232,6 @@ public class MazeBasePanel extends JPanel {
 	 * Pump da music!
 	 * TODO: Continuous and mute
 	 * maybe different music between MazeGameState = UNSETUP and PLAY,PAUSED and SUCCESS
-	 * @param filename
 	 */
 	public void playMusic() {
 		String filename = "music/Pamgaea.wav";

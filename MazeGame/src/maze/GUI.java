@@ -43,9 +43,6 @@ import maze.generator.maze.RecursiveBacktrackerMazeGenerator;
  */
 public class GUI implements ActionListener {
 	
-	/**
-	 * @param frame
-	 */
 	public GUI() {
 		/* Gui has a stack of 'pages' and displays the relevant page.
 		 * Only one page is visible at a time and is switched with the previous card.
