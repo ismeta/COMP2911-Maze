@@ -7,17 +7,21 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import maze.GUI;
 import maze.player.MazePlayer;
 
 /**
@@ -31,13 +35,14 @@ public class MazeScorePanel extends JPanel {
 	/**
 	 * @param panelWidth
 	 */
-	public MazeScorePanel(int panelWidth) {
+	public MazeScorePanel(int panelWidth, GUI frameGui) {
 		super(true);
 		/* GUI */
 		this.setPreferredSize(new Dimension(panelWidth, panelWidth));
 		this.setMaximumSize(new Dimension(panelWidth, panelWidth));
 		this.setFocusable(true);
 		this.setVisible(true);
+		this.frameGui = frameGui;
 	}
 
 	/**
@@ -121,13 +126,22 @@ public class MazeScorePanel extends JPanel {
 
 		/* Play again button */
 		// TODO: do we want to give play again option
-		JLabel restart = new JLabel("PLAY AGAIN");
-		restart.setFont(new Font("verdana", Font.PLAIN, 40));
-		restart.setForeground(Color.YELLOW);
+		ImageIcon ico = new ImageIcon("images/gui/maze_playagain.png");
+		JButton restart = new JButton(ico);
+		restart.setBorderPainted(false);
+		restart.setContentAreaFilled(false);
 		gbc.gridwidth = 4;
 		gbc.gridx = 0;
 		gbc.gridy = 2 + i;
 		this.add(restart, gbc);
+		
+		restart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	// Go back to play options page
+            	frameGui.displayPlayOptionsPage();
+            }
+        });
 	}
 
 	/**
@@ -148,4 +162,6 @@ public class MazeScorePanel extends JPanel {
 	}
 
 	private static final long serialVersionUID = 7399404361523168615L;
+	
+	private GUI frameGui;
 }

@@ -332,6 +332,17 @@ public class GUI implements ActionListener {
 		help.setVisible(true);
 	}
 	
+	public void displayHomePage() {
+		// Switch to home card
+		CardLayout cl = (CardLayout) (pages.getLayout());
+		cl.show(pages, "home");
+	}
+	
+	public void displayPlayOptionsPage() {
+		// Switch to play options card
+		CardLayout cl = (CardLayout) (pages.getLayout());
+		cl.show(pages, "play");
+	}
 	private class ImagePanel extends JPanel {		
 		private static final long serialVersionUID = 1;
 	    Image image;

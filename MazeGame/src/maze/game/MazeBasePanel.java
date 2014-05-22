@@ -42,10 +42,10 @@ import maze.player.MazePlayerPanel;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
-import maze.game.MazeScorePanel;
-
 public class MazeBasePanel extends JPanel {
 
+	private GUI frameGui;
+	
 	public MazeBasePanel(GUI frameGui) {
 
 		super(true);
@@ -68,6 +68,8 @@ public class MazeBasePanel extends JPanel {
 		/* Set up */
 		this.isMusicOn = true;
 		this.as = null;
+		this.frameGui = frameGui;
+		
 		this.setupGui();
 	}
 
@@ -137,7 +139,7 @@ public class MazeBasePanel extends JPanel {
 
 		topButtons.add(pause);
 		topButtons.add(sound);
-		//topButtons.add(back);
+		topButtons.add(back);
 		topButtons.add(help);
 		topButtons.add(exit);
 
@@ -184,16 +186,15 @@ public class MazeBasePanel extends JPanel {
             	}
             }
         });
-		/*
+		
 		back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	// Go back to play options page
-            		CardLayout cl = (CardLayout) (frameGui.getPages().getLayout());
-            		cl.show(frameGui.getPages(), "play");
+            	frameGui.displayPlayOptionsPage();
             }
         });
-		*/
+		
 
 		help.setFocusable(false);
 		help.addActionListener(new ActionListener() {
@@ -437,6 +438,7 @@ public class MazeBasePanel extends JPanel {
 		@Override
 		public void run() {
 			checkGameOver();
+			mbp.gameState = MazeGameState.FINISHED;
 	    	if (mbp.getGameState().equals(MazeGameState.FINISHED)) {
 	    		this.cancel();
 	    		// Display score board
@@ -474,7 +476,7 @@ public class MazeBasePanel extends JPanel {
 			mazeGamePanel.setVisible(false);
 			this.mbp.remove(mazeGamePanel);
 			// Replace with scorep anel
-			MazeScorePanel score = new MazeScorePanel(mazeGamePanelWidth);
+			MazeScorePanel score = new MazeScorePanel(mazeGamePanelWidth, frameGui);
 			score.setup(mazeGamePanel.getMazePlayers());
 			score.setVisible(true);
 			GridBagConstraints x = new GridBagConstraints();
