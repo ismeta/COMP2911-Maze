@@ -42,6 +42,7 @@ import maze.player.MazePlayerPanel;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
+import maze.game.MazeScorePanel;
 
 public class MazeBasePanel extends JPanel {
 	
@@ -62,10 +63,10 @@ public class MazeBasePanel extends JPanel {
 		/* Maze dimensions */
 		Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
 		this.screenWidth = (int) resolution.getWidth();
+		this.mazeGamePanelWidth = screenWidth/2 - 100;
 		this.mazeGamePanel = new MazeGamePanel(screenWidth/2 - 100, screenWidth/2 - 100);
 		/* Set up */
 		this.isMusicOn = true;
-		this.isPlaying = true;
 		this.as = null;
 		this.setupGui();
 	}
@@ -145,9 +146,8 @@ public class MazeBasePanel extends JPanel {
 		pause.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	if (isPlaying) {
+            	if (gameState.equals(MazeGameState.PLAYING)) {
             		// Pause game
-            		isPlaying = false;
             		pause();
             		// Change image to play
             		pause.setIcon(new ImageIcon("images/gui/maze_play.png"));
@@ -155,7 +155,6 @@ public class MazeBasePanel extends JPanel {
             		stopMusic();
             	} else {
             		// Play game
-            		isPlaying = true;
             		unpause();
             		// Change image to pause
             		pause.setIcon(new ImageIcon("images/gui/maze_pause.png"));
@@ -200,13 +199,12 @@ public class MazeBasePanel extends JPanel {
 		help.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	// Pause the game
-            	pause();
-            	if (isPlaying) {
-            		isPlaying = false;
+            	if (gameState.equals(MazeGameState.PLAYING)) {
             		// Change image to play
             		pause.setIcon(new ImageIcon("images/gui/maze_play.png"));
             	}
+            	// Pause the game
+            	pause();
             	// Stop the music
             	stopMusic();
             	// Display help window
@@ -392,6 +390,7 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
 		
+		//TODO: turn timer off
 		System.exit(0);
 	}
 	
@@ -423,7 +422,7 @@ public class MazeBasePanel extends JPanel {
 	}
 	
 
-
+	
 	/**
 	 * @author oliver
 	 * MazeJPanelTimer allows player listeners and repainting
@@ -437,7 +436,15 @@ public class MazeBasePanel extends JPanel {
 		
 		@Override
 		public void run() {
-			if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
+			checkGameOver();
+	    	if (mbp.getGameState().equals(MazeGameState.FINISHED)) {
+	    		// Stop the timer
+	    		this.cancel();
+	    		// Display score board
+	    		displayScorePanel();
+	    		// Repaint since panel in mbp has been changed
+	    		this.mbp.validate();
+	    	} else if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
 				// update all the player
 				long curTime = System.currentTimeMillis();
 				for (Entry<Character, Long> e : this.mbp.getKeyPresses().entrySet()) {
@@ -457,6 +464,27 @@ public class MazeBasePanel extends JPanel {
 				// repaint the maze since there are updates
 				this.mbp.repaint();
 			}
+		}
+		
+		/**
+		 * @author davina
+		 * Display score panel - when game over
+		 */
+		public void displayScorePanel() {
+			// Remove mazeGamePanel
+			mazeGamePanel.setVisible(false);
+			this.mbp.remove(mazeGamePanel);
+			// Replace with scorep anel
+			MazeScorePanel score = new MazeScorePanel(mazeGamePanelWidth);
+			score.setup(mazeGamePanel.getMazePlayers());
+			score.setVisible(true);
+			GridBagConstraints x = new GridBagConstraints();
+			x.anchor = GridBagConstraints.NORTHEAST;
+			x.gridwidth = 1;
+			x.gridx = 0;
+			x.gridy = 1;
+			x.weightx = 0.1;
+			this.mbp.add(score, x);
 		}
 	}
 
@@ -528,12 +556,15 @@ public class MazeBasePanel extends JPanel {
 	
 	/* the current state of the maze */
 	private MazeGameState gameState;
-	
+
+	/* width dimensions */
 	private int screenWidth;
+	private int mazeGamePanelWidth;
 	
+	/* toggles for music*/
 	private boolean isMusicOn;
-	private boolean isPlaying;
 	
+	/* buttons and audio stream */
 	private JButton pause;
 	private JButton sound;
 	private AudioStream as;
