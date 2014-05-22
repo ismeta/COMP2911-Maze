@@ -198,7 +198,7 @@ public class MazePlayer {
 	}
 
 	/**
-	 * @return the ranking
+	 * @return the ranking of the current player
 	 */
 	public int getRanking() {
 		return ranking;
@@ -211,6 +211,9 @@ public class MazePlayer {
 		this.ranking = ranking;
 	}
 
+	/**
+	 * @return whether this player has finished yet
+	 */
 	public boolean isFinished() {
 		return (this.ranking != UNRANKED);
 	}

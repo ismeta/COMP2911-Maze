@@ -26,17 +26,16 @@ import maze.player.MazePlayer;
 
 /**
  * Maze Score Panel displays score board
- * 
- * @author davina
- * 
  */
 public class MazeScorePanel extends JPanel {
 
 	/**
 	 * @param panelWidth
+	 *            the width the panel should be, in pixels
 	 */
 	public MazeScorePanel(int panelWidth, GUI frameGui) {
 		super(true);
+
 		/* GUI */
 		this.setPreferredSize(new Dimension(panelWidth, panelWidth));
 		this.setMaximumSize(new Dimension(panelWidth, panelWidth));
@@ -49,11 +48,14 @@ public class MazeScorePanel extends JPanel {
 	 * Set up score panel
 	 * 
 	 * @param players
+	 *            the players in the game
 	 */
 	public void setup(MazePlayer[] players) {
+		Color darkGray = new Color(45, 45, 45);
+
 		/* Background and Layout */
 		this.setLayout(new GridBagLayout());
-		this.setBackground(new Color(45, 45, 45));
+		this.setBackground(darkGray);
 
 		/* Border */
 		Font f = new Font("verdana", Font.PLAIN, 40);
@@ -84,16 +86,16 @@ public class MazeScorePanel extends JPanel {
 			}
 		});
 
+		/* images to display for the different rankings */
 		String[] positions = { "images/gui/trophy_first.png",
-							   "images/gui/trophy_second.png",
-							   "images/gui/trophy_third.png" };
+				"images/gui/trophy_second.png", "images/gui/trophy_third.png" };
 
 		/* Results Table */
 		gbc.gridwidth = 1;
 		gbc.weightx = 1;
-		int i = 0;
-		for (i = 0; i < players.length; i++) {
-			// Position
+
+		/* draw the rankings */
+		for (int i = 0; i < players.length; i++) {
 			Image trophy = new ImageIcon(positions[i]).getImage();
 			JLabel ranking = new JLabel(new ImageIcon(getResized(trophy, 130,
 					70)));
@@ -103,13 +105,15 @@ public class MazeScorePanel extends JPanel {
 			gbc.gridx = 0;
 			gbc.gridy = 2 + i;
 			this.add(ranking, gbc);
-			// Player Image
+
+			/* player image */
 			JLabel playerImage = new JLabel();
 			Image img = new ImageIcon(players[i].getImage()).getImage();
 			playerImage.setIcon(new ImageIcon(getResized(img, 50, 50)));
 			gbc.gridx = 1;
 			this.add(playerImage, gbc);
-			// Player Number
+
+			/* player number */
 			JLabel playerID = new JLabel("Player "
 					+ Integer.toString(players[i].getId() + 1));
 			playerID.setFont(new Font("verdana", Font.PLAIN, 40));
@@ -119,31 +123,32 @@ public class MazeScorePanel extends JPanel {
 		}
 
 		/* Play again button */
-		// TODO: do we want to give play again option
 		ImageIcon ico = new ImageIcon("images/gui/maze_playagain.png");
 		JButton restart = new JButton(ico);
 		restart.setBorderPainted(false);
 		restart.setContentAreaFilled(false);
 		gbc.gridwidth = 4;
 		gbc.gridx = 0;
-		gbc.gridy = 2 + i;
+		gbc.gridy = 2 + players.length;
 		this.add(restart, gbc);
-		
+
 		restart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	// Go back to play options page
-            	frameGui.displayPlayOptionsPage();
-            }
-        });
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				/* Go back to play options page */
+				frameGui.displayPlayOptionsPage();
+			}
+		});
 	}
 
 	/**
-	 * Resize image
+	 * Resize image and draw it.
 	 * 
 	 * @param srcImg
 	 * @param w
+	 *            width in pixels of the resized image
 	 * @param h
+	 *            height in pixels of the resized image
 	 * @return
 	 */
 	private Image getResized(Image srcImg, int w, int h) {
@@ -156,6 +161,6 @@ public class MazeScorePanel extends JPanel {
 	}
 
 	private static final long serialVersionUID = 7399404361523168615L;
-	
+
 	private GUI frameGui;
 }

@@ -16,18 +16,12 @@ import maze.tiler.CarCityMazeTiler;
 import maze.tiler.MazeTiler;
 
 /**
- * MazeJPanel
- * contains the actual panel controls 
- */
-
-/**
- * @author oliver
- *
+ * MazeJPanel contains the actual panel controls 
  */
 public class MazeGamePanel extends JPanel {
 	
 	public MazeGamePanel(int maxHeight, int maxWidth) {
-		// double buffered JPanel
+		/* double buffered JPanel */
 		super(true);
 		this.setFocusable(true);
 
@@ -43,8 +37,8 @@ public class MazeGamePanel extends JPanel {
 		this.effectDisplay = null;
 	}
 	
+	/* set up the maze panel */
 	public void setup(int size, MazeGenerator mazeGenerator, MazePlayer[] mazePlayers) {
-		// size
 		this.size = size;
 		// we can now set a preferred height
 		this.setPreferredSize(new Dimension((int) (this.maxHeight / size) * size, (int) (this.maxWidth / size) * size));

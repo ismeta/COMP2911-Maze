@@ -18,48 +18,65 @@ import maze.effect.MazeEffect;
 
 public class MazePlayerPanel extends JPanel {
 	/**
-	 * @param player the player this panel belongs to
+	 * @param player
+	 *            the player this panel belongs to
 	 */
 	public MazePlayerPanel(Color color, int playerID) {
 		this.color = color;
 		this.playerID = playerID;
-		this.keyImage = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
-		this.buffKeyImage = new ImageIcon("images/player/player" + playerID + "_buffs.png").getImage();
+		this.keyImage = new ImageIcon("images/player/player" + playerID
+				+ "_keys.png").getImage();
+		this.buffKeyImage = new ImageIcon("images/player/player" + playerID
+				+ "_buffs.png").getImage();
 		this.buffs = new LinkedList<Image>();
 		this.setupGui();
 	}
-	
+
 	/**
-	 * @author davina
+	 * Sets up the components for the maze player panel.
 	 */
 	public void setupGui() {
-		// SIze
+		/* preferred size of a player maze panel is 600 x 220 pixels */
 		this.setPreferredSize(new Dimension(600, 220));
-		// Border
+
+		/* we want a border of 10 pixels thickness */
 		Border blackline = BorderFactory.createLineBorder(color, 10);
-		Font f = new Font("verdana",Font.PLAIN,40);
-		// Title
-		TitledBorder title = BorderFactory.createTitledBorder(blackline, "P" + playerID);
+
+		/* we want largish text for the panel title */
+		Font f = new Font("verdana", Font.PLAIN, 40);
+
+		/*
+		 * title is just "P1" or "P0" or "P2" depending on the player the panel
+		 * is for
+		 */
+		TitledBorder title = BorderFactory.createTitledBorder(blackline, "P"
+				+ playerID);
 		title.setTitlePosition(TitledBorder.DEFAULT_POSITION);
 		title.setTitleJustification(TitledBorder.CENTER);
 		title.setTitleFont(f);
 		title.setTitleColor(color);
-		
+
 		/* set background colour to gray */
 		Color darkGray = new Color(45, 45, 45);
 		this.setBackground(darkGray);
 		this.setBorder(title);
 	}
-	
+
 	/**
 	 * redraw the inside of the panel. (buffs, key controls)
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		/* draw the images of the controls to move for players */
 		g.drawImage(keyImage, 10, 35, 240, 170, null);
 		g.drawImage(buffKeyImage, 220, 35, 400, 70, null);
-		
+
+		/*
+		 * draw on the player's buffs (if they have any) (x, y) represents from
+		 * where the buffs should be drawn
+		 */
 		int x = 300;
 		int y = 110;
 		LinkedList<Image> tempBuffs = new LinkedList<Image>(this.buffs);
@@ -68,33 +85,35 @@ public class MazePlayerPanel extends JPanel {
 			x += 100;
 		}
 	}
-	
+
 	/**
 	 * Update the buffs for this panel.
-	 * @param effectQueue the new effects to display.
+	 * 
+	 * @param effectQueue
+	 *            the new effects to display.
 	 */
 	public void updateBuffs(Queue<MazeEffect> effectQueue) {
 		this.buffs = new LinkedList<Image>();
-		for (MazeEffect e: effectQueue) {
+		for (MazeEffect e : effectQueue) {
 			this.buffs.add(e.getImage());
 		}
 		this.repaint();
 	}
-	
+
 	private static final long serialVersionUID = 2639646226913308598L;
 
 	/* colour of this panel */
 	private Color color;
-	
+
 	/* id of the player this panel displays information for */
 	private int playerID;
-	
+
 	/* image of the keyboard controls for this user */
 	private Image keyImage;
-	
+
 	/* image of the key used to activate buffs for this user */
 	private Image buffKeyImage;
-	
+
 	/* images of the buffs being displayed */
 	private LinkedList<Image> buffs;
 }

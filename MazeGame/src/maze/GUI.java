@@ -38,8 +38,6 @@ import maze.generator.maze.RecursiveBacktrackerMazeGenerator;
  * 
  * GUI FLOW/USER INTERACTION:
  * Listens for when a GUI flow button is pressed e.g. User presses Back.
- * 
- * @author davina
  */
 public class GUI implements ActionListener {
 	
