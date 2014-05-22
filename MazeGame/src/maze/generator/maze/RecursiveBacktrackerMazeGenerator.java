@@ -66,39 +66,43 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 			/* get the most recently visited tile */
 			p = previous.remove(previous.size() - 1);
 			
-			/* Some tile checks:
-			 * - If this tile is out of bounds, don't even try! 
-			 * - If this tile has actually been visited before, we don't
-			 *   worry about it; but first we check if it's a state different
-			 *   to what this is. If it's in the goal set and we're in the start
-			 *   set, then we could potentially add a wall between the two. 
-			 *   (and vice versa)
-			 */
-			ArrayList<Point> neighbours = new ArrayList<Point>();
-			neighbours.add(new Point(p.x + 2, p.y));
-			neighbours.add(new Point(p.x - 2, p.y));
-			neighbours.add(new Point(p.x, p.y - 2));
-			neighbours.add(new Point(p.x, p.y + 2));
-			
-			ArrayList<Point> possibleNextPoints = new ArrayList<Point>();
-			
-			for (Point neighbour : neighbours) {
-				if (neighbour.x < 0 || neighbour.y < 0 || neighbour.x >= size || neighbour.y >= size) {
-					continue;
-				} else if (tiles[neighbour.x][neighbour.y] == null) {
-					possibleNextPoints.add(neighbour);
-				}
-			}
-			
-			if (!possibleNextPoints.isEmpty()) {
-				newP = possibleNextPoints.get(rand.nextInt(possibleNextPoints.size()));
-				previous.add(p);
-				previous.add(newP);
-				
-				/* the tile between this and the previous point can be fetched
-				 * by taking the midpoint of their coordinates.
+			/* If we're at the end goal, don't explore any more tiles connected
+			 * to the end tile */
+			if (p.x != goalP.x || p.y != goalP.y) {			
+				/* Some tile checks:
+				 * - If this tile is out of bounds, don't even try! 
+				 * - If this tile has actually been visited before, we don't
+				 *   worry about it; but first we check if it's a state different
+				 *   to what this is. If it's in the goal set and we're in the start
+				 *   set, then we could potentially add a wall between the two. 
+				 *   (and vice versa)
 				 */
-				tiles[(newP.x + p.x) / 2][(newP.y + p.y) / 2] = new MazeTile();
+				ArrayList<Point> neighbours = new ArrayList<Point>(); 
+				neighbours.add(new Point(p.x + 2, p.y));
+				neighbours.add(new Point(p.x - 2, p.y));
+				neighbours.add(new Point(p.x, p.y - 2));
+				neighbours.add(new Point(p.x, p.y + 2));
+				
+				ArrayList<Point> possibleNextPoints = new ArrayList<Point>();
+				
+				for (Point neighbour : neighbours) {
+					if (neighbour.x < 0 || neighbour.y < 0 || neighbour.x >= size || neighbour.y >= size) {
+						continue;
+					} else if (tiles[neighbour.x][neighbour.y] == null) {
+						possibleNextPoints.add(neighbour);
+					}
+				}
+				
+				if (!possibleNextPoints.isEmpty()) {
+					newP = possibleNextPoints.get(rand.nextInt(possibleNextPoints.size()));
+					previous.add(p);
+					previous.add(newP);
+					
+					/* the tile between this and the previous point can be fetched
+					 * by taking the midpoint of their coordinates.
+					 */
+					tiles[(newP.x + p.x) / 2][(newP.y + p.y) / 2] = new MazeTile();
+				}
 			}
 			
 			/* otherwise, make this a not-wall as well as the wall joining
@@ -122,6 +126,7 @@ public class RecursiveBacktrackerMazeGenerator implements MazeGenerator {
 				}
 			}
 		}
+		tiles[goalP.x][goalP.y].setGoal(true);
 
 		/* (optional) Phase 4: generate some boosts! */
 		BoostGenerator bootGen = new RandomBoostGenerator(size);
