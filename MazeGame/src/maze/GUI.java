@@ -332,13 +332,21 @@ public class GUI implements ActionListener {
 		help.setVisible(true);
 	}
 	
+	/**
+	 * Display home page
+	 */
 	public void displayHomePage() {
 		// Switch to home card
 		CardLayout cl = (CardLayout) (pages.getLayout());
 		cl.show(pages, "home");
 	}
 	
+	/**
+	 * Display play options page (page before maze game)
+	 */
 	public void displayPlayOptionsPage() {
+		// make new maze base page
+		initialiseMazePage();
 		// Switch to play options card
 		CardLayout cl = (CardLayout) (pages.getLayout());
 		cl.show(pages, "play");
