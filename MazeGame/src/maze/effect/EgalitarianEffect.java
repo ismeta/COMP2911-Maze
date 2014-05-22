@@ -16,7 +16,6 @@ import maze.player.MazePlayer;
  * This effect slows down the player/s closest to the end,
  * the definition of 'closest' being the path distance rather
  * than the straight-line distance to the goal.  
- * @author Vanessa
  */
 public class EgalitarianEffect implements MazeEffect {
 
