@@ -116,12 +116,6 @@ public class MazeScorePanel extends JPanel {
 			playerID.setForeground(Color.WHITE);
 			gbc.gridx = 2;
 			this.add(playerID, gbc);
-			// TODO: display actual time
-			JLabel time = new JLabel("Time");
-			time.setFont(new Font("verdana", Font.PLAIN, 40));
-			time.setForeground(Color.WHITE);
-			gbc.gridx = 3;
-			this.add(time, gbc);
 		}
 
 		/* Play again button */
