@@ -25,7 +25,7 @@ public class MazePlayerPanel extends JPanel {
 		this.color = color;
 		this.playerID = playerID;
 		this.keyImage = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
-		this.effectKeyImage = new ImageIcon("images/player/player" + playerID + "_effects.png").getImage();
+		this.effectKeyImage = new ImageIcon("images/player/player" + playerID + "_buffs.png").getImage();
 		this.effects = new LinkedList<Image>();
 		this.setupGui();
 	}
