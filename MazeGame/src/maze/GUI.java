@@ -2,6 +2,7 @@ package maze;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -375,10 +376,78 @@ public class GUI implements ActionListener {
 	 * Display help window as pop up
 	 */
 	public void displayHelpWindow() {
+		/* Layout */
+		//TODO: make constant dimension sizes
 		JFrame help = new JFrame("Help");
+		int width = 900;
 		help.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		help.setMinimumSize(new Dimension(500, 500));
+		help.setPreferredSize(new Dimension(width, width));
+		help.setMinimumSize(new Dimension(width, width));
 		help.setVisible(true);
+		
+		/* Contents */
+		JPanel contents = new JPanel(new GridBagLayout());
+		contents.setBackground(new Color(45, 45, 45));
+		
+		/* How to play */
+		GridBagConstraints gbc = new GridBagConstraints();
+		JLabel header = new JLabel("HOW TO PLAY");
+		header.setFont(new Font("verdana", Font.BOLD, 40));
+		header.setForeground(Color.YELLOW);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weighty = 1;
+		contents.add(header, gbc);
+		
+		/* Play description */
+		JLabel play = new JLabel("Race your car to the M1!");
+		play.setFont(new Font("verdana", Font.PLAIN, 30));
+		play.setForeground(Color.WHITE);
+		gbc.gridy = 1;
+		contents.add(play, gbc);
+		
+		/* Player Control */
+		JLabel control = new JLabel("PLAYER CONTROL");
+		control.setFont(new Font("verdana", Font.BOLD, 30));
+		control.setForeground(Color.YELLOW);
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		contents.add(control, gbc);
+		
+		/* Player control description */
+		JLabel controlDescription = new JLabel();
+		controlDescription.setText("<HTML><div align=\"center\">" +
+								   "Using Player 1 as an example: " +
+					 			   "Control your player (red car)<br>" +
+					 			   "using key guide (W, A, S, D). " +
+					 			   "Collect buffs on the road<br> " +
+					 			   "which are activated using specified key (E) " +
+					 			   "and are<br>displayed in the buffs area.<div></HTML>");
+		gbc.gridy = 3;
+		controlDescription.setFont(new Font("verdana", Font.PLAIN, 25));
+		controlDescription.setForeground(Color.WHITE);
+		contents.add(controlDescription, gbc);
+
+		/* Player panel image */
+		ImageIcon icon = new ImageIcon("images/gui/help_page.png");
+		JLabel controlImage = new JLabel(icon);
+		gbc.gridy = 4;
+		contents.add(controlImage, gbc);
+		
+		/* Buffs */
+		JLabel buffs = new JLabel("BUFFS");
+		buffs.setFont(new Font("verdana", Font.BOLD, 30));
+		buffs.setForeground(Color.WHITE);
+		gbc.gridy = 5;
+		contents.add(buffs, gbc);
+		
+		/* Buffs image */
+		icon = new ImageIcon("images/gui/help_buffs.png");
+		JLabel buffsImage = new JLabel(icon);
+		gbc.gridy = 6;
+		contents.add(buffsImage, gbc);
+		
+		help.add(contents);
 	}
 	
 	/**
