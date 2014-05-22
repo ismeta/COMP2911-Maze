@@ -201,6 +201,7 @@ public class MazeBasePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				/* Go back to play options page */
+				stopMusic();
 				frameGui.displayPlayOptionsPage();
 			}
 		});
