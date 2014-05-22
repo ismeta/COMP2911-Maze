@@ -49,16 +49,18 @@ public class RandomBoostGenerator implements BoostGenerator {
 					}
 
 					/* change the integer bound based on the number of possible effects! */
-					int choice = rand.nextInt(3);
+					int choice = rand.nextInt(5);
 					
 					switch (choice) {
 						case 0:
+						case 1:
 							effect = new GlobalSpeedDownEffect();
 							break;
-						case 1:
+						case 2:
+						case 3:
 							effect = new SelfSpeedUpEffect();
 							break;
-						case 2:
+						case 4:
 							effect = new EgalitarianEffect();
 							break;
 						default:

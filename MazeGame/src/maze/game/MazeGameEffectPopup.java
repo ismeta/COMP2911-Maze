@@ -58,7 +58,7 @@ public class MazeGameEffectPopup {
 	
 	private static int DURATION = 3000;
 	private static float MAX_TRANSPARENCY = 0.6f;
-	private static float MIN_TRANSPARENCY = 0.1f;
+	private static float MIN_TRANSPARENCY = 0f;
 	private static int PROPORTION = 4;
 	private MazePlayer player;
 	private MazeEffect effect;
