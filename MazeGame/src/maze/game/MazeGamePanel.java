@@ -308,9 +308,10 @@ public class MazeGamePanel extends JPanel {
 					}
 				}
 
-				// add leeways to the tiles, so players don't bash against the
-				// wall
-				// if they're one pixel off
+				/*
+				 * add leeways to the tiles, so players don't bash against the wall
+				 * if they're one pixel off
+				 */
 				int tileXs[] = {
 						(int) (p.getPosX() + leeWayX) / tileWidth,
 						(int) ((p.getPosX() + tileWidth + leeWayX - 1) / tileWidth) };
@@ -318,41 +319,48 @@ public class MazeGamePanel extends JPanel {
 						(int) (p.getPosY() + leeWayY) / tileHeight,
 						(int) ((p.getPosY() + tileHeight + leeWayY - 1) / tileHeight) };
 
-				// scan through all potential collisions between the player's
-				// current position
-				// and where there will potentially move to
+				/*
+				 * scan through all potential collisions between the player's
+				 * current position and where they will potentially move to
+				 */
 				for (int tileX : tileXs) {
 					for (int tileY : tileYs) {
 						int i;
 
-						// check moving positive in X direction
-						// looks for closest wall
+						/*
+						 * check moving positive in X direction -
+						 * looks for the closest wall
+						 */
 						for (i = tileX + 1; i < mazeSize; i++) {
 							if (mazeTiles[tileY][i].isWall()) {
 								break;
 							}
 						}
+						
+						/* make sure we don't go past the nearest wall */
 						if (i < mazeSize) {
-							// make sure we don't go past the nearest wall
 							xTo = Math.min((i - 1) * tileWidth, xTo);
 						}
-						// vice versa for negative in X direction
+						
+						/* vice versa for negative in X direction */
 						for (i = tileX; i >= 0; i--) {
 							if (mazeTiles[tileY][i].isWall()) {
 								break;
 							}
 						}
+						
+						/* make sure we don't go past that wall either */
 						if (i >= 0) {
-							// make sure we don't go past that wall either
 							xTo = Math.max((i + 1) * tileWidth, xTo);
 						}
 
-						// and we do the same thing for the Y direction
+						/* and we do the same thing for the Y direction */
 						for (i = tileY + 1; i < mazeSize; i++) {
 							if (mazeTiles[i][tileX].isWall()) {
 								break;
 							}
 						}
+						
 						if (i < mazeSize) {
 							yTo = Math.min((i - 1) * tileHeight, yTo);
 						}
@@ -366,10 +374,12 @@ public class MazeGamePanel extends JPanel {
 						}
 					}
 				}
-				// bounded by 4 walls
+				
+				/* bounded by 4 walls */
 				xTo = Math.max(0, Math.min(xTo, tileWidth * (mazeSize - 1)));
 				yTo = Math.max(0, Math.min(yTo, tileHeight * (mazeSize - 1)));
-				// change direction to face
+				
+				/* change direction to face */
 				if (Math.abs(xTo - p.getPosX()) >= 0.01
 						|| Math.abs(yTo - p.getPosY()) >= 0.01) {
 					if (xDir == -1) {
@@ -386,11 +396,12 @@ public class MazeGamePanel extends JPanel {
 										+ yDir);
 					}
 				}
-				// set position - but make sure we don't fall off the grid :)
+				
+				/* set position - but make sure we don't fall off the grid :) */
 				p.setPosX(xTo);
 				p.setPosY(yTo);
 
-				// are we ABSOLUTELY at the goal?
+				/* are we ABSOLUTELY at the goal? */
 				if (this.mazeTiles[(int) (p.getPosY() / tileHeight)][(int) (p
 						.getPosX() / tileWidth)].isGoal()
 						&& ((int) (p.getPosY() / tileHeight) * tileHeight) == (int) yTo
@@ -479,11 +490,11 @@ public class MazeGamePanel extends JPanel {
 		int tileHeight = this.getHeight() / mazeSize;
 
 		if (this.image != null) {
-			// draw base map
+			/* draw base map */
 			g2d.drawImage(this.image, 0, 0, this.getWidth(), this.getHeight(),
 					null);
 
-			// draw effects
+			/* draw effects */
 			for (int i = 0; i < this.mazeTiles.length; i++) {
 				for (int j = 0; j < this.mazeTiles[i].length; j++) {
 					this.mazeTiles[i][j].draw(g2d, j * tileHeight, i
@@ -491,8 +502,9 @@ public class MazeGamePanel extends JPanel {
 				}
 			}
 		}
+		
 		if (this.mazePlayers != null) {
-			// draw players
+			/* draw players */
 			for (MazePlayer p : this.mazePlayers) {
 				if (p != null) {
 					p.draw(g2d, tileWidth, tileHeight);
@@ -509,7 +521,7 @@ public class MazeGamePanel extends JPanel {
 			}
 		}
 
-		// ensure clean and up to date
+		/* ensure clean and up to date */
 		Toolkit.getDefaultToolkit().sync();
 		g.dispose();
 	}
@@ -524,14 +536,18 @@ public class MazeGamePanel extends JPanel {
 	/* number of tiles height/widthwise for the maze */
 	private int mazeSize;
 
-	// ensure player is drawn correctly
+	/* image of maze */
 	private Image image;
-	// players
+	
+	/* players */
 	private MazePlayer[] mazePlayers;
-	// preferred dimensions
+	
+	/* preferred dimensions */
 	private int maxHeight, maxWidth;
-	// current ranking
+	
+	/* current ranking */
 	private int minRanking;
-	// effect display
+	
+	/* effect display */
 	private MazeGameEffectPopup effectDisplay;
 }
