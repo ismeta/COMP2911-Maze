@@ -438,8 +438,15 @@ public class MazeBasePanel extends JPanel {
 	public void checkGameOver() {
 		/* all players assigned rank */
 		boolean isFinished = true;
-		for (MazePlayer mp : this.mazePlayers) {
-			isFinished &= mp.isFinished();
+		
+		/*
+		 * check if the maze players aren't null - can happen because
+		 * of race conditions when the game ends
+		 */
+		if (this.mazePlayers != null) {
+			for (MazePlayer mp : this.mazePlayers) {
+				isFinished &= mp.isFinished();
+			}
 		}
 		if (isFinished) {
 			this.gameState = MazeGameState.FINISHED;
