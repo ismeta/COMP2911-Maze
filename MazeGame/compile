@@ -10,9 +10,10 @@ mkdir -p bin
 for file in $FILES
 do
     echo "compiling $file"
-    javac -cp "./src/" -d bin $file
+    javac -cp "./src/" -d bin $file 2>/dev/null
     if [ $? -ne 0 ]
     then
+        echo "compile failed"
         exit 1
     fi
 done

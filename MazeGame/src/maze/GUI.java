@@ -25,7 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import maze.game.MazeBasePanel;
+import maze.generator.maze.MazeGenerator;
 import maze.generator.maze.RandomMazeGenerator;
+import maze.generator.maze.RecursiveBacktrackerMazeGenerator;
 
 /**
  * GUI.
@@ -63,8 +65,8 @@ public class GUI implements ActionListener {
 	 */
 	public void generate(Container pane) {
 		/* Default difficulty and number of players */
-		difficulty = EASY_MELBOURNE;
-		numPlayers = TWO_PLAYERS;
+		this.numPlayers = TWO_PLAYERS;
+		this.difficulty = MazeDifficulty.MELBOURNE;
 
 		/* Initialise Pages */
 		this.initialiseHomePage();
@@ -187,7 +189,7 @@ public class GUI implements ActionListener {
 		melbourne.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				difficulty = EASY_MELBOURNE;
+				difficulty = MazeDifficulty.MELBOURNE;
 			}
 		});
 
@@ -202,7 +204,7 @@ public class GUI implements ActionListener {
 		sydney.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				difficulty = HARD_SYDNEY;
+				difficulty = MazeDifficulty.SYDNEY;
 			}
 		});
 
@@ -328,7 +330,15 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == exitButton) {
 			System.exit(0);
 		} else if (e.getSource() == playSaveButton) {
-			mazePage.setup(TILE_SIZE, numPlayers, new RandomMazeGenerator(TILE_SIZE), this);
+			MazeGenerator generator = null;
+			if (this.difficulty.equals(MazeDifficulty.MELBOURNE)) {
+				generator = new RecursiveBacktrackerMazeGenerator(TILE_SIZE);
+			} else if (this.difficulty.equals(MazeDifficulty.SYDNEY)) {
+				generator = new RandomMazeGenerator(TILE_SIZE);
+			} else {
+				throw new RuntimeException("Unknown difficulty");
+			}
+			mazePage.setup(TILE_SIZE, numPlayers, generator, this);
 			cl.show(pages, "maze");
 		} else if (e.getSource() == playBackButton) {
 			cl.show(pages, "home");
@@ -407,6 +417,11 @@ public class GUI implements ActionListener {
 	private JButton systemBackButton;
 
 	/* Option settings */
-	private int difficulty;
 	private int numPlayers;
+	private MazeDifficulty difficulty;
+	
+	private enum MazeDifficulty {
+		SYDNEY,
+		MELBOURNE
+	}
 }
