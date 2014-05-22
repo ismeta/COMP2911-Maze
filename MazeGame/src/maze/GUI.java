@@ -38,6 +38,8 @@ import maze.generator.maze.RecursiveBacktrackerMazeGenerator;
  * 
  * GUI FLOW/USER INTERACTION:
  * Listens for when a GUI flow button is pressed e.g. User presses Back.
+ * 
+ * @author davina
  */
 public class GUI implements ActionListener {
 	
@@ -62,9 +64,10 @@ public class GUI implements ActionListener {
 	 * @param pane
 	 */
 	public void generate(Container pane) {
-		/* Default difficulty and number of players */
-		this.numPlayers = TWO_PLAYERS;
+		/* Default requestedDifficulty and number of players */
 		this.requestedDifficulty = MazeDifficulty.MELBOURNE;
+		this.tileSize = TILE_SIZE_LARGE;
+		this.numPlayers = TWO_PLAYERS;
 
 		/* Initialise Pages */
 		this.initialiseHomePage();
@@ -141,7 +144,7 @@ public class GUI implements ActionListener {
 	public void initialisePlayOptionsPage() {
 		/* Background and Layout */
 		playOptionsPage = new ImagePanel();
-		Image img = new ImageIcon("images/gui/player_options_bg.png")
+		Image img = new ImageIcon("images/gui/player_options.png")
 				.getImage();
 		playOptionsPage.setBackground(img);
 		playOptionsPage.setLayout(new BorderLayout());
@@ -157,39 +160,36 @@ public class GUI implements ActionListener {
 		optionPanel.setOpaque(false);
 
 		/* - CHOOSE CITY*/
-		JLabel cityLabel = new JLabel("CHOOSE CITY (DIFFICULTY)");
+		JLabel cityLabel = new JLabel("CHOOSE CITY (DIFFICULTY):");
 		cityLabel.setFont(new Font("verdana", Font.BOLD, 25));
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.weightx = 0;
-		gbc.weighty = 0.1;
+		gbc.weightx = -10;
+		gbc.weighty = 0.5;
 		optionPanel.add(cityLabel, gbc);
 
 		/* -- Melbourne radio button */
 		JRadioButton melbourne = new JRadioButton("Melbourne (Easy)", true);
 		melbourne.setFont(new Font("verdana", Font.PLAIN, 25));
 		melbourne.setOpaque(false);
-		gbc.gridwidth = 1;
-		gbc.gridx = 0;
-		gbc.gridy = 1;
+		gbc.gridx = 1;
 		optionPanel.add(melbourne, gbc);
-		// Set difficulty
+		// Set requestedDifficulty
 		melbourne.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				requestedDifficulty = MazeDifficulty.MELBOURNE;
 			}
 		});
-
+		
 		/* -- Sydney radio button */
 		JRadioButton sydney = new JRadioButton("Sydney (Hard)");
 		sydney.setFont(new Font("verdana", Font.PLAIN, 25));
 		sydney.setOpaque(false);
-		gbc.gridx = 1;
-		gbc.gridy = 1;
+		gbc.gridx = 2;
 		optionPanel.add(sydney, gbc);
-		// Set difficulty
+		// Set requestedDifficulty
 		sydney.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -201,11 +201,65 @@ public class GUI implements ActionListener {
 		ButtonGroup cityGroup = new ButtonGroup();
 		cityGroup.add(melbourne);
 		cityGroup.add(sydney);
+		
+		/* CHOOSE TILE SIZE*/
+		JLabel tileSizeLabel = new JLabel("CHOOSE MAZE TILE SIZE:");
+		tileSizeLabel.setFont(new Font("verdana", Font.BOLD, 25));
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		optionPanel.add(tileSizeLabel, gbc);
 
+		/* -- Small radio button */
+		JRadioButton small = new JRadioButton("Small", true);
+		small.setFont(new Font("verdana", Font.PLAIN, 25));
+		small.setOpaque(false);
+		gbc.gridx = 1;
+		optionPanel.add(small, gbc);
+		// Set requestedDifficulty
+		small.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tileSize = TILE_SIZE_SMALL;
+			}
+		});
+
+		/* -- Medium radio button */
+		JRadioButton medium = new JRadioButton("Medium", true);
+		medium.setFont(new Font("verdana", Font.PLAIN, 25));
+		medium.setOpaque(false);
+		gbc.gridx = 2;
+		optionPanel.add(medium, gbc);
+		// Set requestedDifficulty
+		medium.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tileSize = TILE_SIZE_MEDIUM;
+			}
+		});
+		
+		/* -- Large radio button */
+		JRadioButton large = new JRadioButton("Large", true);
+		large.setFont(new Font("verdana", Font.PLAIN, 25));
+		large.setOpaque(false);
+		gbc.gridx = 3;
+		optionPanel.add(large, gbc);
+		// Set requestedDifficulty
+		large.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tileSize = TILE_SIZE_LARGE;
+			}
+		});
+		
+		/* Radio buttons are set up so add to button group */
+		ButtonGroup tileSizeGroup = new ButtonGroup();
+		tileSizeGroup.add(small);
+		tileSizeGroup.add(medium);
+		tileSizeGroup.add(large);
+		
 		/* CHOOSE NUM PLAYERS */
-		JLabel playersLabel = new JLabel("CHOOSE NUMBER OF PLAYERS");
+		JLabel playersLabel = new JLabel("CHOOSE NUMBER OF PLAYERS:");
 		playersLabel.setFont(new Font("verdana", Font.BOLD, 25));
-		gbc.gridwidth = 2;
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		optionPanel.add(playersLabel, gbc);
@@ -214,9 +268,7 @@ public class GUI implements ActionListener {
 		JRadioButton twoplayer = new JRadioButton("2 Players", true);
 		twoplayer.setFont(new Font("verdana", Font.PLAIN, 25));
 		twoplayer.setOpaque(false);
-		gbc.gridwidth = 1;
-		gbc.gridx = 0;
-		gbc.gridy = 3;
+		gbc.gridx = 1;
 		optionPanel.add(twoplayer, gbc);
 		// Set num players
 		twoplayer.addActionListener(new ActionListener() {
@@ -230,8 +282,7 @@ public class GUI implements ActionListener {
 		JRadioButton threeplayer = new JRadioButton("3 Players");
 		threeplayer.setFont(new Font("verdana", Font.PLAIN, 25));
 		threeplayer.setOpaque(false);
-		gbc.gridx = 1;
-		gbc.gridy = 3;
+		gbc.gridx = 2;
 		optionPanel.add(threeplayer, gbc);
 		// Set num players
 		threeplayer.addActionListener(new ActionListener() {
@@ -252,6 +303,7 @@ public class GUI implements ActionListener {
 		playSaveButton.setBorderPainted(false);
 		playSaveButton.setContentAreaFilled(false);
 		playSaveButton.addActionListener(this);
+		gbc.gridwidth = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 4;
 		optionPanel.add(playSaveButton, gbc);
@@ -262,6 +314,7 @@ public class GUI implements ActionListener {
 		playBackButton.setBorderPainted(false);
 		playBackButton.setContentAreaFilled(false);
 		playBackButton.addActionListener(this);
+		gbc.gridwidth = 2;
 		gbc.gridx = 1;
 		gbc.gridy = 4;
 		optionPanel.add(playBackButton, gbc);
@@ -304,13 +357,14 @@ public class GUI implements ActionListener {
 		} else if (e.getSource() == playSaveButton) {
 			MazeGenerator generator = null;
 			if (this.requestedDifficulty.equals(MazeDifficulty.MELBOURNE)) {
-				generator = new RecursiveBacktrackerMazeGenerator(TILE_SIZE);
+				generator = new RecursiveBacktrackerMazeGenerator(tileSize);
 			} else if (this.requestedDifficulty.equals(MazeDifficulty.SYDNEY)) {
-				generator = new RandomMazeGenerator(TILE_SIZE);
+				generator = new RandomMazeGenerator(tileSize);
 			} else {
-				throw new RuntimeException("Unknown difficulty");
+				throw new RuntimeException("Unknown requestedDifficulty");
 			}
-			mazePage.setup(TILE_SIZE, numPlayers, generator, this);
+
+			mazePage.setup(getTileSize(tileSize), numPlayers, generator, this);
 			cl.show(pages, "maze");
 		} else if (e.getSource() == playBackButton) {
 			cl.show(pages, "home");
@@ -376,15 +430,14 @@ public class GUI implements ActionListener {
 		return new Dimension(adjustedWidth, adjustedHeight);
 	}
 	
-	/* approximate size of each maze tile */
-	private static final int TILE_SIZE_ORIGINAL = 25;
+	private int getTileSize(int chosenTileSize) {
+		return ((int)(chosenTileSize) / 2) * 2 + 1;
+	}
 	
-	/* actual size of each maze tile - required to be an odd number */
-	private static final int TILE_SIZE = ((int) (TILE_SIZE_ORIGINAL) / 2) * 2 + 1;
-
-	/* difficulty level - linked to a city */
-	private static final int EASY_MELBOURNE = 5;
-	private static final int HARD_SYDNEY = 10;
+	/* approximate size of each maze tile */
+	private static final int TILE_SIZE_LARGE = 25;
+	private static final int TILE_SIZE_MEDIUM = 41;
+	private static final int TILE_SIZE_SMALL = 55;
 	
 	/* number of players */
 	private static final int TWO_PLAYERS = 2;
@@ -394,7 +447,6 @@ public class GUI implements ActionListener {
 	private JPanel pages;
 	private ImagePanel homePage;
 	private ImagePanel playOptionsPage;
-	private JPanel systemopsPage;
 	private MazeBasePanel mazePage;
 
 	/* Buttons */
@@ -408,8 +460,9 @@ public class GUI implements ActionListener {
 	private JButton systemBackButton;
 
 	/* Option settings */
-	private int numPlayers;
 	private MazeDifficulty requestedDifficulty;
+	private int tileSize;
+	private int numPlayers;
 	
 	private enum MazeDifficulty {
 		SYDNEY,
