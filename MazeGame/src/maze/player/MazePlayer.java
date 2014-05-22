@@ -218,6 +218,13 @@ public class MazePlayer {
 		return (this.ranking != UNRANKED);
 	}
 	
+	/**
+	 * @return maze player panel
+	 */
+	public MazePlayerPanel getPlayerPanel() {
+		return this.mazePlayerPanel;
+	}
+	
 	/* use this to denote a player's ranking if they haven't finished */
 	private static final int UNRANKED = 0;
 	

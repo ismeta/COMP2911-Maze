@@ -27,6 +27,7 @@ public class MazePlayerPanel extends JPanel {
 		this.keyImage = new ImageIcon("images/player/player" + playerID + "_keys.png").getImage();
 		this.effectKeyImage = new ImageIcon("images/player/player" + playerID + "_buffs.png").getImage();
 		this.effects = new LinkedList<Image>();
+		this.isFinished = false;
 		this.setupGui();
 	}
 
@@ -78,10 +79,18 @@ public class MazePlayerPanel extends JPanel {
 		g.drawImage(effectKeyImage, 220, 35, 400, 70, null);
 		int x = 300;
 		int y = 110;
-		LinkedList<Image> tempeffects = new LinkedList<Image>(this.effects);
-		for (Image img : tempeffects) {
-			g.drawImage(img, x, y, 60, 60, null);
-			x += 100;
+		/*
+		 * If finished, display "FINISHED" otherwise display the buffs
+		 */
+		if (isFinished) {
+			Image img = new ImageIcon("images/player/finished_transparent.png").getImage();
+			g.drawImage(img, x, y, 190, 60, null);
+		} else {
+			LinkedList<Image> tempBuffs = new LinkedList<Image>(this.effects);
+			for (Image img : tempBuffs) {
+				g.drawImage(img, x, y, 60, 60, null);
+				x += 100;
+			}
 		}
 	}
 
@@ -99,6 +108,10 @@ public class MazePlayerPanel extends JPanel {
 		}
 		this.repaint();
 	}
+	
+	public void displayFinished() {
+		isFinished = true;
+	}
 
 	private static final long serialVersionUID = 2639646226913308598L;
 
@@ -115,4 +128,7 @@ public class MazePlayerPanel extends JPanel {
 	
 	/* images of the effects being displayed */
 	private LinkedList<Image> effects;
+	
+	/* status of player */
+	private boolean isFinished;
 }
