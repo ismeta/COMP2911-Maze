@@ -422,9 +422,9 @@ public class GUI implements ActionListener {
 		controlDescription.setText("<HTML><div align=\"center\">" +
 								   "Using Player 1 as an example: " +
 					 			   "Control your player (red car)<br>" +
-					 			   "using key guide (W, A, S, D)." +
-					 			   "Collect buffs on the road<br>" +
-					 			   "which are activated using specified key (E)" +
+					 			   "using key guide (W, A, S, D). " +
+					 			   "Collect buffs on the road<br> " +
+					 			   "which are activated using specified key (E) " +
 					 			   "and are<br>displayed in the buffs area.<div></HTML>");
 		gbc.gridy = 3;
 		controlDescription.setFont(new Font("verdana", Font.PLAIN, 25));
