@@ -12,7 +12,6 @@ import maze.player.MazePlayer;
 
 /**
  * Effect which rotates the maze to the right by 90 degrees
- * @author Oliver
  */
 public class RotateRightEffect implements MazeEffect {
 	public RotateRightEffect() {
@@ -35,12 +34,12 @@ public class RotateRightEffect implements MazeEffect {
 	
 	@Override
 	public void addEndTime(long add) {
-		// not affected
+		/* not affected */
 	}
 	
 	@Override
 	public void deactivate(MazeGamePanel m) {
-		// do nothing
+		/* do nothing */
 	}
 
 	@Override
@@ -48,6 +47,9 @@ public class RotateRightEffect implements MazeEffect {
 		g2d.drawImage(this.image, x, y, width, height, null);
 	}
 	
+	/**
+	 * @return the image for this effect
+	 */
 	public Image getImage() {
 		return this.image;
 	}

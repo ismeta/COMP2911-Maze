@@ -77,9 +77,15 @@ public class MazeGameEffectPopup {
 	private static float MAX_TRANSPARENCY = 0.6f;
 	private static float MIN_TRANSPARENCY = 0f;
 	
+	/* how much smaller the popup should be than the window it is displayed in */
 	private static int PROPORTION = 4;
-	private MazePlayer player;
-	private MazeEffect effect;
-	private long startTime;
 	
+	/* the player using the effect which triggers the popup */
+	private MazePlayer player;
+	
+	/* the effect */
+	private MazeEffect effect;
+	
+	/* when the popup started */
+	private long startTime;
 }

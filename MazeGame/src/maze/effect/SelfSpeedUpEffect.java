@@ -15,7 +15,6 @@ import maze.player.MazePlayer;
 
 /**
  * Effect which increases the speed of the invoking player.
- * @author Oliver
  */
 public class SelfSpeedUpEffect implements MazeEffect {
 	
