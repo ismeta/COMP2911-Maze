@@ -453,6 +453,11 @@ public class MazeBasePanel extends JPanel {
 		if (this.mazePlayers != null) {
 			for (MazePlayer mp : this.mazePlayers) {
 				isFinished &= mp.isFinished();
+				// Check if player has finished
+				if (mp.isFinished()) {
+					// Display finished on player panel
+					mp.getPlayerPanel().displayFinished();
+				}
 			}
 		}
 		if (isFinished) {
