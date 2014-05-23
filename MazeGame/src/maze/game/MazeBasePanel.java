@@ -227,11 +227,7 @@ public class MazeBasePanel extends JPanel {
 				stopMusic();
 
 				/* Display help window */
-				JFrame helpFrame = new JFrame("Help");
-				helpFrame.setFocusable(false);
-				helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				helpFrame.setMinimumSize(new Dimension(500, 500));
-				helpFrame.setVisible(true);
+				frameGui.displayHelpWindow();
 			}
 		});
 
@@ -438,7 +434,6 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
 
-		// TODO: turn timer off
 		System.exit(0);
 	}
 
