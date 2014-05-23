@@ -169,19 +169,12 @@ public class MazeBasePanel extends JPanel {
 
 					/* Change image to play */
 					pause.setIcon(new ImageIcon(MAZE_PLAY_IMAGE_FILE));
-
-					/* Turn music off */
-					stopMusic();
 				} else {
 					/* Play game */
 					unpause();
 
 					/* Change image to pause */
 					pause.setIcon(new ImageIcon(MAZE_PAUSE_IMAGE_FILE));
-
-					/* Turn music on */
-					playMusic();
-
 				}
 			}
 		});
