@@ -2,7 +2,10 @@ package maze.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
 
 import maze.effect.MazeEffect;
 
@@ -95,8 +98,8 @@ public class MazeTile {
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 		/* special graphic if it's a goal tile! */
 		if (this.isGoal) {
-			g2d.setPaint(Color.CYAN);
-			g2d.fill(new Rectangle(x, y, width, height));
+			Image img = new ImageIcon(GOAL_TILE_IMAGE_FILE).getImage();
+			g2d.drawImage(img, x, y, width, height, null);
 		}
 
 		/* draw boost if required */
@@ -112,4 +115,7 @@ public class MazeTile {
 
 	/* effect on this tile */
 	private MazeEffect effect;
+	
+	/* Image to be displayed for goal tile */
+	private static final String GOAL_TILE_IMAGE_FILE = "images/sprites/m1.png";
 }

@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -32,7 +33,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -66,7 +66,7 @@ public class MazeBasePanel extends JPanel {
 				screenWidth / 2 - 100);
 
 		/* Set up */
-		this.isMusicOn = true;
+		this.isMusicOn = false;
 		try {
 			this.clip = AudioSystem.getClip();
 		} catch (LineUnavailableException e) {
@@ -74,8 +74,14 @@ public class MazeBasePanel extends JPanel {
 			e.printStackTrace();
 		}
 		this.frameGui = frameGui;
-
+		this.playerStatus = new JPanel();
+		this.timeLabel = new JLabel();
 		this.setupGui();
+		
+		/* Note start time */
+        this.start = Calendar.getInstance();
+        start.set(Calendar.HOUR, 0);
+        start.set(Calendar.MINUTE, 0);
 	}
 
 	/**
@@ -123,7 +129,7 @@ public class MazeBasePanel extends JPanel {
 		pause.setContentAreaFilled(false);
 
 		/* - Sound */
-		ico = new ImageIcon(MAZE_SOUND_IMAGE_FILE);
+		ico = new ImageIcon(MAZE_MUTE_IMAGE_FILE);
 		sound = new JButton(ico);
 		sound.setBorderPainted(false);
 		sound.setContentAreaFilled(false);
@@ -163,19 +169,12 @@ public class MazeBasePanel extends JPanel {
 
 					/* Change image to play */
 					pause.setIcon(new ImageIcon(MAZE_PLAY_IMAGE_FILE));
-
-					/* Turn music off */
-					stopMusic();
 				} else {
 					/* Play game */
 					unpause();
 
 					/* Change image to pause */
 					pause.setIcon(new ImageIcon(MAZE_PAUSE_IMAGE_FILE));
-
-					/* Turn music on */
-					playMusic();
-
 				}
 			}
 		});
@@ -227,11 +226,7 @@ public class MazeBasePanel extends JPanel {
 				stopMusic();
 
 				/* Display help window */
-				JFrame helpFrame = new JFrame("Help");
-				helpFrame.setFocusable(false);
-				helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				helpFrame.setMinimumSize(new Dimension(500, 500));
-				helpFrame.setVisible(true);
+				frameGui.displayHelpWindow();
 			}
 		});
 
@@ -321,7 +316,6 @@ public class MazeBasePanel extends JPanel {
 		 * Play music throughout application unless turned off in system
 		 * options.
 		 */
-		this.playMusic();
 		Color purple = new Color(174, 79, 255);
 		Color blue = new Color(0, 156, 255);
 
@@ -331,7 +325,6 @@ public class MazeBasePanel extends JPanel {
 		colors.add(blue);
 
 		/* Gui */
-		JPanel playerStatus = new JPanel();
 		playerStatus.setOpaque(false);
 		playerStatus.setLayout(new GridBagLayout());
 
@@ -339,21 +332,26 @@ public class MazeBasePanel extends JPanel {
 		this.mazePlayers = new MazePlayer[numPlayers];
 
 		/* padding is the space between the player panels */
-		int padding = 140 / numPlayers;
+		int padding = 110 / numPlayers;
 
 		/* draw player panels for each player */
+		GridBagConstraints gbc = new GridBagConstraints();
 		for (int i = 0; i < numPlayers; i++) {
 			MazePlayerPanel s = new MazePlayerPanel(colors.get(i), i);
 			this.mazePlayers[i] = new MazePlayer(i, s);
-
-			GridBagConstraints gbc = new GridBagConstraints();
 			gbc.gridx = 0;
-			gbc.gridy = i;
-
+			gbc.gridy = i+1;
 			gbc.insets = new Insets(0, 0, padding, 0);
 			playerStatus.add(s, gbc);
 		}
 
+		/* timer */
+		timeLabel.setFont(new Font("verdana", Font.BOLD, 25));
+		timeLabel.setForeground(Color.DARK_GRAY);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		this.playerStatus.add(this.timeLabel, gbc);
+		
 		g.anchor = GridBagConstraints.CENTER;
 		g.gridx = 1;
 		g.gridy = 1;
@@ -392,6 +390,9 @@ public class MazeBasePanel extends JPanel {
 	 * Called when the game is paused.
 	 */
 	public void pause() {
+		/* display paused */
+		timeLabel.setText("PAUSED");
+		
 		/* change state and last paused stuff */
 		this.gameState = MazeGameState.PAUSED;
 		this.lastPauseTime = System.currentTimeMillis();
@@ -438,7 +439,6 @@ public class MazeBasePanel extends JPanel {
 		this.keyPresses = null;
 		this.gameState = MazeGameState.UNSETUP;
 
-		// TODO: turn timer off
 		System.exit(0);
 	}
 
@@ -503,6 +503,15 @@ public class MazeBasePanel extends JPanel {
 			} else if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
 				/* update all the players */
 				long curTime = System.currentTimeMillis();
+				
+				start.add(Calendar.SECOND, 1);
+				/* Since run every millisecond, the hour value = min
+				 * and minute value = sec.
+				 */
+				int m = start.get(Calendar.HOUR);
+                int s = start.get(Calendar.MINUTE);
+                timeLabel.setText(m + " min " + s + " sec");
+                
 				for (Entry<Character, Long> e : this.mbp.getKeyPresses()
 						.entrySet()) {
 					long difference = curTime - e.getValue();
@@ -658,5 +667,15 @@ public class MazeBasePanel extends JPanel {
 	private JButton sound;
 	Clip clip;
 
+	/* gui of frame */
 	private GUI frameGui;
+	
+	/* panel that holds the timer and player panels */
+	private JPanel playerStatus;
+	
+	/* start instance */
+	private Calendar start;
+	
+	/* displays timer */
+	private JLabel timeLabel;
 }
