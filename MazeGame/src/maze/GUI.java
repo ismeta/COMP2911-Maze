@@ -208,7 +208,7 @@ public class GUI implements ActionListener {
 		optionPanel.add(tileSizeLabel, gbc);
 
 		/* -- Small radio button */
-		JRadioButton small = new JRadioButton("Small", true);
+		JRadioButton small = new JRadioButton("Small");
 		small.setFont(new Font("verdana", Font.PLAIN, 25));
 		small.setOpaque(false);
 		gbc.gridx = 1;
@@ -222,7 +222,7 @@ public class GUI implements ActionListener {
 		});
 
 		/* -- Medium radio button */
-		JRadioButton medium = new JRadioButton("Medium", true);
+		JRadioButton medium = new JRadioButton("Medium");
 		medium.setFont(new Font("verdana", Font.PLAIN, 25));
 		medium.setOpaque(false);
 		gbc.gridx = 2;
