@@ -289,9 +289,9 @@ public class MazeBasePanel extends JPanel {
 	}
 
 	@Override
-	public void paintComponent(Graphics G) {
-		super.paintComponent(G);
-		G.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
 	}
 
 	/**
