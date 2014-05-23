@@ -222,9 +222,6 @@ public class MazeBasePanel extends JPanel {
 				/* Pause the game */
 				pause();
 
-				/* Stop the music */
-				stopMusic();
-
 				/* Display help window */
 				frameGui.displayHelpWindow();
 			}
