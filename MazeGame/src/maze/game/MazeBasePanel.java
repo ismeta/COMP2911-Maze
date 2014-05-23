@@ -32,7 +32,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -66,7 +65,7 @@ public class MazeBasePanel extends JPanel {
 				screenWidth / 2 - 100);
 
 		/* Set up */
-		this.isMusicOn = true;
+		this.isMusicOn = false;
 		try {
 			this.clip = AudioSystem.getClip();
 		} catch (LineUnavailableException e) {
@@ -123,7 +122,7 @@ public class MazeBasePanel extends JPanel {
 		pause.setContentAreaFilled(false);
 
 		/* - Sound */
-		ico = new ImageIcon(MAZE_SOUND_IMAGE_FILE);
+		ico = new ImageIcon(MAZE_MUTE_IMAGE_FILE);
 		sound = new JButton(ico);
 		sound.setBorderPainted(false);
 		sound.setContentAreaFilled(false);
@@ -317,7 +316,6 @@ public class MazeBasePanel extends JPanel {
 		 * Play music throughout application unless turned off in system
 		 * options.
 		 */
-		this.playMusic();
 		Color purple = new Color(174, 79, 255);
 		Color blue = new Color(0, 156, 255);
 

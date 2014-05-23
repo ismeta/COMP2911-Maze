@@ -361,7 +361,6 @@ public class GUI implements ActionListener {
 			} else {
 				throw new RuntimeException("Unknown requestedDifficulty");
 			}
-
 			mazePage.setup(getTileSize(tileSize), numPlayers, generator, this);
 			cl.show(pages, "maze");
 		} else if (e.getSource() == playBackButton) {
