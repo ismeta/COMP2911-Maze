@@ -101,13 +101,13 @@ public class MazeBasePanel extends JPanel {
 		this.add(this.mazeGamePanel, g);
 
 		/* Prompt line */
-		/*JLabel headerText = new JLabel("Get to the M1 before the other cars!");
-		headerText.setFont(new Font("verdana", Font.PLAIN, 40));
-		g.anchor = GridBagConstraints.NORTH;
+		JLabel headerText = new JLabel();
+		ImageIcon prompt = new ImageIcon("images/gui/prompt.png");
+		headerText.setIcon(prompt);
+		g.anchor = GridBagConstraints.CENTER;
 		g.gridx = 0;
 		g.gridy = 0;
-		g.insets = new Insets(20, 0, 0, 0);
-		this.add(headerText, g);*/
+		this.add(headerText, g);
 
 		/* TopButtons - contains buttons */
 		GridLayout buttonsGridLayout = new GridLayout(1, 5);
