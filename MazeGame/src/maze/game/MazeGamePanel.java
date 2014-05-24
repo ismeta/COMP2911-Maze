@@ -485,7 +485,7 @@ public class MazeGamePanel extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		Graphics2D g2d = (Graphics2D) g;
+		Graphics2D g2d = (Graphics2D) g.create();
 		int tileWidth = this.getWidth() / mazeSize;
 		int tileHeight = this.getHeight() / mazeSize;
 
@@ -513,8 +513,7 @@ public class MazeGamePanel extends JPanel {
 		}
 
 		if (this.effectDisplay != null) {
-			if (this.effectDisplay.getFinishTime() >= System
-					.currentTimeMillis()) {
+			if (this.effectDisplay.getFinishTime() >= System.currentTimeMillis()) {
 				this.effectDisplay.paint(g, this.getWidth(), this.getHeight());
 			} else {
 				this.effectDisplay = null;
@@ -523,7 +522,7 @@ public class MazeGamePanel extends JPanel {
 
 		/* ensure clean and up to date */
 		Toolkit.getDefaultToolkit().sync();
-		g.dispose();
+		g2d.dispose();
 	}
 
 	private static final double TILES_PER_SECOND = 4;
@@ -550,4 +549,5 @@ public class MazeGamePanel extends JPanel {
 	
 	/* effect display */
 	private MazeGameEffectPopup effectDisplay;
+	
 }

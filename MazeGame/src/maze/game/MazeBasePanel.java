@@ -80,8 +80,7 @@ public class MazeBasePanel extends JPanel {
 		
 		/* Note start time */
         this.start = Calendar.getInstance();
-        start.set(Calendar.HOUR, 0);
-        start.set(Calendar.MINUTE, 0);
+        start.setTimeInMillis(0);
 	}
 
 	/**
@@ -102,13 +101,13 @@ public class MazeBasePanel extends JPanel {
 		this.add(this.mazeGamePanel, g);
 
 		/* Prompt line */
-		JLabel headerText = new JLabel("Get to the M1 before the other cars!");
+		/*JLabel headerText = new JLabel("Get to the M1 before the other cars!");
 		headerText.setFont(new Font("verdana", Font.PLAIN, 40));
 		g.anchor = GridBagConstraints.NORTH;
 		g.gridx = 0;
 		g.gridy = 0;
 		g.insets = new Insets(20, 0, 0, 0);
-		this.add(headerText, g);
+		this.add(headerText, g);*/
 
 		/* TopButtons - contains buttons */
 		GridLayout buttonsGridLayout = new GridLayout(1, 5);
@@ -242,6 +241,10 @@ public class MazeBasePanel extends JPanel {
 	 */
 	public void playMusic() {
 		try {
+			// shut down everything just in case
+			stopMusic();
+			
+			// make sounds
 			File soundFile = new File(GAME_MUSIC_FILE);
 			AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
 
@@ -264,7 +267,11 @@ public class MazeBasePanel extends JPanel {
 	 */
 	public void stopMusic() {
 		try {
-			clip.stop();
+			if (clip != null) {
+				if (clip.isOpen()) {
+					clip.stop();
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -390,6 +397,12 @@ public class MazeBasePanel extends JPanel {
 		/* display paused */
 		timeLabel.setText("PAUSED");
 		
+		// everything unvisible
+		this.mazeGamePanel.setVisible(false);
+		for (MazePlayer mp : this.mazePlayers) {
+			mp.getPlayerPanel().setVisible(false);
+		}
+		
 		/* change state and last paused stuff */
 		this.gameState = MazeGameState.PAUSED;
 		this.lastPauseTime = System.currentTimeMillis();
@@ -406,6 +419,11 @@ public class MazeBasePanel extends JPanel {
 		long pauseDuration = System.currentTimeMillis() - this.lastPauseTime;
 		for (MazeEffect me : this.activatedEffects) {
 			me.addEndTime(pauseDuration);
+		}
+		// everything visible again
+		this.mazeGamePanel.setVisible(true);
+		for (MazePlayer mp : this.mazePlayers) {
+			mp.getPlayerPanel().setVisible(true);
 		}
 		this.gameState = MazeGameState.PLAYING;
 	}
@@ -481,13 +499,15 @@ public class MazeBasePanel extends JPanel {
 	 */
 	private class MazeBasePanelTimer extends TimerTask {
 		private MazeBasePanel mbp;
-
+		private long lastTime;
 		private MazeBasePanelTimer(MazeBasePanel mbp) {
 			this.mbp = mbp;
+			this.lastTime = System.currentTimeMillis();
 		}
 
 		@Override
 		public void run() {
+			long curTime = System.currentTimeMillis();
 			checkGameOver();
 			if (mbp.getGameState().equals(MazeGameState.FINISHED)) {
 				this.cancel();
@@ -499,21 +519,19 @@ public class MazeBasePanel extends JPanel {
 				this.mbp.validate();
 			} else if (mbp.getGameState().equals(MazeGameState.PLAYING)) {
 				/* update all the players */
-				long curTime = System.currentTimeMillis();
 				
-				start.add(Calendar.SECOND, 1);
+				start.add(Calendar.MILLISECOND, (int) (curTime - this.lastTime));
 				/* Since run every millisecond, the hour value = min
 				 * and minute value = sec.
 				 */
-				int m = start.get(Calendar.HOUR);
-                int s = start.get(Calendar.MINUTE);
-                timeLabel.setText(m + " min " + s + " sec");
+				int m = start.get(Calendar.MINUTE);
+                int s = start.get(Calendar.SECOND);
+                timeLabel.setText(String.format("Time: %02d:%02d", m, s));
                 
 				for (Entry<Character, Long> e : this.mbp.getKeyPresses()
 						.entrySet()) {
 					long difference = curTime - e.getValue();
-					this.mbp.getMazeGamePanel().updatePlayerMovement(
-							e.getKey(), difference);
+					this.mbp.getMazeGamePanel().updatePlayerMovement(e.getKey(), difference);
 					this.mbp.getKeyPresses().put(e.getKey(), curTime);
 				}
 
@@ -529,6 +547,7 @@ public class MazeBasePanel extends JPanel {
 				/* repaint the maze since there are updates */
 				this.mbp.repaint();
 			}
+			this.lastTime = curTime;
 		}
 
 		/**
