@@ -126,6 +126,13 @@ public class MazeBasePanel extends JPanel {
 		pause = new JButton(ico);
 		pause.setBorderPainted(false);
 		pause.setContentAreaFilled(false);
+		
+		/* - Resume */
+		ico = new ImageIcon(MAZE_RESUME_IMAGE_FILE);
+		resume = new JButton(ico);
+		resume.setBorderPainted(false);
+		resume.setContentAreaFilled(false);
+		resume.setVisible(false);
 
 		/* - Sound */
 		ico = new ImageIcon(MAZE_MUTE_IMAGE_FILE);
@@ -165,16 +172,15 @@ public class MazeBasePanel extends JPanel {
 				if (gameState.equals(MazeGameState.PLAYING)) {
 					/* Pause game */
 					pause();
-
-					/* Change image to play */
-					pause.setIcon(new ImageIcon(MAZE_PLAY_IMAGE_FILE));
-				} else {
-					/* Play game */
-					unpause();
-
-					/* Change image to pause */
-					pause.setIcon(new ImageIcon(MAZE_PAUSE_IMAGE_FILE));
 				}
+			}
+		});
+		
+		resume.setFocusable(false);
+		resume.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				unpause();
 			}
 		});
 
@@ -356,6 +362,12 @@ public class MazeBasePanel extends JPanel {
 		gbc.gridy = 0;
 		this.playerStatus.add(this.timeLabel, gbc);
 		
+		/* resume button */
+		gbc.gridx = 0;
+		gbc.gridy = numPlayers;
+		this.playerStatus.add(resume, gbc);
+		resume.setVisible(false);
+		
 		g.anchor = GridBagConstraints.CENTER;
 		g.gridx = 1;
 		g.gridy = 1;
@@ -406,7 +418,13 @@ public class MazeBasePanel extends JPanel {
 		/* change state and last paused stuff */
 		this.gameState = MazeGameState.PAUSED;
 		this.lastPauseTime = System.currentTimeMillis();
-
+		
+		/* resume button */
+		resume.setVisible(true);
+		
+		/* pause button disappears */
+		pause.setVisible(false);
+		
 		/* clear the keys pressed */
 		this.keyPresses.clear();
 	}
@@ -425,6 +443,9 @@ public class MazeBasePanel extends JPanel {
 		for (MazePlayer mp : this.mazePlayers) {
 			mp.getPlayerPanel().setVisible(true);
 		}
+		/* pause button visible again */
+		pause.setVisible(true);
+		
 		this.gameState = MazeGameState.PLAYING;
 	}
 
@@ -656,6 +677,9 @@ public class MazeBasePanel extends JPanel {
 
 	/* image to display for the exit button */
 	private static final String MAZE_EXIT_IMAGE_FILE = "images/gui/maze_exit.png";
+	
+	/* image to display for the exit button */
+	private static final String MAZE_RESUME_IMAGE_FILE = "images/gui/resumebutton.png";
 
 	private Timer timer;
 	private MazePlayer mazePlayers[];
@@ -694,4 +718,7 @@ public class MazeBasePanel extends JPanel {
 	
 	/* displays timer */
 	private JLabel timeLabel;
+	
+	/* resume button */
+	private JButton resume;
 }
