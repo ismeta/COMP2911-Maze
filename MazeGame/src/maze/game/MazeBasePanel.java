@@ -101,13 +101,13 @@ public class MazeBasePanel extends JPanel {
 		this.add(this.mazeGamePanel, g);
 
 		/* Prompt line */
-		JLabel headerText = new JLabel();
+		header = new JLabel();
 		ImageIcon prompt = new ImageIcon("images/gui/prompt.png");
-		headerText.setIcon(prompt);
+		header.setIcon(prompt);
 		g.anchor = GridBagConstraints.CENTER;
 		g.gridx = 0;
 		g.gridy = 0;
-		this.add(headerText, g);
+		this.add(header, g);
 
 		/* TopButtons - contains buttons */
 		GridLayout buttonsGridLayout = new GridLayout(1, 5);
@@ -425,6 +425,9 @@ public class MazeBasePanel extends JPanel {
 		/* pause button disappears */
 		pause.setVisible(false);
 		
+		/* header */
+		header.setVisible(false);
+		
 		/* clear the keys pressed */
 		this.keyPresses.clear();
 	}
@@ -445,6 +448,7 @@ public class MazeBasePanel extends JPanel {
 		}
 		/* pause button visible again */
 		pause.setVisible(true);
+		header.setVisible(true);
 		
 		this.gameState = MazeGameState.PLAYING;
 	}
@@ -721,4 +725,7 @@ public class MazeBasePanel extends JPanel {
 	
 	/* resume button */
 	private JButton resume;
+	
+	/* header label */
+	private JLabel header;
 }
