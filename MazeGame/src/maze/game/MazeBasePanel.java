@@ -247,22 +247,22 @@ public class MazeBasePanel extends JPanel {
 	 */
 	public void playMusic() {
 		try {
-			// shut down everything just in case
-			stopMusic();
-			
-			// make sounds
-			File soundFile = new File(GAME_MUSIC_FILE);
-			AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
-
-			AudioInputStream soundIn = AudioSystem
-					.getAudioInputStream(soundFile);
-			AudioFormat format = soundIn.getFormat();
-			DataLine.Info info = new DataLine.Info(Clip.class, format);
-
-			clip = (Clip) AudioSystem.getLine(info);
-			clip.open(ais);
-			clip.loop(Clip.LOOP_CONTINUOUSLY);
-			clip.start();
+			if (clip.isOpen()) {
+				clip.loop(Clip.LOOP_CONTINUOUSLY);
+			} else {
+				// make sounds
+				File soundFile = new File(GAME_MUSIC_FILE);
+				AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
+	
+				AudioInputStream soundIn = AudioSystem
+						.getAudioInputStream(soundFile);
+				AudioFormat format = soundIn.getFormat();
+				DataLine.Info info = new DataLine.Info(Clip.class, format);
+	
+				clip = (Clip) AudioSystem.getLine(info);
+				clip.open(ais);
+				clip.loop(Clip.LOOP_CONTINUOUSLY);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
