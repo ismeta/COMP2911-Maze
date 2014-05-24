@@ -526,7 +526,7 @@ public class MazeBasePanel extends JPanel {
 				 */
 				int m = start.get(Calendar.MINUTE);
                 int s = start.get(Calendar.SECOND);
-                timeLabel.setText(String.format("Time: %02d:%02d", m, s));
+                timeLabel.setText(String.format("%02d:%02d", m, s));
                 
 				for (Entry<Character, Long> e : this.mbp.getKeyPresses()
 						.entrySet()) {
