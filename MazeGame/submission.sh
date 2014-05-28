@@ -15,7 +15,7 @@ cp -v uml/uml.pdf ass3
 cp -v *.pdf ass3
 cp -v compile ass3
 cp -v run ass3
-
+cp -vr doc ass3
 # make a zip
 echo "generating zip ass3.zip"
 cd ./ass3
