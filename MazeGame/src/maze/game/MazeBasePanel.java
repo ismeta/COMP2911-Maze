@@ -621,6 +621,7 @@ public class MazeBasePanel extends JPanel {
 						if (MAZE_EFFECT_ACTIVATE_KEYS[i] == c
 								&& !mazePlayers[i].isFinished()) {
 							mazePlayers[i].activateNextMazeEffect(mbp);
+							return;
 						}
 					}
 					/* make sure we register the player's key as pressed */
