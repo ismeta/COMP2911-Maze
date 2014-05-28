@@ -201,14 +201,14 @@ public class GUI implements ActionListener {
 		cityGroup.add(sydney);
 		
 		/* CHOOSE TILE SIZE*/
-		JLabel tileSizeLabel = new JLabel("CHOOSE MAZE TILE SIZE:");
+		JLabel tileSizeLabel = new JLabel("CHOOSE MAZE SIZE:");
 		tileSizeLabel.setFont(new Font("verdana", Font.BOLD, 25));
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		optionPanel.add(tileSizeLabel, gbc);
 
 		/* -- Small radio button */
-		JRadioButton small = new JRadioButton("Small");
+		JRadioButton small = new JRadioButton("Small", true);
 		small.setFont(new Font("verdana", Font.PLAIN, 25));
 		small.setOpaque(false);
 		gbc.gridx = 1;
@@ -217,7 +217,7 @@ public class GUI implements ActionListener {
 		small.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tileSize = TILE_SIZE_SMALL;
+				tileSize = TILE_SIZE_LARGE;
 			}
 		});
 
@@ -236,7 +236,7 @@ public class GUI implements ActionListener {
 		});
 		
 		/* -- Large radio button */
-		JRadioButton large = new JRadioButton("Large", true);
+		JRadioButton large = new JRadioButton("Large");
 		large.setFont(new Font("verdana", Font.PLAIN, 25));
 		large.setOpaque(false);
 		gbc.gridx = 3;
@@ -245,7 +245,7 @@ public class GUI implements ActionListener {
 		large.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tileSize = TILE_SIZE_LARGE;
+				tileSize = TILE_SIZE_SMALL;
 			}
 		});
 		
